@@ -243,45 +243,45 @@
 
   /* ---------- diagram slides (route MoE, memory snapshot+trend) ---------- */
   .s-route, .s-memory { align-content:center; justify-items:center; }
-  .s-route .diag-eyebrow, .s-memory .diag-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.6vw,1.5rem); letter-spacing:.05em; margin-bottom:2.4vh; }
-  .s-route .code-cap, .s-memory .code-cap { margin-top:2.4vh; color:var(--muted); font-size:clamp(1rem,1.45vw,1.28rem); line-height:1.45; max-width:62ch; text-align:center; }
+  .s-route .diag-eyebrow, .s-memory .diag-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.6vw,1.5rem); letter-spacing:.05em; margin-bottom:5vh; }
+  .s-route .code-cap, .s-memory .code-cap { margin-top:5vh; color:var(--muted); font-size:clamp(1rem,1.45vw,1.28rem); line-height:1.45; max-width:62ch; text-align:center; }
   .s-route .code-cap strong, .s-memory .code-cap strong { color:var(--champagne); }
   /* route: command → router → one expert lit; register switch */
-  .route-flow { display:flex; align-items:center; gap:1.4vw; }
-  .route-col { display:flex; flex-direction:column; gap:.55rem; }
-  .route-col .rcell { font-family:var(--mono); font-size:clamp(.72rem,1vw,.94rem); padding:.5rem .8rem; border:1px solid var(--gold-faint); border-radius:6px; color:var(--muted); background:oklch(10% 0.006 90 /.4); white-space:nowrap; }
+  .route-flow { display:flex; align-items:center; gap:2.2vw; }
+  .route-col { display:flex; flex-direction:column; gap:.72rem; }
+  .route-col .rcell { font-family:var(--mono); font-size:clamp(.82rem,1.15vw,1.08rem); padding:.66rem 1.05rem; border:1px solid var(--gold-faint); border-radius:6px; color:var(--muted); background:oklch(10% 0.006 90 /.4); white-space:nowrap; }
   .route-col .rcell.on { color:var(--champagne); border-color:var(--kinpaku); background:oklch(22% 0.05 85 /.2); }
   .route-col .rcell.off { opacity:.34; }
   .route-col .rcell .rload { color:var(--kinpaku); margin-left:.4rem; }
   .route-col .rmore { font-family:var(--mono); font-size:.72rem; color:var(--faint); padding-left:.15rem; }
-  .route-arrow { color:var(--kinpaku); font-size:1.5rem; }
-  .router { font-family:var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.02em; color:var(--champagne); border:1.5px solid var(--gold-rule); border-radius:8px; padding:1rem 1.3rem; text-align:center; background:linear-gradient(180deg, oklch(13% 0.006 90), oklch(9% 0.005 90)); font-size:clamp(.95rem,1.3vw,1.2rem); }
+  .route-arrow { color:var(--kinpaku); font-size:2.1rem; }
+  .router { font-family:var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.02em; color:var(--champagne); border:1.5px solid var(--gold-rule); border-radius:8px; padding:1.3rem 1.7rem; text-align:center; background:linear-gradient(180deg, oklch(13% 0.006 90), oklch(9% 0.005 90)); font-size:clamp(1.05rem,1.45vw,1.35rem); }
   .router small { display:block; font-family:var(--mono); font-weight:400; text-transform:none; color:var(--kinpaku-deep); font-size:.6em; letter-spacing:.1em; margin-top:.25rem; }
-  .route-register { margin-top:2.6vh; display:flex; align-items:center; gap:.5rem; font-family:var(--mono); font-size:clamp(.78rem,1.05vw,.98rem); color:var(--muted); border:1px solid var(--gold-faint); border-radius:999px; padding:.5rem 1.15rem; }
+  .route-register { margin-top:4vh; display:flex; align-items:center; gap:.5rem; font-family:var(--mono); font-size:clamp(.82rem,1.1vw,1.04rem); color:var(--muted); border:1px solid var(--gold-faint); border-radius:999px; padding:.62rem 1.4rem; }
   .route-register .rk { color:var(--kinpaku-deep); text-transform:uppercase; letter-spacing:.14em; font-size:.82em; }
   .route-register b { color:var(--champagne); font-weight:600; }
   .route-register .swap { color:var(--kinpaku); }
   .route-register .rsub { color:var(--faint); }
   /* memory: a real snapshot file beside a compounding-trend chart */
-  .mem-wrap { display:flex; align-items:stretch; gap:2.4vw; }
+  .mem-wrap { display:flex; align-items:stretch; gap:4vw; }
   .snapfile { border:1px solid var(--gold-rule); border-radius:8px; overflow:hidden; background:linear-gradient(180deg, oklch(12% 0.006 90), oklch(8% 0.005 90)); }
   .snap-name { font-family:var(--mono); font-size:clamp(.64rem,.82vw,.8rem); color:var(--kinpaku-pale); padding:.55rem .85rem; border-bottom:1px solid var(--gold-faint); background:oklch(16% 0.006 90 /.6); }
-  .snap-body { font-family:var(--mono); font-size:clamp(.72rem,.92vw,.9rem); line-height:1.5; color:var(--muted); padding:.9em 1.1em; margin:0; white-space:pre; }
+  .snap-body { font-family:var(--mono); font-size:clamp(.82rem,1.05vw,1.02rem); line-height:1.55; color:var(--muted); padding:1.05em 1.35em; margin:0; white-space:pre; }
   .snap-body .k { color:var(--kinpaku-deep); } .snap-body .v { color:var(--champagne); }
   .snap-body .h { color:var(--kinpaku); } .snap-body .d { color:var(--faint); }
   .trend { display:flex; flex-direction:column; justify-content:center; align-items:center; gap:1rem; padding:0 1vw; }
   .trend-title { font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--kinpaku-deep); }
-  .trend svg { width:clamp(190px,18vw,260px); height:auto; }
+  .trend svg { width:clamp(240px,24vw,360px); height:auto; }
   .trend svg text { font-family:var(--mono); }
   .trend-runs { display:flex; gap:1.1rem; font-family:var(--mono); font-size:.74rem; color:var(--muted); }
   .trend-runs b { color:var(--kinpaku-pale); }
 
   /* diverge: the monoculture cluster, and the escape from it */
   .s-diverge { align-content:center; justify-items:center; }
-  .s-diverge .diag-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.6vw,1.5rem); letter-spacing:.05em; margin-bottom:2vh; }
-  .s-diverge svg { width:min(86vw,860px); height:auto; }
+  .s-diverge .diag-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.6vw,1.5rem); letter-spacing:.05em; margin-bottom:4.6vh; }
+  .s-diverge svg { width:min(92vw,1060px); height:auto; }
   .s-diverge svg text { font-family:var(--mono); }
-  .s-diverge .code-cap { margin-top:2vh; color:var(--muted); font-size:clamp(1rem,1.45vw,1.28rem); line-height:1.45; max-width:64ch; text-align:center; }
+  .s-diverge .code-cap { margin-top:4.6vh; color:var(--muted); font-size:clamp(1rem,1.45vw,1.28rem); line-height:1.45; max-width:64ch; text-align:center; }
   .s-diverge .code-cap strong { color:var(--champagne); }
 
   /* system: a capability map — what Impeccable can do that a prompt can't */
