@@ -260,7 +260,7 @@ Total: 35 slides · ~22 min · 5 acts plus close. Demo is PRE-RUN (see checklist
 - "Wherever your agent already lives, Impeccable runs."
 - Name the big ones: Claude Code, Cursor, Codex, Gemini, Copilot.
 - "Less common harness? Install via npm or symlink. Works the same."
-- "MIT. No telemetry. No account."
+- "Apache 2.0. No telemetry. No account."
 
 → click
 

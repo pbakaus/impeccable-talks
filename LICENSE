@@ -1,0 +1,18 @@
+Copyright (c) 2026 Paul Bakaus. All rights reserved.
+
+This repository contains talk decks, speaker notes, images, and related
+presentation materials. They are published for viewing only. No license is
+granted to use, copy, modify, distribute, or create derivative works from any
+part of this repository, except as stated below.
+
+EXCEPTION: dark-arts/starter/
+
+The directory `dark-arts/starter/` is licensed separately under the Apache
+License, Version 2.0. See `dark-arts/starter/LICENSE` for the full terms. You
+may use, copy, modify, and distribute the contents of that directory under that
+license.
+
+Third-party material (e.g. logos, film stills, and meme images included for
+illustration) remains the property of its respective owners and is used here for
+commentary and educational purposes; no rights to it are granted by this
+repository.

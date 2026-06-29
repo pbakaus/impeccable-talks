@@ -11,7 +11,7 @@ description: >
 user-invocable: true
 allowed-tools:
   - Bash(node *)
-license: MIT
+license: Apache-2.0
 ---
 
 # Spellbook (starter)

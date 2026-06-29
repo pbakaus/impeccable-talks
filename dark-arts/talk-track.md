@@ -202,7 +202,7 @@ Opus. Non-compressible gates, hard stops, no inference."
   file it lives in. "A prompt suggests a design, once. Now it reviews itself,
   escapes the average, routes per surface, remembers, adapts, guards every edit,
   tunes in the browser, runs on any harness, holds on weak models. Every one is
-  MIT, steal them." Let them photograph. (This merges the old Spellbook slide.)
+  Apache 2.0, steal them." Let them photograph. (This merges the old Spellbook slide.)
 
 **48 · CTA · try it Monday** · `38:00`
 - `npx impeccable skills install`; clone `talks/dark-arts/starter`; run

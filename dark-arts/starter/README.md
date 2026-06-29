@@ -52,5 +52,5 @@ echo '{"tool_input":{"file_path":"SKILL.md"}}' | node scripts/hook.mjs
 | Hooks that fight back | `scripts/hook.mjs` | runs on every edit, even when the skill was never called. |
 | Force divergence | `reference/diverge.md` + `scripts/seed.mjs` | ban the monoculture, inject a seed. |
 
-The full versions of all nine arts live in the Impeccable repo (MIT). This
+The full versions of all nine arts live in the Impeccable repo (Apache 2.0). This
 starter is the teaching cut.

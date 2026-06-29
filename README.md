@@ -24,10 +24,21 @@ hash tracks the slide (`#7`).
 
 ## Dark Arts specifics
 
-- `dark-arts/index.html` — the deck (data-driven `SLIDES` array + renderers).
-- `dark-arts/talk-track.md` — per-slide spoken beats.
-- `dark-arts/outline.md` — structure and rationale.
-- `dark-arts/starter/` — a runnable mini-skill ("Spellbook") that demonstrates five of the dark arts.
-- `dark-arts/demos/` — the live-demo runbook plus a deliberately-median page to critique.
+- `dark-arts/index.html`: the deck (data-driven `SLIDES` array + renderers).
+- `dark-arts/talk-track.md`: per-slide spoken beats.
+- `dark-arts/outline.md`: structure and rationale.
+- `dark-arts/starter/`: a runnable mini-skill ("Spellbook") that demonstrates five of the dark arts.
+- `dark-arts/demos/`: the live-demo runbook plus a deliberately-median page to critique.
 
 The starter and demos reference the `impeccable` CLI (`npx impeccable …`), published on npm.
+
+## License
+
+The talk materials in this repo (decks, speaker notes, outlines, images) are
+All Rights Reserved (see [`LICENSE`](LICENSE)) and published for viewing only.
+
+The one exception is [`dark-arts/starter/`](dark-arts/starter/), the runnable
+mini-skill, which is licensed under Apache 2.0 (see
+[`dark-arts/starter/LICENSE`](dark-arts/starter/LICENSE)). Clone it, change it,
+ship it. The full Impeccable skill it's distilled from is also Apache 2.0 at
+[impeccable.style](https://impeccable.style).
