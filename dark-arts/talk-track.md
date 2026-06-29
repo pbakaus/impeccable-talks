@@ -99,10 +99,12 @@ that, it picks the next cluster. A named ban relocates the monoculture."
 **17 · diagram (the cluster escape)**: "Bans just chase the model around its own
 cluster. The escape is sideways: out of the cluster entirely." Trace the arrow
 from the median blob to the gold dot.
-**18 · code (the technique)**: show it, don't just point at it. "Two levers. One:
-make the model name its own instinct fonts, then eliminate all three, out-rank
-itself. Two: seed from entropy it didn't pick, `palette.mjs --from`, so the
-average isn't even on the table."
+**18 · three ways out**: the techniques, cheapest first. "One, a prompt: name your
+safe picks, then discard all three, out-rank yourself. Two, generate ~50 ideas and
+let a blind sub-agent keep the most distinct, that one lives in radiant, not
+impeccable yet. Three, a script seeds from outside, `palette.mjs --from`, jumping
+to a region the model never starts from. Stack them and the average gets
+unreachable."
 **19 · "One brief. Three worlds."** *(image: 3 variants)*: the payoff to the code
 you just showed. "Same brief, three runs, three results that share nothing: no
 font, no layout, no mood. That's divergence landing, not theory."

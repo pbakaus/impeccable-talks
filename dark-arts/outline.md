@@ -139,7 +139,7 @@ Build order (Level 1→Level 9): argue · diverge · route · memory · script-t
 ### ACT II · The build (~36 min) · slides 8-48
 Each level: *our skill still fails at X* → the dark art → *it levels up* (a sigil ignites; call the level). Each level now leads with a *show* slide (code / artifact / comparison), not a description:
 - **Level 1 argue** (D) · 08 problem → 09 gag (Gandalf vs Saruman) → **10 the two-way bias (three verdicts)** → 11 code → 12 payoff; then 13 Codex meme + 14 the `<codex>` gate; **15 demo 1**.
-- **Level 2 force divergence** (D), pays off Level 0's *relocation* flaw · 16 problem → 17 diagram (cluster escape) → **18 code (anti-attractors + `palette.mjs` seed)** → 19 "divergence is the hard part" (3-up image).
+- **Level 2 force divergence** (D), pays off Level 0's *relocation* flaw · 16 problem → 17 diagram (cluster escape) → **18 three ways out** (1 prompt-discard · 2 generate+rank, radiant-only today · 3 `palette.mjs` seed) → 19 "One brief. Three worlds." (3-up image).
 - **Level 3 route** (M), pays off the *over-apply* flaw (register: brand vs product) · 20 problem → 21 diagram (routing) → **22 code (SKILL.md router table + register switch)** → 23 payoff.
 - **Level 4 memory** (M) · 24-26 (25 = real snapshot + trend artifact). **Level 5 script talks back** (D) · 27-29 (28 = stdout code).
 - **Level 6 hooks** (M) · 30 problem → 31 gag (grappling hooks) → 32 code → 33 payoff; **34 demo 2** (staged thread).

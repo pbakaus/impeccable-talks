@@ -303,6 +303,22 @@
   /* supporting evidence, demoted to faint gray so it stops pulling focus */
   .cap-file { font-family:var(--mono); font-size:.7rem; color:var(--faint); letter-spacing:.02em; }
 
+  /* divkit: the three escalating divergence techniques, as a ladder */
+  .s-divkit { align-content:center; justify-items:center; }
+  .s-divkit .divkit-head { text-align:center; margin-bottom:4.5vh; }
+  .s-divkit .diag-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.6vw,1.5rem); letter-spacing:.05em; }
+  .s-divkit .divkit-title { margin-top:.5rem; font-family:var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.02em; font-size:clamp(1.6rem,3.2vw,2.7rem); color:var(--champagne); }
+  .divkit { display:flex; flex-direction:column; width:min(92vw,1080px); }
+  .dk-row { display:grid; grid-template-columns:2.6rem 1fr auto; gap:2vw; align-items:start; padding:2.6vh 0; border-top:1px solid var(--gold-faint); }
+  .dk-row:first-child { border-top:0; padding-top:0; }
+  .dk-num { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1.5rem,2.1vw,2rem); line-height:1; }
+  .dk-name { font-family:var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.01em; color:var(--champagne); font-size:clamp(1.05rem,1.5vw,1.4rem); line-height:1; }
+  .dk-mech { font-family:var(--mono); color:var(--muted); font-size:clamp(.82rem,1.05vw,1rem); margin-top:.6rem; line-height:1.4; }
+  .dk-mech .v { color:var(--kinpaku-pale); }
+  .dk-src { font-family:var(--mono); font-size:clamp(.66rem,.85vw,.78rem); text-transform:uppercase; letter-spacing:.1em; color:var(--kinpaku-deep); white-space:nowrap; padding-top:.4rem; }
+  .dk-src.ext { color:var(--patina); }
+  .s-divkit .divkit-cap { margin-top:4.5vh; font-family:var(--mono); color:var(--muted); font-size:clamp(.9rem,1.15vw,1.08rem); text-align:center; max-width:64ch; line-height:1.45; }
+
   /* crit3: same skill, three verdicts -- show the two-way detector bias + the fix */
   .s-crit3 { align-content:center; justify-items:center; }
   .s-crit3 .c3-head { text-align:center; margin-bottom:4.5vh; }
@@ -727,20 +743,8 @@ report = <span class="f">synthesize</span>(A, B)   <span class="c">// weave, nev
 
   { type:'diverge' },
 
-  /* show, don't tell: the actual anti-attractor technique + the seed */
-  { type:'code', level:2, tag:'anti-attractors + a seed',
-    code:
-`<span class="c">// ban Inter and the model just grabs the next cluster.</span>
-<span class="c">// so make it out-rank its OWN defaults:</span>
-
-director: <span class="s">"name your 3 instinct fonts for this brief"</span>
-          <span class="c">→ [Inter, Space Grotesk, Manrope]</span>
-director: <span class="s">"now eliminate all three. go further out."</span>
-
-$ node palette.mjs --from <span class="v">8f2a</span>   <span class="c">// a seed you didn't pick</span>
-  → <span class="f">oklch(0.62 0.19 28)</span>          <span class="c">// off-cluster on purpose</span>`,
-    file:'skill/reference/brand.md · skill/scripts/palette.mjs',
-    cap:'A ban relocates the monoculture. Anti-attractors make the model eliminate its <strong>own</strong> top picks, seeded from entropy it didn’t choose, so the average isn’t reachable.' },
+  /* show, don't tell: the three escalating divergence techniques */
+  { type:'divkit' },
 
   /* divergence punch line (IMAGE: three divergent variants) */
   { type:'imgstate', mvt:'The build',
@@ -1155,6 +1159,34 @@ body text 3.1:1 on the tinted card
   </section>`);
 }
 /* diverge: the monoculture cluster, and the escape from it */
+function renderDivKit(){
+  const rows = [
+    { n:'1', name:'Shave the safe picks',
+      mech:'prompt: <span class="v">"name your top 3 fonts, now discard all three"</span>',
+      src:'in impeccable · brand.md', ext:false },
+    { n:'2', name:'Generate many, rank for novelty',
+      mech:'write <span class="v">~50</span> ideas → a blind sub-agent keeps the 5 most distinct',
+      src:'in radiant, not impeccable yet', ext:true },
+    { n:'3', name:'Seed from outside the model',
+      mech:'node palette.mjs --from <span class="v">8f2a</span> → a region it never starts from',
+      src:'in impeccable · palette.mjs', ext:false },
+  ];
+  const items = rows.map(r=>`
+    <div class="dk-row">
+      <div class="dk-num">${r.n}</div>
+      <div class="dk-body"><div class="dk-name">${r.name}</div><div class="dk-mech">${r.mech}</div></div>
+      <div class="dk-src${r.ext?' ext':''}">${r.src}</div>
+    </div>`).join('');
+  return el(`<section class="slide s-divkit">
+    <div class="divkit-head">
+      <div class="diag-eyebrow">Level 2 · force divergence</div>
+      <div class="divkit-title">Three ways out.</div>
+    </div>
+    <div class="divkit">${items}</div>
+    <div class="divkit-cap">Cheapest first: a prompt, then a ranker, then a seed. Each one makes the average harder to fall back into.</div>
+  </section>`);
+}
+
 function renderDiverge(){
   return el(`<section class="slide s-diverge">
     <div class="diag-eyebrow">Level 2 · force divergence</div>
@@ -1383,7 +1415,7 @@ const ARTS = [
 const RENDER = {
   title: renderTitle, statement: renderStatement, thesis: renderThesis,
   divider: renderDivider, art: renderArt, spellbook: renderSpellbook,
-  demo: renderDemo, crit3: renderCrit3, loop: renderLoop, table: renderTable, cta: renderCTA,
+  demo: renderDemo, crit3: renderCrit3, divkit: renderDivKit, loop: renderLoop, table: renderTable, cta: renderCTA,
   imgstate: renderImgState, logos: renderLogos, spell: renderSpell,
   punch: renderPunch, code: renderCode, poster: renderPoster, htable: renderHTable,
   meme: renderMeme, route: renderRoute, memory: renderMemory,
