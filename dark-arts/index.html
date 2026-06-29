@@ -314,7 +314,7 @@
   .s-thesis .ineq .lt { color: var(--kinpaku); font-family: var(--font-display); padding: 0 .2em; }
   .s-thesis .ineq .h { color: var(--kinpaku); }
   .s-thesis .whisper { margin-top: 2rem; font-family: var(--font-display); font-size: clamp(1.1rem,2vw,1.7rem); color: var(--kinpaku-deep); letter-spacing:.02em; }
-  .s-thesis .remember { margin-top: 3.2rem; font-family: var(--mono); font-size:.74rem; letter-spacing:.24em; text-transform:uppercase; color: var(--faint); }
+  .s-thesis .remember { margin-bottom: 2.6rem; font-family: var(--mono); font-size:.74rem; letter-spacing:.24em; text-transform:uppercase; color: var(--kinpaku-deep); }
 
   /* ---------- DIVIDER (movement) ---------- */
   .s-divider { align-content: center; justify-items: center; text-align: center; }
@@ -1117,9 +1117,9 @@ function renderSystem(){
 
 function renderThesis(){
   return el(`<section class="slide s-thesis">
+    <div class="remember">If you remember one thing</div>
     <div class="ineq">Prompting <span class="lt">&lt;</span> <span class="h">harness</span> engineering</div>
     <div class="whisper">Prompting is the spell. Harnessing is the magic.</div>
-    <div class="remember">If you remember one thing</div>
   </section>`);
 }
 
