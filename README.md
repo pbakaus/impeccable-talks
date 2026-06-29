@@ -7,8 +7,8 @@ track, and any runnable demos or starter code.
 | Talk | Folder | What it is |
 |---|---|---|
 | **The Dark Arts of Skill Engineering** | [`dark-arts/`](dark-arts/) | AI Engineer World's Fair, workshop track. Building one skill from a prompt to a harness extension, live. |
+| **Design at the Speed of Adjectives** | [`adjectives/`](adjectives/) | AI Engineer World's Fair (WIP). |
 | Killing the handoff | [`handoff/`](handoff/) | Earlier keynote on the design-to-code handoff. |
-| adjectives, expedia | [`adjectives/`](adjectives/), [`expedia/`](expedia/) | Older / supporting decks. |
 
 ## Running a deck
 
