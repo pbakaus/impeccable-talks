@@ -302,6 +302,25 @@
   /* supporting evidence, demoted to faint gray so it stops pulling focus */
   .cap-file { font-family:var(--mono); font-size:.7rem; color:var(--faint); letter-spacing:.02em; }
 
+  /* crit3: same skill, three verdicts -- show the two-way detector bias + the fix */
+  .s-crit3 { align-content:center; justify-items:center; }
+  .s-crit3 .c3-head { text-align:center; margin-bottom:4.5vh; }
+  .s-crit3 .c3-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.6vw,1.5rem); letter-spacing:.05em; }
+  .s-crit3 .c3-title { margin-top:.5rem; font-family:var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.02em; font-size:clamp(1.5rem,3.2vw,2.7rem); color:var(--champagne); }
+  .c3-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.8vw; width:min(94vw,1300px); align-items:stretch; }
+  .c3-card { display:flex; flex-direction:column; gap:1.1rem; border:1px solid var(--gold-faint); border-radius:10px; padding:1.5rem 1.5rem 1.6rem;
+             background:linear-gradient(180deg, oklch(10% 0.006 90 /.6), oklch(6% 0.005 90 /.4)); }
+  .c3-card.bad { border-color:oklch(60% 0.17 32 /.32); }
+  .c3-card.win { border-color:var(--kinpaku); background:linear-gradient(180deg, oklch(17% 0.045 85 /.4), oklch(9% 0.012 85 /.32)); }
+  .c3-pill { align-self:flex-start; font-family:var(--mono); font-size:clamp(.66rem,.82vw,.78rem); letter-spacing:.14em; text-transform:uppercase; padding:.34em .8em; border-radius:999px; }
+  .c3-card.bad .c3-pill { color:var(--vermilion); border:1px solid oklch(60% 0.17 32 /.5); }
+  .c3-card.win .c3-pill { color:var(--lacquer); background:var(--kinpaku); font-weight:600; }
+  .c3-out { font-family:var(--mono); font-size:clamp(.84rem,1.05vw,1.02rem); line-height:1.8; color:var(--muted); white-space:pre-line; }
+  .c3-out .s { color:var(--champagne); } .c3-out .q { color:var(--text); } .c3-out .d { color:var(--faint); }
+  .c3-foot { margin-top:auto; padding-top:1rem; border-top:1px solid var(--gold-faint); font-size:clamp(.86rem,1.05vw,1.04rem); line-height:1.4; color:var(--text); }
+  .c3-card.bad .c3-foot { color:oklch(70% 0.12 32); }
+  .c3-card.win .c3-foot { color:var(--kinpaku-pale); }
+
   /* ---------- STATEMENT ---------- */
   .s-statement { align-content: center; justify-items: start; }
   .s-statement .big { font-family: var(--font); font-weight:700; letter-spacing:-.02em; font-size: clamp(2.4rem, 6.5vw, 6rem); line-height: 1; color: var(--champagne); max-width: 20ch; }
@@ -627,6 +646,9 @@ const SLIDES = [
     bg:'assets/slides/argue-wizards.png',
     big:'So make them&nbsp;argue.',
     sub:'Two sub-agents. They never see each other’s work.' },
+
+  /* show, don't tell: the two-way detector bias, side by side with the fix */
+  { type:'crit3' },
 
   /* the code, big */
   { type:'code', level:1, tag:'/impeccable critique',
@@ -1207,6 +1229,33 @@ function hookThread(){
     </div>
   </div>`;
 }
+function renderCrit3(){
+  const cards = [
+    { cls:'bad', pill:'✗ false alarm',
+      out:'detector: <span class="s">11 flags</span>\nscore: <span class="s">32 / 100</span>\n<span class="q">"this page is broken."</span>',
+      foot:'A strong page, condemned over fixable nits.' },
+    { cls:'bad', pill:'✗ rubber stamp',
+      out:'detector: <span class="s">0 flags</span>\nscore: <span class="s">94 / 100</span>\n<span class="q">"looks great, ship it."</span>',
+      foot:'Clean, generic, forgettable, blessed anyway.' },
+    { cls:'win', pill:'✓ balanced',
+      out:'design <span class="d">(blind)</span>: <span class="s">bold, real POV</span>\ndetector <span class="d">(blind)</span>: <span class="s">3 real nits</span>\nsynthesis: <span class="s">keep the bones, fix three</span>',
+      foot:'Tells "technically flawed" from "actually bad."' },
+  ];
+  const cells = cards.map(c=>`
+    <div class="c3-card ${c.cls}">
+      <span class="c3-pill">${c.pill}</span>
+      <div class="c3-out">${c.out}</div>
+      <div class="c3-foot">${c.foot}</div>
+    </div>`).join('');
+  return el(`<section class="slide s-crit3">
+    <div class="c3-head">
+      <div class="c3-eyebrow">make them argue</div>
+      <div class="c3-title">One detector. Opposite mistakes.</div>
+    </div>
+    <div class="c3-grid">${cells}</div>
+  </section>`);
+}
+
 function renderDemo(s){
   const steps = s.steps.map(([n,t])=>`<div class="step"><span class="n">${n||'·'}</span><span>${t}</span></div>`).join('');
   return el(`<section class="slide s-demo">
@@ -1261,7 +1310,7 @@ const ARTS = [
 const RENDER = {
   title: renderTitle, statement: renderStatement, thesis: renderThesis,
   divider: renderDivider, art: renderArt, spellbook: renderSpellbook,
-  demo: renderDemo, loop: renderLoop, table: renderTable, cta: renderCTA,
+  demo: renderDemo, crit3: renderCrit3, loop: renderLoop, table: renderTable, cta: renderCTA,
   imgstate: renderImgState, logos: renderLogos, spell: renderSpell,
   punch: renderPunch, code: renderCode, poster: renderPoster, htable: renderHTable,
   meme: renderMeme, route: renderRoute, memory: renderMemory,
