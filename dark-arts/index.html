@@ -403,7 +403,7 @@
   .loop-cap { font-family: var(--mono); font-size:.8rem; color: var(--muted); letter-spacing:.06em; text-align:center; max-width: 60ch; }
 
   /* ---------- DEMO card ---------- */
-  .s-demo { grid-template-columns: 1.05fr 0.95fr; gap: 4vw; align-content:center; }
+  .s-demo { grid-template-columns: 0.8fr 1.2fr; gap: 3.4vw; align-content:center; }
   .s-demo .demo-left { display:flex; flex-direction:column; align-items:flex-start; min-width:0; }
   .s-demo .demo-right { display:flex; align-items:center; min-width:0; }
   .s-demo .demo-right .imgph { aspect-ratio:16/11; }
@@ -637,7 +637,7 @@ B = <span class="f">subagent</span>(<span class="s">"detector + browser evidence
 
 report = <span class="f">synthesize</span>(A, B)   <span class="c">// weave, never concatenate</span>`,
     file:'skill/reference/critique.md:7-40, 92-95',
-    cap:'Ordering debiases: the deterministic detector is <strong>withheld</strong> until the human-style review commits, so the cheap, confident signal can’t anchor the expensive one.' },
+    cap:'Let the detector in first and it skews the verdict <strong>both ways</strong>: a clean scan and the model rubber-stamps the page; a noisy one and it condemns a strong page that just needs a few fixes. So the design review commits before it ever sees the detector.' },
 
   /* the payoff, tweetable */
   { type:'punch', center:true,
@@ -664,12 +664,11 @@ report = <span class="f">synthesize</span>(A, B)   <span class="c">// weave, nev
     cap:'Detect the capability, ask once, <strong>degrade loudly</strong>. Never assume the runtime you wrote for.' },
 
   /* Demo 1 */
-  { type:'demo', chip:'Live demo · 1 of 2', big:'Watch them argue.',
+  { type:'demo', chip:'Live demo', big:'Watch them argue.',
     steps:[
-      ['', 'A deliberately median page. One command:'],
-      ['$', '<code>/impeccable critique</code>'],
-      ['→', 'Two assessments come back independently…'],
-      ['→', 'Synthesis flags what the eye <em>missed</em> but the detector <em>caught</em>.'],
+      ['$', '<code>/impeccable critique</code> on a deliberately median page'],
+      ['→', 'Two blind assessments, then one forced synthesis'],
+      ['→', 'It catches what the eye <em>missed</em> but the detector <em>caught</em>'],
     ],
     media:{ tag:'GIF · pre-recorded', cap:'Screen capture of <b>/impeccable critique</b> on the median page: two sub-agents, then a synthesis listing the findings.', hint:'record during the pre-run' } },
 
@@ -767,7 +766,7 @@ hook(<span class="f">event</span>) → detect(file) → <span class="k">addition
     uses:['lint & format','secret detection','a11y checks','policy enforcement'] },
 
   /* Demo 2 — faked agent thread (the hook fires on its own) */
-  { type:'demo', app:'hook', chip:'Live demo · 2 of 2', big:'The hook fires<br>unprompted.',
+  { type:'demo', app:'hook', chip:'Live demo', big:'The hook fires<br>unprompted.',
     steps:[
       ['', 'I never invoke the skill. I just make one bad edit:'],
       ['+', '<code>img:hover { transform: scale(1.1) }</code>'],
