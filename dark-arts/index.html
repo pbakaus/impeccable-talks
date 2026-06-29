@@ -186,11 +186,12 @@
   .imgstate-text .sub { margin-top:1rem; color:var(--text); max-width:50ch; font-size:clamp(1rem,1.45vw,1.3rem); line-height:1.5; }
   .imgstate-text .kicker { margin-bottom:.7rem; }
   /* logo grid (compile slide) — borderless, icons sit on the lacquer */
-  .logo-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:2vh 1.2rem; width:100%; }
-  .logo-cell { display:flex; flex-direction:column; align-items:center; gap:.75rem; padding:.5rem .4rem; }
-  .logo-cell img { width:44px; height:44px; object-fit:contain; }
+  .s-statement .beat-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.6vw,1.5rem); letter-spacing:.05em; margin-bottom:.3rem; }
+  .logo-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:3.6vh 2.4rem; width:min(100%,640px); }
+  .logo-cell { display:flex; flex-direction:column; align-items:center; gap:.85rem; padding:.5rem .4rem; }
+  .logo-cell img { width:52px; height:52px; object-fit:contain; }
   .logo-cell img.lite { filter: invert(1) brightness(1.7); }   /* dark monochrome marks → light on lacquer */
-  .logo-cell span { font-family:var(--mono); font-size:.68rem; color:var(--muted); letter-spacing:.04em; text-align:center; }
+  .logo-cell span { font-family:var(--mono); font-size:.76rem; color:var(--muted); letter-spacing:.04em; text-align:center; }
   .art-right .media-cap, .filetag.media-cap { color:var(--faint); }
 
   /* ---------- EDUTAINMENT BEATS (clean, no grimoire) ---------- */
@@ -911,7 +912,7 @@ $ npm run build →
     cap:'One source, compiled into each harness’s own skill dir with every integration point resolved: “ask the user” becomes <strong>AskUserQuestion</strong>, Codex’s input tool, or plain chat; the prefix flips / to $; the per-model blocks stay or go. Hardcode one and it breaks on the rest.' },
 
   /* DA-8 the logos: one source, every harness */
-  { type:'logos', kicker:'Dark art 08 · one source, every harness',
+  { type:'logos', level:8, tag:'every harness',
     big:'Write once. Ship to all of&nbsp;them.',
     file:'each build gets the right paths, command syntax, and per-model patches',
     uses:['multi-IDE plugins','cross-runtime libs','write-once distribution','per-model patches'] },
@@ -1022,18 +1023,17 @@ function renderImgState(s){
 /* one-source → many-harness logo grid */
 const HARNESSES = [
   ['claude-logo.png','Claude Code'],['cursor-logo.png','Cursor'],['openai-logo.png','Codex',true],
-  ['gemini-logo.png','Gemini CLI'],['copilot-logo.svg','Copilot'],['kiro-logo.png','Kiro'],
-  ['opencode-logo.png','OpenCode'],['pi-logo.svg','Pi'],['antigravity-logo.png','Antigravity'],
-  ['windsurf-logo.png','Windsurf'],
+  ['gemini-logo.png','Gemini CLI'],['copilot-logo.svg','Copilot'],['opencode-logo.png','OpenCode'],
+  ['pi-logo.svg','Pi'],['antigravity-logo.png','Antigravity'],['windsurf-logo.png','Windsurf'],
 ];
 function renderLogos(s){
   const cells = HARNESSES.map(([f,n,lite])=>`<div class="logo-cell"><img class="${lite?'lite':''}" src="assets/logos/${f}" alt=""><span>${n}</span></div>`).join('');
-  return el(`<section class="slide s-statement" style="align-content:center">
-    <div class="kicker">${s.kicker||'Dark art 08 · compile to every harness'}</div>
-    <div class="big" style="font-size:clamp(1.8rem,4vw,3.4rem);max-width:24ch;margin:.8rem 0 2rem">${s.big}</div>
+  return el(`<section class="slide s-statement" style="align-content:center; justify-items:center; text-align:center">
+    <div class="beat-eyebrow">Level ${s.level||8}${s.tag?` · ${s.tag}`:''}</div>
+    <div class="big" style="font-size:clamp(1.8rem,4vw,3.4rem);max-width:26ch;margin:.8rem 0 2.6rem">${s.big}</div>
     <div class="logo-grid">${cells}</div>
-    <div class="filetag" style="margin-top:1.4rem">${s.file||''}</div>
-    ${s.uses?`<div style="margin-top:.4rem">${usesRow(s.uses)}</div>`:''}
+    <div class="filetag" style="margin-top:1.8rem">${s.file||''}</div>
+    ${s.uses?`<div style="margin-top:.7rem; display:flex; justify-content:center">${usesRow(s.uses)}</div>`:''}
   </section>`);
 }
 
