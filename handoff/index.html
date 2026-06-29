@@ -1,0 +1,2683 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Killing the handoff / Impeccable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700&family=Alumni+Sans:wght@400;500;600;700&family=Alumni+Sans+Pinstripe&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Surfaces */
+    --lacquer:        oklch(7%  0.006 95);
+    --lacquer-deep:   oklch(4%  0.004 95);
+    --lacquer-raised: oklch(11% 0.006 95);
+    --graphite:       oklch(15% 0.008 95);
+    --graphite-2:     oklch(19% 0.008 95);
+
+    /* Gold system — brand values from site/styles/kinpaku-tokens.css */
+    --kinpaku:        oklch(84% 0.19  80.46);
+    --kinpaku-deep:   oklch(61% 0.085 78);
+    --kinpaku-pale:   oklch(86% 0.07  84);
+    --gold-rule:      oklch(58% 0.065 82 / 0.48);
+    --gold-rule-strong: oklch(74% 0.09 82 / 0.62);
+
+    /* Patina */
+    --patina:         oklch(70% 0.12  188);
+    --oxide:          oklch(49% 0.08  188);
+    --vermilion:      oklch(58% 0.15  35);
+
+    /* Text — the site's neutral bright ramp, so copy reads on lacquer
+       even on small screens */
+    --champagne:      oklch(91% 0 0);
+    --text:           oklch(88% 0 0);
+    --muted:          oklch(72% 0 0);
+    --faint:          oklch(62% 0 0);
+
+    /* Category accents (for the periodic table) */
+    --cat-create:    oklch(86% 0.075 82);
+    --cat-evaluate:  oklch(76% 0.088 190);
+    --cat-refine:    oklch(88% 0.047 84);
+    --cat-simplify:  oklch(82% 0.095 76);
+    --cat-harden:    oklch(71% 0.082 184);
+    --cat-system:    oklch(71% 0.028 82);
+
+    --font: "Albert Sans", "Avenir Next", "Helvetica Neue", Arial, system-ui, sans-serif;
+    --font-display: "Alumni Sans Pinstripe", "Albert Sans", Arial, sans-serif;
+    --font-wordmark: "Alumni Sans", "Alumni Sans Pinstripe", "Albert Sans", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", "Roboto Mono", "JetBrains Mono", Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    color: var(--text);
+    font-family: var(--font);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+  body {
+    overflow: hidden;
+    background:
+      linear-gradient(180deg, oklch(4% 0.004 95 / 0.78), oklch(3% 0.004 95 / 0.93)),
+      url("assets/neo-kinpaku/lacquer-grain.png") center top / 1800px auto fixed,
+      linear-gradient(180deg, var(--lacquer), var(--lacquer-deep));
+  }
+
+  /* ============ Deck shell ============ */
+  .deck { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute; inset: 0;
+    padding: clamp(40px, 4.5vw, 80px) clamp(40px, 6vw, 112px);
+    display: none;
+    flex-direction: column;
+  }
+  .slide.active { display: flex; }
+
+  /* ============ Chrome (meta, page numbers) ============ */
+  .meta-top, .meta-bot {
+    position: absolute; left: clamp(40px, 6vw, 112px); right: clamp(40px, 6vw, 112px);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--faint);
+    z-index: 5;
+  }
+  .meta-top { top: clamp(24px, 3vw, 40px); }
+  .meta-bot { bottom: clamp(24px, 3vw, 40px); }
+  .meta-bot .num { color: var(--kinpaku); font-weight: 500; }
+  .meta-bot .num::before {
+    content: ""; display: inline-block; width: 14px; height: 1px; background: var(--gold-rule-strong);
+    vertical-align: middle; margin-right: 10px;
+  }
+
+  /* ============ Wordmarks + tracked labels ============ */
+  .wordmark {
+    font-family: var(--font);
+    font-weight: 400;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--kinpaku);
+  }
+  .label {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  .label.gold { color: var(--kinpaku); }
+  .label.patina { color: var(--patina); }
+  .label.muted { color: var(--muted); }
+
+  /* ============ Display sizes ============ */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(54px, 7.2vw, 132px);
+    line-height: 1.02;
+    letter-spacing: -0.005em;
+    color: var(--champagne);
+  }
+  .display .gold { color: var(--kinpaku); font-weight: 400; }
+  .display .patina { color: var(--patina); font-weight: 400; }
+  .display .em { color: var(--kinpaku-pale); font-weight: 400; }
+
+  .headline {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(36px, 4.4vw, 64px);
+    line-height: 1.08;
+    letter-spacing: -0.005em;
+    color: var(--champagne);
+  }
+  .headline .gold { color: var(--kinpaku); font-weight: 400; }
+  .headline .patina { color: var(--patina); font-weight: 400; }
+
+  .body {
+    font-family: var(--font);
+    font-size: clamp(15px, 1.1vw, 18px);
+    line-height: 1.7;
+    color: var(--text);
+    max-width: 64ch;
+  }
+  .body em { color: var(--kinpaku); font-style: normal; }
+  .body strong { color: var(--champagne); font-weight: 500; }
+
+  /* ============ Dividers (lifted from /design-system) ============ */
+  /* D5 · circle anchor + line. The most distinctive of the set. */
+  .anchor-rule {
+    color: var(--kinpaku);
+    display: flex; align-items: center; height: 14px;
+  }
+  .anchor-rule::before {
+    content: ""; width: 11px; height: 11px;
+    border: 1.5px solid currentColor; border-radius: 50%;
+    flex: none;
+  }
+  .anchor-rule::after {
+    content: ""; flex: 1; height: 1.5px;
+    background: currentColor;
+  }
+
+  /* D1 · double rail with a single notch on the upper line. */
+  .double-notch {
+    position: relative; height: 8px;
+    color: var(--kinpaku);
+  }
+  .double-notch::before, .double-notch::after {
+    content: ""; position: absolute; left: 0; right: 0;
+    height: 1.5px; background: currentColor;
+  }
+  .double-notch::before {
+    top: 0;
+    background: linear-gradient(90deg, currentColor 0 9%, transparent 9% 11.5%, currentColor 11.5%);
+  }
+  .double-notch::after { bottom: 0; }
+
+  /* D2 · diagonal tick repeat */
+  .ticks-rule {
+    height: 18px; color: var(--kinpaku);
+    background: repeating-linear-gradient(-65deg, currentColor 0 1.4px, transparent 1.4px 12px);
+  }
+
+  /* ============ Brand lockup — canonical split-square mark + ALUMNI SANS
+     wordmark, mirroring site/components/Header.astro + kinpaku-kit.css ============ */
+  .brand-lockup {
+    display: inline-flex; align-items: center; gap: 4px;
+    color: var(--kinpaku);
+    text-decoration: none;
+  }
+  .brand-lockup .ks-mark {
+    width: 32px; height: 32px;
+    display: grid; place-items: center;
+    color: var(--kinpaku);
+  }
+  .brand-lockup .ks-mark svg { width: 26px; height: 26px; }
+  .brand-lockup .ks-wordmark {
+    color: var(--kinpaku);
+    font-family: var(--font-wordmark);
+    font-weight: 400;
+    font-size: 21px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    line-height: 1;
+    padding-right: 0.15em;
+  }
+
+  /* ============ Kinpaku gold-leaf chip (eyebrow / brand-bearing label) ============
+     The leaf texture is brand-bearing but high-frequency. To keep dark text legible:
+     1. Darker base color underneath (deep kinpaku, not pale)
+     2. Subtle darkening gradient overlay across the chip
+     3. Material texture rides on top at reduced opacity via mix-blend-mode
+     4. Bold sans-serif sits cleanly on the consistent dark-gold field. */
+  .leaf-chip {
+    display: inline-block;
+    padding: 8px 16px;
+    color: oklch(8% 0.004 82);
+    background:
+      linear-gradient(180deg, oklch(70% 0.13 78), oklch(60% 0.11 75));
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .leaf-chip::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: url("assets/neo-kinpaku/kinpaku-gold-leaf.png") 50% 50% / cover no-repeat;
+    mix-blend-mode: overlay;
+    opacity: 0.55;
+    z-index: -1;
+  }
+
+  /* ============ SLIDE 1: title ============ */
+  .s-title {
+    justify-content: center; align-items: flex-start; overflow: hidden;
+    /* Override default slide padding so stage clears meta-top + meta-bot */
+    padding-top: clamp(110px, 11vw, 150px);
+    padding-bottom: clamp(90px, 8vw, 120px);
+  }
+  /* Homepage hero treatment: the SAME art + filter as the real dark hero
+     (site/styles/home-rebuild.css .hero-rebuild-art, m-01-v2-01.png).
+     A subtle left-side darkening keeps the title text legible — the homepage
+     gets away without it because its text column is narrower. */
+  .s-title::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+      linear-gradient(90deg, oklch(5% 0.004 95 / 0.72) 0%, oklch(5% 0.004 95 / 0.3) 36%, transparent 60%),
+      url("assets/neo-kinpaku/m-01-v2-01.png") center / cover no-repeat;
+    filter: saturate(1.2) contrast(1.08);
+    pointer-events: none;
+  }
+  /* Keep meta-top/meta-bot absolutely positioned; only bump z-index over the ::before backdrop. */
+  .s-title > .meta-top,
+  .s-title > .meta-bot { z-index: 6; }
+  .s-title > .stage { position: relative; z-index: 2; }
+  .s-title .stage { max-width: 1240px; }
+  .s-title .label-row { display: flex; align-items: center; gap: 16px; }
+  .s-title .label-row::after {
+    content: ""; flex: 1; max-width: 320px; height: 1px;
+    background: linear-gradient(90deg, var(--gold-rule), transparent);
+  }
+  .s-title .display { margin-top: 40px; max-width: 18ch; }
+  .s-title .lede {
+    margin-top: 28px;
+    font-family: var(--font); font-weight: 300;
+    font-size: clamp(22px, 1.9vw, 30px); line-height: 1.32;
+    color: var(--text); max-width: 38ch;
+  }
+  .s-title .seam { margin-top: 56px; }
+  .s-title .credits {
+    margin-top: 36px;
+    display: grid; grid-template-columns: repeat(3, max-content); gap: 64px;
+  }
+  .s-title .credits dt { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--faint); margin-bottom: 8px; }
+  .s-title .credits dd { font-family: var(--font); font-size: 17px; font-weight: 400; color: var(--champagne); }
+
+  /* ============ Generic statement slide ============ */
+  .s-statement { justify-content: center; }
+  .s-statement .stage { display: flex; flex-direction: column; max-width: 1240px; }
+  .s-statement .label { margin-bottom: 24px; }
+  .s-statement .display { max-width: 22ch; }
+  .s-statement .body { margin-top: 40px; }
+
+  /* ============ Caption overlay (for full-bleed slides + overlay-text slides) ============ */
+  .s-overlay { justify-content: flex-end; align-items: flex-start; padding-bottom: clamp(88px, 9vw, 140px); }
+  .s-overlay .stage { max-width: 720px; }
+  .s-overlay .label { margin-bottom: 16px; display: block; }
+  .s-overlay .display { font-size: clamp(44px, 5.2vw, 84px); line-height: 1.04; }
+  .s-overlay .sub {
+    margin-top: 22px; font-family: var(--font); font-weight: 300;
+    font-size: clamp(18px, 1.7vw, 26px); line-height: 1.4; color: var(--muted);
+    max-width: 36ch;
+  }
+
+  /* ============ Chain diagram (slides 2 + 6) ============ */
+  .chain-slide { justify-content: center; align-items: center; }
+  .chain-slide .stage { width: 100%; max-width: 1480px; display: flex; flex-direction: column; align-items: center; gap: 56px; }
+  .chain-slide .label { align-self: flex-start; }
+  .chain-svg { width: 100%; max-width: 1320px; height: auto; }
+  .chain-svg text { fill: var(--champagne); font-family: var(--mono); font-size: 16px; letter-spacing: 0.12em; text-transform: uppercase; }
+  .chain-svg .node-fill { fill: var(--lacquer-raised); stroke: var(--gold-rule); stroke-width: 1; }
+  .chain-svg .node-fill.gold { stroke: var(--kinpaku); }
+  .chain-svg .link { stroke: var(--gold-rule); stroke-width: 1; }
+  .chain-svg .link.gold { stroke: var(--kinpaku); }
+  .chain-svg .break { stroke: var(--vermilion); stroke-width: 1.5; }
+  .chain-slide .caption {
+    font-family: var(--font); font-weight: 300; font-size: clamp(20px, 1.7vw, 26px);
+    color: var(--muted); text-align: center; max-width: 56ch;
+  }
+  .chain-slide .caption .gold { color: var(--kinpaku); }
+  .chain-slide .caption .patina { color: var(--patina); }
+
+  /* ============ Spatial divergence slide ============ */
+  .s-rooms { justify-content: center; }
+  .s-rooms .stage { max-width: 1320px; width: 100%; display: flex; flex-direction: column; gap: 24px; }
+  .s-rooms .display { max-width: 24ch; font-size: clamp(32px, 3.6vw, 56px); line-height: 1.06; }
+  .s-rooms .display .gold { color: var(--kinpaku); }
+  .s-rooms .sub {
+    font-family: var(--font); font-weight: 300;
+    font-size: clamp(17px, 1.4vw, 22px); color: var(--muted);
+    max-width: 60ch;
+  }
+  .s-rooms .rooms-grid {
+    display: grid; grid-template-columns: 1fr 80px 1fr;
+    gap: 0; margin-top: 14px;
+    align-items: stretch;
+  }
+  .s-rooms .room {
+    border: 1px solid var(--gold-rule);
+    border-radius: 3px;
+    background: var(--lacquer-raised);
+    padding: 18px;
+    display: flex; flex-direction: column; gap: 12px;
+    aspect-ratio: 2 / 1;
+  }
+  .s-rooms .room .roomlab {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--champagne);
+  }
+  .s-rooms .room.left .roomlab { color: var(--muted); }
+  .s-rooms .room.right .roomlab { color: var(--kinpaku); }
+  .s-rooms .room .roombody { font-family: var(--font); font-weight: 300; font-size: 16px; line-height: 1.5; color: var(--text); max-width: 30ch; }
+  /* LEFT room: a "canvas" — empty artboard with vector handles */
+  .s-rooms .room.left {
+    background: linear-gradient(180deg, oklch(11% 0.005 95), oklch(8% 0.005 95));
+  }
+  .s-rooms .room.left .canvas {
+    flex: 1; position: relative; margin-top: 4px;
+    border: 1px dashed oklch(40% 0.012 80);
+    border-radius: 1px;
+    background: oklch(13% 0.005 95);
+  }
+  .s-rooms .room.left .canvas::before {
+    content: ""; position: absolute; left: 24%; top: 28%; right: 32%; height: 18%;
+    background: oklch(22% 0 0); border-radius: 1px;
+  }
+  .s-rooms .room.left .canvas::after {
+    content: ""; position: absolute; left: 24%; bottom: 22%; width: 28%; height: 12%;
+    background: oklch(22% 0 0); border-radius: 1px;
+  }
+  .s-rooms .room.left .roombody { color: var(--faint); }
+  /* RIGHT room: a "live app" — terminal + browser */
+  .s-rooms .room.right {
+    background:
+      radial-gradient(circle at 80% 12%, oklch(84% 0.19 80.46 / 0.08), transparent 50%),
+      linear-gradient(180deg, var(--lacquer-raised), oklch(9% 0.006 95));
+  }
+  .s-rooms .room.right .liveapp {
+    flex: 1; position: relative; margin-top: 4px;
+    border: 1px solid var(--gold-rule);
+    border-radius: 1px;
+    background: var(--lacquer-deep);
+    overflow: hidden;
+  }
+  .s-rooms .room.right .liveapp .codebar {
+    height: 22px; padding: 6px 10px;
+    border-bottom: 1px solid var(--gold-rule);
+    font-family: var(--mono); font-size: 9px; color: var(--kinpaku);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .s-rooms .room.right .liveapp .codebar .dot {
+    width: 5px; height: 5px; border-radius: 50%; background: var(--patina);
+    box-shadow: 0 0 6px var(--patina);
+  }
+  .s-rooms .room.right .liveapp .codelines {
+    padding: 12px 12px; display: flex; flex-direction: column; gap: 4px;
+  }
+  .s-rooms .room.right .liveapp .codelines span {
+    height: 4px; border-radius: 1px; background: oklch(30% 0.01 82);
+  }
+  .s-rooms .room.right .liveapp .codelines span:nth-child(1) { width: 52%; background: var(--kinpaku-deep); }
+  .s-rooms .room.right .liveapp .codelines span:nth-child(2) { width: 78%; }
+  .s-rooms .room.right .liveapp .codelines span:nth-child(3) { width: 64%; }
+  .s-rooms .room.right .liveapp .codelines span:nth-child(4) { width: 42%; background: var(--patina); opacity: 0.8; }
+  .s-rooms .room.right .liveapp .codelines span:nth-child(5) { width: 70%; }
+  /* The gap between the two rooms — broken arrow */
+  .s-rooms .gap {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px;
+    position: relative;
+  }
+  .s-rooms .gap .gaplab {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--vermilion);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+  .s-rooms .gap .arrow-broken {
+    color: var(--vermilion); font-family: var(--font); font-size: 28px;
+    line-height: 0.8;
+  }
+
+  /* ============ What-is-Impeccable explainer slide ============ */
+  .s-anatomy { justify-content: center; }
+  .s-anatomy .stage { max-width: 1400px; width: 100%; display: flex; flex-direction: column; gap: 36px; }
+  .s-anatomy .display { max-width: 28ch; font-size: clamp(40px, 4.6vw, 64px); }
+  .s-anatomy .display .gold { color: var(--kinpaku); }
+  .s-anatomy .anatomy-row {
+    display: grid; grid-template-columns: 1fr 36px 1fr 36px 1fr;
+    align-items: stretch; gap: 0;
+    margin-top: 12px;
+  }
+  .s-anatomy .anatomy-arrow {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--kinpaku); font-family: var(--font); font-weight: 200;
+    font-size: 28px; line-height: 1;
+  }
+  .s-anatomy .anatomy-arrow::before { content: "→"; }
+  .s-anatomy .anatomy-block {
+    border: 1px solid var(--gold-rule);
+    border-radius: 3px;
+    background: var(--lacquer-raised);
+    padding: 22px 20px;
+    display: flex; flex-direction: column; gap: 12px;
+    position: relative;
+  }
+  .s-anatomy .anatomy-block .step-n {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em;
+    text-transform: uppercase; color: var(--kinpaku);
+  }
+  .s-anatomy .anatomy-block .step-t {
+    font-family: var(--font); font-weight: 300;
+    font-size: 22px; line-height: 1.1; color: var(--champagne);
+  }
+  .s-anatomy .anatomy-block .step-b {
+    font-family: var(--font); font-size: 13px; line-height: 1.55; color: var(--muted);
+  }
+  .s-anatomy .anatomy-block .step-visual {
+    margin-top: auto; padding-top: 14px;
+  }
+  .s-anatomy .anatomy-block .logos {
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .s-anatomy .anatomy-block .logos .chip {
+    width: 28px; height: 28px;
+    background: oklch(94% 0.005 80); border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: inset 0 0 0 1px oklch(82% 0.01 80);
+  }
+  .s-anatomy .anatomy-block .logos .chip img { width: 17px; height: 17px; object-fit: contain; }
+  .s-anatomy .anatomy-block .terminal {
+    background: var(--lacquer-deep);
+    border: 1px solid var(--gold-rule);
+    border-radius: 2px;
+    padding: 8px 10px;
+    font-family: var(--mono); font-size: 11.5px; color: var(--kinpaku-pale);
+    line-height: 1.5;
+  }
+  .s-anatomy .anatomy-block .terminal .gold { color: var(--kinpaku); }
+  .s-anatomy .anatomy-block .codeicon {
+    height: 38px; display: flex; align-items: center; gap: 6px;
+    color: var(--patina); font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .s-anatomy .anatomy-block .codeicon::before {
+    content: ""; width: 12px; height: 1px; background: currentColor;
+  }
+  .s-anatomy .close {
+    margin-top: 12px; padding-top: 18px;
+    border-top: 1px solid var(--gold-rule);
+    font-family: var(--font); font-weight: 300;
+    font-size: clamp(15px, 1.2vw, 19px); color: var(--text); max-width: 76ch;
+  }
+  .s-anatomy .close em { font-style: italic; color: var(--champagne); }
+
+  /* ============ Cadence bars (slide 4) ============ */
+  .cadence-slide { justify-content: center; }
+  .cadence-slide .stage { max-width: 1280px; width: 100%; }
+  .cadence-slide .headline { max-width: 18ch; margin-bottom: 64px; }
+  .cadence-bars { display: flex; flex-direction: column; gap: 22px; }
+  .cadence-row { display: grid; grid-template-columns: 220px 1fr 120px; align-items: center; gap: 28px; }
+  .cadence-row .name { font-family: var(--mono); font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+  .cadence-row .bar-wrap {
+    height: 56px; position: relative;
+    border-left: 1px solid var(--gold-rule);
+  }
+  .cadence-row .bar {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--graphite-2);
+    border: 1px solid var(--gold-rule);
+    border-left: 0;
+  }
+  .cadence-row.waterfall .bar { background: linear-gradient(90deg, var(--graphite-2), var(--graphite)); width: 96%; }
+  .cadence-row.agile     .bar { background: linear-gradient(90deg, oklch(45% 0.05 82 / 0.45), oklch(35% 0.04 82 / 0.4)); width: 38%; border-color: var(--kinpaku-deep); }
+  .cadence-row.ai        .bar { background: linear-gradient(90deg, var(--kinpaku-deep), var(--kinpaku)); width: 8%; border-color: var(--kinpaku); }
+  .cadence-row .scale { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint); text-align: right; }
+  .cadence-row.ai .scale { color: var(--kinpaku); }
+
+  /* ============ Full-bleed slop slides ============ */
+  .s-bleed { padding: 0; background: var(--lacquer); }
+  .s-bleed .frame { position: absolute; inset: 0; overflow: hidden; }
+  .s-bleed .frame iframe {
+    position: absolute; top: 0; left: 0;
+    width: 142.857%; height: 142.857%;
+    transform: scale(0.7);
+    transform-origin: 0 0;
+    border: 0; background: white;
+  }
+  .s-bleed .vignette {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      linear-gradient(180deg,
+        rgba(7,5,3,0.55) 0%,
+        rgba(7,5,3,0) 16%,
+        rgba(7,5,3,0) 36%,
+        rgba(7,5,3,0.94) 100%),
+      linear-gradient(90deg,
+        rgba(7,5,3,0.65) 0%,
+        rgba(7,5,3,0) 44%);
+  }
+
+  /* ============ Catalog wall (slide 12) ============ */
+  .catalog-slide { justify-content: center; }
+  .catalog-slide .stage { max-width: 1400px; display: flex; flex-direction: column; gap: 36px; }
+  .catalog-slide .row-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .catalog-slide .row-head .label { color: var(--kinpaku); }
+  .catalog-grid {
+    display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px;
+  }
+  .catalog-tile {
+    aspect-ratio: 1.35 / 1;
+    background: var(--lacquer-raised);
+    border: 1px solid var(--gold-rule);
+    border-radius: 2px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .catalog-tile .sample {
+    flex: 1; min-height: 0;
+    border-bottom: 1px solid oklch(58% 0.065 82 / 0.18);
+    position: relative;
+    overflow: hidden;
+  }
+  .catalog-tile .sample.img {
+    background-size: cover;
+    background-position: center;
+    filter: saturate(0.85);
+  }
+  .catalog-tile .meta {
+    padding: 6px 9px 7px;
+    display: flex; flex-direction: row; align-items: baseline; gap: 8px;
+    min-height: 0;
+  }
+  .catalog-tile .num {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em;
+    color: var(--faint);
+    -webkit-font-smoothing: antialiased;
+    flex-shrink: 0;
+  }
+  .catalog-tile .name {
+    font-family: var(--font); font-size: 10.5px; font-weight: 400;
+    line-height: 1.18; color: var(--text); letter-spacing: -0.005em;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .catalog-tile .meta { align-items: flex-start; }
+  .catalog-tile .num { padding-top: 1px; }
+  .catalog-tile.gold .sample { box-shadow: inset 0 0 0 1px oklch(84% 0.19 80.46 / 0.4); }
+  .catalog-tile.gold .name { color: var(--kinpaku-pale); }
+  .catalog-tile.gold .num { color: var(--kinpaku); }
+
+  /* Procedural sample treatments */
+  .sm-gradient-pc { background: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%); }
+  .sm-gradient-mc { background: linear-gradient(120deg, #d946ef, #06b6d4); }
+  .sm-gradient-soft { background: linear-gradient(180deg, oklch(96% 0 0), oklch(88% 0.01 80)); }
+  .sm-neutral { background: oklch(94% 0 0); position: relative; }
+  .sm-neutral::before {
+    content: ""; position: absolute; left: 18%; top: 32%; right: 36%; height: 16%;
+    background: oklch(20% 0 0); border-radius: 1px;
+  }
+  .sm-neutral::after {
+    content: ""; position: absolute; left: 18%; bottom: 18%; width: 30%; height: 12%;
+    background: oklch(20% 0 0); border-radius: 999px;
+  }
+  .sm-pureblack { background: #000; }
+  .sm-purewhite { background: #fff; }
+  .sm-inter { display: flex; align-items: center; justify-content: center; background: var(--graphite); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 28px; letter-spacing: -0.04em; }
+  .sm-inter::before { content: 'Aa'; }
+  .sm-tracked { display: flex; align-items: center; justify-content: center; background: var(--graphite); color: var(--muted); font-family: var(--mono); font-weight: 500; font-size: 11px; letter-spacing: 0.28em; }
+  .sm-tracked::before { content: 'ABCDEF'; }
+  .sm-italic { display: flex; align-items: center; justify-content: center; background: var(--graphite); color: var(--champagne); font-family: 'Fraunces', Georgia, serif; font-style: italic; font-weight: 400; font-size: 32px; }
+  .sm-italic::before { content: 'Aa'; }
+  .sm-cards { background: var(--graphite); position: relative; }
+  .sm-cards::before, .sm-cards::after { content: ""; position: absolute; border: 1px solid oklch(45% 0.02 82); border-radius: 4px; }
+  .sm-cards::before { inset: 14% 18% 36% 14%; background: oklch(20% 0 0); }
+  .sm-cards::after { inset: 28% 14% 18% 26%; background: oklch(28% 0 0); }
+  .sm-sidetab { background: var(--graphite); position: relative; }
+  .sm-sidetab::before { content: ""; position: absolute; inset: 18% 18% 18% 22%; background: oklch(22% 0 0); border-left: 3px solid oklch(70% 0.18 25); border-radius: 1px; }
+  .sm-3col { background: var(--graphite); display: flex; gap: 4px; padding: 18% 14%; }
+  .sm-3col::before, .sm-3col::after, .sm-3col > i { display: block; }
+  .sm-3col::before { content: ""; flex: 1; background: oklch(22% 0 0); border-radius: 1px; }
+  .sm-3col::after { content: ""; flex: 1; background: oklch(22% 0 0); border-radius: 1px; }
+  .sm-3col-mid { position: absolute; left: 50%; top: 18%; bottom: 18%; width: 12%; transform: translateX(-50%); background: oklch(22% 0 0); border-radius: 1px; }
+  .sm-pill { background: var(--graphite); position: relative; }
+  .sm-pill::before { content: ""; position: absolute; left: 30%; top: 42%; right: 30%; height: 18%; background: oklch(20% 0 0); border-radius: 999px; }
+  .sm-icon-tile { background: var(--graphite); position: relative; }
+  .sm-icon-tile::before { content: ""; position: absolute; inset: 22%; background: linear-gradient(135deg, #a855f7, #6366f1); border-radius: 12px; }
+  .sm-massive { background: var(--graphite); position: relative; }
+  .sm-massive::before { content: ""; position: absolute; left: 50%; top: 50%; width: 56%; aspect-ratio: 1; transform: translate(-50%, -50%); background: oklch(86% 0.05 90); border-radius: 8px; }
+  .sm-modal { background: oklch(94% 0 0); position: relative; }
+  .sm-modal::before { content: ""; position: absolute; inset: 14%; background: oklch(7% 0.006 95 / 0.7); }
+  .sm-modal::after { content: ""; position: absolute; inset: 28% 22%; background: white; border-radius: 4px; }
+  .sm-lorem { background: var(--graphite); position: relative; padding: 24% 16%; }
+  .sm-lorem::before {
+    content: "Lorem ipsum dolor sit amet consectetur";
+    position: absolute; inset: 24% 16%; color: oklch(40% 0.01 82); font-family: var(--font); font-size: 8px; line-height: 1.4;
+    overflow: hidden;
+  }
+  .sm-emoji { display: flex; align-items: center; justify-content: center; background: var(--graphite); font-size: 26px; }
+  .sm-emoji::before { content: "🚀✨⚡"; }
+  .sm-trustlogos { background: var(--graphite); display: flex; align-items: center; justify-content: space-around; padding: 0 12%; }
+  .sm-trustlogos::before, .sm-trustlogos::after, .sm-trustlogos > i { display: block; width: 20%; height: 8px; background: oklch(40% 0.01 82); border-radius: 1px; }
+  .sm-trustlogos::before { content: ""; }
+  .sm-trustlogos::after { content: ""; }
+  .sm-stats { background: var(--graphite); display: flex; align-items: center; justify-content: space-around; padding: 0 14%; color: var(--champagne); font-family: var(--font); font-weight: 300; font-size: 22px; letter-spacing: -0.02em; }
+  .sm-stats::before { content: "10×"; }
+  .sm-stats::after { content: "+99%"; }
+  .sm-dust { background: var(--graphite); position: relative; }
+  .sm-dust::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: radial-gradient(circle, oklch(70% 0.04 82) 1px, transparent 1.5px);
+    background-size: 8px 8px;
+    opacity: 0.4;
+  }
+  .sm-calib { background: var(--graphite); position: relative; }
+  .sm-calib::before {
+    content: ""; position: absolute; left: 10%; right: 10%; top: 50%;
+    height: 1px; background: var(--gold-rule);
+  }
+  .sm-calib::after {
+    content: ""; position: absolute; left: 10%; right: 10%; top: 50%; height: 8px;
+    background-image: repeating-linear-gradient(90deg, var(--kinpaku) 0 1px, transparent 1px 8px);
+    transform: translateY(-4px);
+  }
+  .sm-glow { background: radial-gradient(circle at center, oklch(70% 0.2 280) 0%, var(--graphite) 70%); }
+  .sm-stripe-neutral { background: oklch(94% 0 0); position: relative; }
+  .sm-stripe-neutral::before {
+    content: ""; position: absolute; inset: 20% 18%; background: oklch(88% 0.01 80); border-radius: 1px;
+  }
+  .sm-stripe-neutral::after {
+    content: ""; position: absolute; left: 30%; right: 50%; bottom: 28%; height: 10%; background: oklch(28% 0.15 270); border-radius: 1px;
+  }
+  .sm-tasteful { background: linear-gradient(135deg, oklch(96% 0 0), oklch(90% 0.01 60)); }
+  .sm-hero-qmark { display: flex; align-items: center; justify-content: center; background: var(--graphite); color: var(--faint); font-family: var(--font); font-weight: 200; font-size: 44px; }
+  .sm-hero-qmark::before { content: "?"; }
+  .sm-diamond { display: flex; align-items: center; justify-content: center; background: var(--graphite); color: var(--kinpaku); font-size: 26px; }
+  .sm-diamond::before { content: "◆"; }
+  .sm-3drender { background: linear-gradient(135deg, #c084fc, #67e8f9); position: relative; }
+  .sm-3drender::before {
+    content: ""; position: absolute; left: 30%; top: 24%; width: 40%; height: 52%;
+    background: linear-gradient(135deg, oklch(80% 0.2 280), oklch(70% 0.2 200));
+    border-radius: 50%;
+    box-shadow: inset -8px -8px 14px rgba(0,0,0,0.25);
+  }
+  .sm-six-cta { background: var(--graphite); display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 18% 14%; }
+  .sm-six-cta::before, .sm-six-cta::after { display: block; height: 10px; background: linear-gradient(90deg, #a855f7, #06b6d4); border-radius: 999px; }
+  .sm-six-cta::before { content: ""; }
+  .sm-six-cta::after { content: ""; }
+  .sm-wide-card { background: var(--graphite); position: relative; }
+  .sm-wide-card::before {
+    content: ""; position: absolute; inset: 32% 8%; background: oklch(20% 0 0); border-radius: 24px;
+  }
+  .sm-bad-contrast { display: flex; align-items: center; justify-content: center; background: oklch(80% 0 0); color: oklch(78% 0 0); font-family: var(--font); font-size: 11px; }
+  .sm-bad-contrast::before { content: "barely readable"; }
+  .sm-redundant {
+    display: flex; align-items: center; justify-content: center;
+    background: var(--graphite); color: var(--muted); padding: 0 10%; text-align: center;
+    font-family: var(--font); font-size: 9.5px; line-height: 1.3;
+  }
+  .sm-redundant::before { content: "Click here to learn more about getting started today"; }
+  .sm-templates {
+    background: var(--graphite); display: grid;
+    grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; padding: 14%;
+  }
+  .sm-templates::before, .sm-templates::after { display: block; background: oklch(22% 0 0); border-radius: 1px; }
+  .sm-templates::before { content: ""; }
+  .sm-templates::after { content: ""; }
+  .sm-templates > i { display: block; background: oklch(22% 0 0); border-radius: 1px; }
+  .sm-logo-shine { background: linear-gradient(135deg, oklch(85% 0.18 270) 0%, oklch(70% 0.2 200) 100%); }
+
+  /* ---- Additional samples for real registry rules ---- */
+  .sm-flat-hier {
+    background: var(--graphite);
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    gap: 4px; padding: 0 14%;
+  }
+  .sm-flat-hier::before, .sm-flat-hier::after {
+    display: block; width: 100%; height: 6px;
+    background: oklch(78% 0 0); border-radius: 1px;
+  }
+  .sm-flat-hier::before { content: ""; }
+  .sm-flat-hier::after { content: ""; }
+  .sm-centered {
+    background: var(--graphite);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sm-centered::before {
+    content: ""; width: 36%; height: 12px;
+    background: oklch(60% 0 0); border-radius: 2px;
+  }
+  .sm-bounce {
+    background: var(--graphite); position: relative;
+  }
+  .sm-bounce::before {
+    content: ""; position: absolute; left: 8%; right: 8%; top: 50%;
+    height: 1px;
+    background:
+      radial-gradient(circle 4px at 14% 50%, var(--kinpaku), transparent 60%),
+      radial-gradient(circle 4px at 38% 50%, var(--kinpaku), transparent 60%),
+      radial-gradient(circle 4px at 62% 50%, var(--kinpaku), transparent 60%),
+      radial-gradient(circle 4px at 86% 50%, var(--kinpaku), transparent 60%);
+  }
+  .sm-bounce::after {
+    content: ""; position: absolute; left: 10%; right: 10%; top: 30%; height: 40%;
+    border-top: 1px solid var(--gold-rule);
+    border-radius: 100% 100% 0 0 / 60% 60% 0 0;
+  }
+  .sm-eyebrow {
+    background: var(--graphite); display: flex; flex-direction: column;
+    justify-content: center; align-items: flex-start; gap: 4px; padding: 0 14%;
+  }
+  .sm-eyebrow::before {
+    content: "EYEBROW";
+    font-family: var(--mono); font-size: 7px; letter-spacing: 0.22em;
+    color: var(--kinpaku);
+  }
+  .sm-eyebrow::after {
+    content: ""; width: 70%; height: 6px; background: oklch(80% 0 0); border-radius: 1px;
+  }
+  .sm-kickers {
+    background: var(--graphite); display: flex; flex-direction: column; gap: 5px;
+    padding: 18% 14%;
+  }
+  .sm-kickers::before, .sm-kickers::after, .sm-kickers > i { display: block; }
+  .sm-kickers::before {
+    content: "SECTION 01"; font-family: var(--mono); font-size: 6px;
+    letter-spacing: 0.22em; color: var(--kinpaku);
+  }
+  .sm-kickers::after {
+    content: "SECTION 02"; font-family: var(--mono); font-size: 6px;
+    letter-spacing: 0.22em; color: var(--kinpaku);
+  }
+  .sm-layout-anim { background: var(--graphite); position: relative; }
+  .sm-layout-anim::before {
+    content: ""; position: absolute; left: 14%; top: 30%; width: 40%; height: 40%;
+    background: oklch(22% 0 0); border-radius: 2px;
+  }
+  .sm-layout-anim::after {
+    content: ""; position: absolute; left: 50%; top: 30%; width: 36%; height: 40%;
+    background: oklch(22% 0 0); border-radius: 2px;
+    border: 1px dashed var(--patina);
+  }
+  .sm-long-line {
+    background: var(--graphite); display: flex; align-items: center; padding: 0 5%;
+  }
+  .sm-long-line::before {
+    content: ""; width: 100%; height: 6px;
+    background: oklch(50% 0 0); border-radius: 1px;
+  }
+  .sm-cramped {
+    background: var(--graphite); position: relative;
+  }
+  .sm-cramped::before {
+    content: ""; position: absolute; inset: 18%;
+    border: 1px solid oklch(40% 0 0);
+  }
+  .sm-cramped::after {
+    content: ""; position: absolute; inset: 20%;
+    background: oklch(60% 0 0); border-radius: 1px;
+  }
+  .sm-edge {
+    background: var(--graphite); display: flex; align-items: flex-start;
+  }
+  .sm-edge::before {
+    content: ""; width: 100%; height: 50%;
+    background: linear-gradient(180deg, oklch(50% 0 0), oklch(50% 0 0)) no-repeat;
+    background-size: 100% 12px;
+    background-position: 0 12px;
+  }
+  .sm-tight-leading {
+    background: var(--graphite); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; gap: 1px; padding: 0 14%;
+  }
+  .sm-tight-leading::before, .sm-tight-leading::after {
+    display: block; content: ""; width: 100%; height: 8px;
+    background: oklch(55% 0 0);
+  }
+  .sm-skipped-h {
+    background: var(--graphite); display: flex; flex-direction: column;
+    justify-content: center; gap: 6px; padding: 0 18%;
+  }
+  .sm-skipped-h::before {
+    content: "H1"; font-family: var(--mono); font-size: 11px;
+    color: var(--text); letter-spacing: 0.08em;
+  }
+  .sm-skipped-h::after {
+    content: "H4"; font-family: var(--mono); font-size: 8px;
+    color: var(--faint); letter-spacing: 0.08em;
+  }
+  .sm-justified {
+    background: var(--graphite); display: flex; flex-direction: column;
+    justify-content: center; align-items: stretch; gap: 4px; padding: 0 14%;
+  }
+  .sm-justified::before, .sm-justified::after {
+    content: ""; height: 5px; background: oklch(48% 0 0);
+    display: block;
+  }
+  .sm-justified > i {
+    display: block; height: 5px; background: oklch(48% 0 0); width: 78%;
+  }
+  .sm-tiny {
+    background: var(--graphite); display: flex; align-items: center; justify-content: center;
+    font-family: var(--font); font-size: 6px; color: var(--faint);
+  }
+  .sm-tiny::before { content: "the lowest readable size, smaller is hostile"; }
+  .sm-all-caps {
+    background: var(--graphite); display: flex; align-items: center; justify-content: center;
+    font-family: var(--font); font-size: 9px; font-weight: 500; letter-spacing: 0.1em;
+    color: var(--text); text-transform: uppercase; padding: 0 12%;
+  }
+  .sm-all-caps::before { content: "WHY ARE WE YELLING"; }
+  .sm-mono-tech {
+    background: var(--graphite); display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 9px; color: var(--patina); letter-spacing: 0.02em;
+  }
+  .sm-mono-tech::before { content: "deploy_id: 7a3f"; }
+  .sm-dark-default {
+    background: oklch(8% 0 0); display: flex; align-items: center; justify-content: center;
+    color: oklch(40% 0 0); font-family: var(--font); font-size: 10px;
+  }
+  .sm-dark-default::before { content: "dark"; }
+  .sm-id-grid {
+    background: var(--graphite); display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 3px; padding: 18% 14%;
+  }
+  .sm-id-grid::before, .sm-id-grid::after, .sm-id-grid > i {
+    display: block; background: oklch(22% 0 0); border-radius: 1px;
+  }
+  .sm-id-grid::before { content: ""; }
+  .sm-id-grid::after { content: ""; }
+  .sm-glass {
+    background: linear-gradient(135deg, #a855f7, #06b6d4);
+    position: relative;
+  }
+  .sm-glass::before {
+    content: ""; position: absolute; inset: 22%;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 4px;
+  }
+  .sm-spark { background: var(--graphite); position: relative; }
+  .sm-spark::before {
+    content: ""; position: absolute; left: 10%; right: 10%; top: 30%; bottom: 30%;
+    background:
+      linear-gradient(90deg, transparent 0 8%, var(--kinpaku) 8% 9%, transparent 9% 24%, var(--kinpaku) 24% 25%, transparent 25%) 0 30%/100% 1px no-repeat,
+      linear-gradient(90deg, transparent 0 38%, var(--kinpaku) 38% 39%, transparent 39% 62%, var(--kinpaku) 62% 63%, transparent 63% 86%, var(--kinpaku) 86% 87%, transparent 87%) 0 70%/100% 1px no-repeat;
+  }
+  .sm-spark::after {
+    content: ""; position: absolute; left: 10%; right: 10%; top: 40%;
+    height: 30%; border-top: 1px solid var(--kinpaku);
+    clip-path: polygon(0 60%, 14% 40%, 28% 70%, 42% 20%, 56% 55%, 70% 30%, 84% 65%, 100% 40%);
+  }
+  .sm-drop-shadow {
+    background: var(--graphite); display: flex; align-items: center; justify-content: center;
+  }
+  .sm-drop-shadow::before {
+    content: ""; width: 56%; height: 56%; background: oklch(30% 0 0);
+    border-radius: 8px;
+    box-shadow: 0 10px 18px rgba(0,0,0,0.6);
+  }
+  .sm-all-primary {
+    background: var(--graphite); display: flex; flex-direction: column;
+    justify-content: center; align-items: stretch; gap: 5px; padding: 18% 18%;
+  }
+  .sm-all-primary::before, .sm-all-primary::after, .sm-all-primary > i {
+    display: block; content: ""; height: 8px; background: var(--kinpaku); border-radius: 2px;
+  }
+  .sm-mobile-amp {
+    background: var(--graphite); display: flex; align-items: center; justify-content: center;
+    gap: 6px;
+  }
+  .sm-mobile-amp::before {
+    content: ""; width: 24%; aspect-ratio: 9/16;
+    border: 1px solid oklch(45% 0 0); border-radius: 4px;
+    background:
+      linear-gradient(180deg, oklch(25% 0 0) 0 10%, transparent 10% 12%, oklch(25% 0 0) 12% 30%, transparent 30% 32%, oklch(25% 0 0) 32%);
+  }
+  .sm-mobile-amp::after {
+    content: "—"; color: var(--vermilion); font-size: 18px;
+  }
+
+  /* ============ Two toolshelves (slide 13) ============ */
+  .shelves-slide { justify-content: center; }
+  .shelves-slide .stage { max-width: 1400px; width: 100%; }
+  .shelves-slide .headline { max-width: 20ch; margin-bottom: 56px; }
+  .shelves { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+  .shelf-head { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--gold-rule); margin-bottom: 24px; }
+  .shelf-head .title { font-family: var(--mono); font-size: 13px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--champagne); }
+  .shelf-head .count { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .shelf-head.gold .title { color: var(--kinpaku); }
+  .shelf-head.empty .title { color: var(--faint); }
+  .shelf-head.empty .count { color: var(--faint); }
+  .shelf-items { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tool-pill {
+    padding: 10px 18px;
+    background: var(--lacquer-raised);
+    border: 1px solid var(--gold-rule);
+    border-radius: 2px;
+    font-family: var(--font); font-size: 14px; color: var(--text);
+  }
+  .tool-pill.dim { color: var(--muted); border-color: var(--graphite-2); }
+  .shelf-empty {
+    border: 1px dashed var(--graphite-2);
+    padding: 80px 40px;
+    text-align: center;
+    color: var(--faint);
+    font-family: var(--font); font-style: normal; font-size: 16px;
+    letter-spacing: 0.04em;
+  }
+  .shelf-empty .note {
+    display: block; margin-top: 12px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+  }
+
+  /* ============ Vocabulary spread (slide 15) ============ */
+  .vocab-slide { justify-content: center; padding: 0 clamp(40px, 5vw, 96px); }
+  .vocab-slide .stage { max-width: 1500px; width: 100%; display: flex; flex-direction: column; gap: 48px; }
+  .vocab-slide .row-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .vocab-spread {
+    display: flex; flex-wrap: wrap; gap: 6px 22px;
+    font-family: var(--font); font-weight: 300;
+    line-height: 1.05;
+    align-items: baseline;
+  }
+  .vocab-spread span { color: var(--faint); }
+  .vocab-spread .gold { color: var(--kinpaku); font-weight: 400; }
+  .vocab-spread .s1 { font-size: 28px; }
+  .vocab-spread .s2 { font-size: 36px; }
+  .vocab-spread .s3 { font-size: 48px; }
+  .vocab-spread .s4 { font-size: 62px; }
+
+  /* ============ Five-pass component (slide 17) ============ */
+  .passes-slide { justify-content: center; }
+  .passes-slide .stage { max-width: 1500px; width: 100%; display: flex; flex-direction: column; gap: 44px; }
+  .passes-slide .headline { max-width: 24ch; }
+  .passes-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+  .pass-cell { display: flex; flex-direction: column; gap: 12px; }
+  .pass-cell .step {
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  /* Marginalia-style outlined ordinal, lifted from /design-system Style B */
+  .pass-cell .step .num {
+    font-family: var(--font); font-weight: 100;
+    font-size: 38px; line-height: 0.9; letter-spacing: -0.02em;
+    color: var(--kinpaku);
+  }
+  .pass-cell .step .lab {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .pass-cell .cmd { font-family: var(--mono); font-size: 13.5px; color: var(--kinpaku); }
+  .pass-card {
+    aspect-ratio: 1 / 1.05;
+    padding: 18px;
+    border-radius: 3px;
+    background: var(--lacquer-raised);
+    border: 1px solid var(--gold-rule);
+    display: flex; flex-direction: column;
+  }
+  /* p0 = BASELINE — bland AI default (Stripe-clone) */
+  .pass-card.p0 {
+    background: #ffffff;
+    border: 1px solid oklch(90% 0.005 80);
+    color: oklch(20% 0 0);
+    font-family: "Inter", system-ui, sans-serif;
+    padding: 22px 18px 18px;
+  }
+  .pass-card.p0 .brand {
+    font-family: "Inter", sans-serif; font-weight: 600; font-size: 10.5px;
+    color: oklch(15% 0 0); letter-spacing: -0.02em;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .pass-card.p0 .brand::before {
+    content: ""; width: 10px; height: 10px; border-radius: 2px;
+    background: linear-gradient(135deg, oklch(50% 0.18 270), oklch(60% 0.16 200));
+  }
+  .pass-card.p0 .pill {
+    align-self: flex-start; margin-top: 22px;
+    background: oklch(96% 0.005 270); color: oklch(40% 0.06 270);
+    padding: 3px 9px; border-radius: 999px;
+    font-size: 9px; font-weight: 500; letter-spacing: 0;
+    border: 1px solid oklch(90% 0.02 270);
+  }
+  .pass-card.p0 .ttl {
+    font-family: "Inter", sans-serif;
+    font-size: 19px; font-weight: 600; color: oklch(13% 0 0);
+    margin-top: 12px; line-height: 1.12; letter-spacing: -0.02em;
+  }
+  .pass-card.p0 .bd { font-size: 10.5px; color: oklch(48% 0 0); margin-top: 10px; line-height: 1.5; }
+  .pass-card.p0 .cta {
+    align-self: flex-start; margin-top: auto;
+    background: oklch(15% 0 0);
+    color: white; padding: 8px 14px; border-radius: 6px;
+    font-family: "Inter", sans-serif;
+    font-size: 11px; font-weight: 500; letter-spacing: -0.005em;
+  }
+
+  /* p1 = /BOLDER — magazine cover. huge, dense, declarative */
+  .pass-card.p1 {
+    background:
+      radial-gradient(circle at 80% 8%, oklch(84% 0.19 80.46 / 0.16), transparent 60%),
+      linear-gradient(180deg, oklch(8% 0.008 82), var(--lacquer-deep));
+    border: 0;
+    padding: 18px 18px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pass-card.p1::before {
+    content: ""; position: absolute; left: 16px; right: 16px; top: 38px; height: 1px;
+    background: linear-gradient(90deg, var(--kinpaku), transparent);
+  }
+  .pass-card.p1 .topline {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.2em; color: var(--kinpaku); text-transform: uppercase;
+  }
+  .pass-card.p1 .ttl {
+    margin-top: 28px;
+    font-family: var(--font); font-weight: 400;
+    font-size: 28px; line-height: 0.92; letter-spacing: -0.03em;
+    text-transform: uppercase; color: var(--champagne);
+  }
+  .pass-card.p1 .ttl em { font-style: normal; color: var(--kinpaku); }
+  .pass-card.p1 .cta {
+    align-self: stretch; margin-top: auto;
+    background: var(--kinpaku); color: var(--lacquer-deep);
+    padding: 11px 0; border-radius: 0;
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    letter-spacing: 0.22em; text-transform: uppercase; text-align: center;
+  }
+
+  /* p2 = /QUIETER — cream, tiny mark, mostly empty */
+  .pass-card.p2 {
+    background: oklch(96% 0.008 90);
+    border: 0;
+    color: oklch(22% 0.005 80);
+    padding: 18px;
+    display: flex; flex-direction: column;
+  }
+  .pass-card.p2 .mark {
+    font-family: var(--mono); font-size: 8px; letter-spacing: 0.3em;
+    color: oklch(40% 0.012 80); text-transform: uppercase;
+  }
+  .pass-card.p2 .ttl {
+    margin-top: auto;
+    font-family: var(--font); font-weight: 300;
+    font-size: 17px; line-height: 1.25; letter-spacing: -0.01em;
+    color: oklch(20% 0.005 80); max-width: 14ch;
+  }
+  .pass-card.p2 .cta {
+    margin-top: 16px;
+    font-family: var(--font); font-size: 10px; font-weight: 400;
+    color: oklch(30% 0.005 80);
+    border-bottom: 1px solid oklch(60% 0.012 80);
+    align-self: flex-start; padding-bottom: 2px;
+  }
+
+  /* p3 = /DISTILL — single word, poster */
+  .pass-card.p3 {
+    background: oklch(6% 0.004 95);
+    border: 1px solid oklch(20% 0.008 95);
+    padding: 16px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .pass-card.p3 .corner {
+    font-family: var(--mono); font-size: 8px; letter-spacing: 0.3em;
+    color: var(--faint); text-transform: uppercase;
+  }
+  .pass-card.p3 .word {
+    font-family: var(--font); font-weight: 300;
+    font-size: 52px; line-height: 0.9; letter-spacing: -0.04em;
+    color: var(--champagne);
+    align-self: flex-start;
+    margin-top: auto; margin-bottom: 8px;
+  }
+  .pass-card.p3 .word::after {
+    content: "."; color: var(--kinpaku);
+  }
+  .pass-card.p3 .footer {
+    font-family: var(--mono); font-size: 8px; letter-spacing: 0.3em;
+    color: var(--faint); text-transform: uppercase;
+    align-self: flex-end;
+  }
+
+  /* p4 = /POLISH — production-grade. nothing that doesn't earn its place. */
+  .pass-card.p4 {
+    background: var(--lacquer-raised);
+    border: 1px solid var(--gold-rule);
+    padding: 18px;
+    display: flex; flex-direction: column;
+  }
+  .pass-card.p4 .brand {
+    font-family: var(--font); font-weight: 400;
+    font-size: 11px; letter-spacing: 0.02em;
+    color: var(--champagne);
+  }
+  .pass-card.p4 .ttl {
+    margin-top: 22px;
+    font-family: var(--font); font-weight: 300;
+    font-size: 22px; line-height: 1.1; letter-spacing: -0.02em;
+    color: var(--champagne);
+  }
+  .pass-card.p4 .ttl em { font-style: normal; color: var(--kinpaku); font-weight: 400; }
+  .pass-card.p4 .bd {
+    margin-top: 10px;
+    font-family: var(--font); font-size: 11px; color: var(--muted);
+    line-height: 1.55;
+  }
+  .pass-card.p4 .cta {
+    align-self: flex-start; margin-top: auto;
+    background: var(--kinpaku); color: var(--lacquer-deep);
+    padding: 9px 14px; border-radius: 2px;
+    font-family: var(--font); font-size: 11px; font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+
+  /* ============ Big single-statement (the bet, slide 18) ============ */
+  .s-bet { justify-content: center; align-items: flex-start; }
+  .s-bet .stage { max-width: 1320px; }
+  .s-bet .label { margin-bottom: 24px; }
+  .s-bet .display { font-size: clamp(64px, 9vw, 156px); max-width: 16ch; }
+  .s-bet .tag {
+    margin-top: 40px;
+    font-family: var(--font); font-weight: 300;
+    font-size: clamp(20px, 1.7vw, 26px); color: var(--muted);
+    max-width: 50ch;
+  }
+
+  /* ============ Two moves slide (the honest pitch) ============ */
+  .s-twomoves { justify-content: center; }
+  .s-twomoves .stage { max-width: 1280px; width: 100%; display: flex; flex-direction: column; gap: 22px; }
+  .s-twomoves .display {
+    font-size: clamp(42px, 5vw, 76px);
+    line-height: 1.04;
+    max-width: 24ch;
+  }
+  .s-twomoves .setup {
+    font-family: var(--font); font-weight: 300;
+    font-size: clamp(17px, 1.4vw, 22px); line-height: 1.45;
+    color: var(--muted); max-width: 64ch; margin-top: 2px;
+  }
+  .s-twomoves .moves {
+    display: grid; grid-template-columns: 1fr 1px 1fr;
+    gap: clamp(36px, 4vw, 64px);
+    margin-top: 22px;
+  }
+  .s-twomoves .moves > .divider { background: var(--gold-rule); }
+  .s-twomoves .move { display: flex; flex-direction: column; gap: 12px; }
+  .s-twomoves .move .sign {
+    font-family: var(--font); font-weight: 200;
+    font-size: clamp(54px, 5.4vw, 84px); line-height: 0.85;
+    color: var(--kinpaku);
+    margin-bottom: 2px;
+  }
+  .s-twomoves .move.patina .sign { color: var(--patina); }
+  .s-twomoves .move .lab {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--champagne);
+  }
+  .s-twomoves .move .body {
+    font-family: var(--font); font-size: clamp(15px, 1.2vw, 19px);
+    line-height: 1.55; color: var(--text); max-width: 34ch;
+  }
+  .s-twomoves .move .ref {
+    display: block; margin-top: 6px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.2em;
+    color: var(--faint); text-transform: uppercase;
+  }
+  .s-twomoves .close {
+    margin-top: 22px; padding-top: 18px;
+    border-top: 1px solid var(--gold-rule);
+    font-family: var(--font); font-weight: 300;
+    font-size: clamp(15px, 1.2vw, 19px);
+    color: var(--text); max-width: 72ch;
+  }
+  .s-twomoves .close em { font-style: italic; color: var(--champagne); }
+  .s-twomoves .close .gold { color: var(--kinpaku); font-style: normal; }
+
+  /* ============ Wordmark slide (slide 19) ============ */
+  .s-mark { justify-content: center; align-items: center; }
+  .s-mark .stage { display: flex; flex-direction: column; align-items: center; gap: 36px; }
+  .s-mark .label { color: var(--patina); }
+  .s-mark .big-mark {
+    font-family: var(--font-wordmark); font-weight: 400;
+    font-size: clamp(48px, 7.6vw, 132px);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--kinpaku);
+    text-indent: 0.15em; /* compensates for trailing letter-spacing */
+    white-space: nowrap;
+  }
+  .s-mark .seam { width: 50vw; max-width: 720px; }
+
+  /* ============ Periodic table (slide 20) ============ */
+  .pt-slide { justify-content: center; }
+  .pt-slide .stage { max-width: 1500px; width: 100%; display: flex; flex-direction: column; gap: 40px; }
+  .pt-slide .row-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; }
+  .pt-slide .headline { font-size: clamp(28px, 3.4vw, 48px); }
+  .pt-slide .legend { display: flex; gap: 22px; }
+  .pt-slide .legend .item {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+  }
+  .pt-slide .legend .dot { width: 10px; height: 10px; border-radius: 2px; }
+  .pt-grid {
+    display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px;
+  }
+  .pt-cell {
+    aspect-ratio: 1 / 1;
+    background: var(--lacquer-raised);
+    border: 1px solid var(--gold-rule);
+    border-radius: 2px;
+    padding: 12px 14px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative;
+  }
+  /* Hierarchy is presentation-first: the /command is the headline (gold mono,
+     like commands everywhere else in the deck); the element symbol is the
+     quiet decorative layer behind the conceit. */
+  .pt-cell .pt-num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--faint); }
+  .pt-cell .pt-sym { font-family: var(--font); font-weight: 300; font-size: 24px; letter-spacing: -0.02em; line-height: 1; color: var(--text); }
+  .pt-cell .pt-name { font-family: var(--mono); font-size: 18px; font-weight: 500; letter-spacing: 0.01em; text-transform: lowercase; color: var(--kinpaku); }
+  .pt-cell.create   { border-color: oklch(84% 0.19 80.46 / 0.7); }
+  .pt-cell.create   .pt-num { color: var(--cat-create); }
+  .pt-cell.evaluate { border-color: oklch(70% 0.12 188 / 0.74); }
+  .pt-cell.evaluate .pt-num { color: var(--cat-evaluate); }
+  .pt-cell.refine   { border-color: oklch(84% 0.055 84 / 0.58); }
+  .pt-cell.refine   .pt-num { color: var(--cat-refine); }
+  .pt-cell.simplify { border-color: oklch(70% 0.096 72 / 0.72); }
+  .pt-cell.simplify .pt-num { color: var(--cat-simplify); }
+  .pt-cell.harden   { border-color: oklch(58% 0.085 185 / 0.74); }
+  .pt-cell.harden   .pt-num { color: var(--cat-harden); }
+  .pt-cell.system   { border-color: oklch(58% 0.028 82 / 0.5); }
+  .pt-cell.system   .pt-num { color: var(--cat-system); }
+
+  /* ============ Two registers (slide 21) ============ */
+  .registers-slide { justify-content: center; }
+  .registers-slide .stage { max-width: 1500px; width: 100%; display: flex; flex-direction: column; gap: 40px; }
+  .registers-slide .row-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .registers { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .register {
+    border: 1px solid var(--gold-rule);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--lacquer-raised);
+    aspect-ratio: 16 / 11;
+    position: relative;
+  }
+  .register .reg-label {
+    position: absolute; top: 14px; left: 16px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--kinpaku);
+  }
+  /* Brand register: a magazine-spread mock */
+  .register.brand {
+    background:
+      linear-gradient(135deg, oklch(12% 0.012 82), oklch(8% 0.006 95));
+    padding: 56px 48px 36px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .register.brand .br-issue { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.24em; color: var(--muted); }
+  .register.brand .br-title {
+    font-family: var(--font); font-weight: 300;
+    font-size: clamp(28px, 2.6vw, 40px); line-height: 1.02; letter-spacing: -0.012em;
+    color: var(--champagne); margin-top: 24px;
+  }
+  .register.brand .br-title .gold { color: var(--kinpaku); font-weight: 400; }
+  .register.brand .br-byline { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--kinpaku); margin-top: 18px; }
+  .register.brand .br-rule { width: 60%; height: 1px; background: linear-gradient(90deg, var(--kinpaku), transparent); margin-top: 14px; }
+  /* Product register: a dashboard-ish UI mock */
+  .register.product { padding: 0; }
+  .register.product .pr-bar {
+    display: flex; align-items: center; gap: 14px;
+    padding: 38px 18px 12px; border-bottom: 1px solid var(--gold-rule);
+    font-family: var(--mono); font-size: 10.5px; color: var(--muted); letter-spacing: 0.12em;
+  }
+  .register.product .pr-grid { height: calc(100% - 67px); }
+  .register.product .pr-bar .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--patina); box-shadow: 0 0 8px var(--patina); }
+  .register.product .pr-bar .crumb.active { color: var(--champagne); }
+  .register.product .pr-grid { display: grid; grid-template-columns: 140px 1fr; height: calc(100% - 41px); }
+  .register.product .pr-side { border-right: 1px solid var(--gold-rule); padding: 14px 12px; display: flex; flex-direction: column; gap: 8px; }
+  .register.product .pr-side .it { font-family: var(--mono); font-size: 10.5px; color: var(--muted); padding: 6px 8px; border-radius: 2px; letter-spacing: 0.08em; }
+  .register.product .pr-side .it.on { color: var(--kinpaku); background: oklch(84% 0.19 80.46 / 0.08); border-left: 1px solid var(--kinpaku); }
+  .register.product .pr-main { padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; }
+  .register.product .pr-table-row {
+    display: grid; grid-template-columns: 24px 1fr 80px 60px; gap: 14px; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--graphite-2);
+    font-family: var(--mono); font-size: 11px; color: var(--text);
+  }
+  .register.product .pr-table-row .ix { color: var(--faint); }
+  .register.product .pr-table-row .stat { color: var(--kinpaku); }
+  .register.product .pr-table-row .stat.dim { color: var(--muted); }
+  .registers-slide .close {
+    margin-top: 4px; padding-top: 18px;
+    border-top: 1px solid var(--gold-rule);
+    font-family: var(--font); font-weight: 300;
+    font-size: clamp(15px, 1.2vw, 19px); color: var(--text); max-width: 76ch;
+  }
+  .registers-slide .close .gold { color: var(--kinpaku); font-family: var(--mono); font-size: 0.9em; }
+
+  /* ============ Pre-run critique receipts (demo act) ============ */
+  .run-slide { justify-content: center; }
+  .run-slide .stage { max-width: 1240px; width: 100%; display: flex; flex-direction: column; gap: 36px; }
+  .run-slide .headline { max-width: 24ch; }
+  .run-slide .term {
+    background: var(--lacquer-deep);
+    border: 1px solid var(--gold-rule);
+    border-radius: 6px;
+    padding: 28px 32px;
+    font-family: var(--mono); font-size: clamp(13px, 1.15vw, 17px); line-height: 2;
+    color: var(--text);
+  }
+  .run-slide .term .winhead { display: flex; gap: 8px; margin-bottom: 16px; }
+  .run-slide .term .winhead i { width: 9px; height: 9px; border-radius: 50%; background: var(--graphite-2); display: block; }
+  .run-slide .term .rule { color: var(--kinpaku); }
+  .run-slide .term .dim { color: var(--muted); }
+  .run-slide .term .verdict { color: var(--patina); display: block; margin-top: 10px; }
+
+  /* ============ Twelve harnesses (slide 22) ============ */
+  .harness-slide { justify-content: center; }
+  .harness-slide .stage { max-width: 1400px; width: 100%; display: flex; flex-direction: column; gap: 48px; }
+  .harness-slide .headline { max-width: 18ch; }
+  .harness-grid {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px;
+  }
+  .harness-cell {
+    aspect-ratio: 1 / 0.78;
+    background: var(--lacquer-raised);
+    border: 1px solid var(--gold-rule);
+    border-radius: 3px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    padding: 18px;
+  }
+  .harness-cell .logo-chip {
+    width: 48px; height: 48px;
+    background: oklch(94% 0.005 80);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: inset 0 0 0 1px oklch(82% 0.01 80);
+  }
+  .harness-cell .logo-chip img { width: 26px; height: 26px; object-fit: contain; }
+  .harness-cell .nm { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); text-align: center; }
+  .harness-cell.gold { border-color: var(--kinpaku); }
+  .harness-cell.gold .nm { color: var(--champagne); }
+
+  /* ============ Split-screen (slide 23) ============ */
+  .split-slide { padding: 0; background: var(--lacquer); }
+  .split-slide .split {
+    position: absolute; inset: 0;
+    display: grid; grid-template-columns: 1fr 1px 1fr;
+  }
+  .split-slide .split .divider { background: linear-gradient(180deg, transparent, var(--kinpaku) 22%, var(--kinpaku) 78%, transparent); }
+  .split-slide .editor, .split-slide .runtime {
+    padding: 56px clamp(40px, 4vw, 64px);
+    display: flex; flex-direction: column; gap: 18px;
+    overflow: hidden;
+  }
+  .split-slide .editor {
+    background: linear-gradient(180deg, var(--lacquer-deep), var(--lacquer));
+    font-family: var(--mono); font-size: 13px; line-height: 1.65; color: var(--text);
+  }
+  .split-slide .editor .winhead { display: flex; gap: 8px; margin-bottom: 16px; }
+  .split-slide .editor .winhead i { width: 8px; height: 8px; border-radius: 50%; background: var(--graphite-2); display: block; }
+  .split-slide .editor .prompt { color: var(--muted); }
+  .split-slide .editor .prompt .gold { color: var(--kinpaku); }
+  .split-slide .editor .reply { color: var(--text); }
+  .split-slide .editor .reply .gold { color: var(--kinpaku); }
+  .split-slide .editor .reply .patina { color: var(--patina); }
+  .split-slide .editor .reply em { color: var(--champagne); font-style: normal; }
+  .split-slide .editor .caret { display: inline-block; width: 8px; height: 1.2em; background: var(--kinpaku); vertical-align: -3px; animation: blink 1.1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .split-slide .runtime {
+    background:
+      radial-gradient(circle at 70% 20%, oklch(84% 0.19 80.46 / 0.07), transparent 60%),
+      linear-gradient(180deg, var(--lacquer-raised), oklch(9% 0.008 95));
+  }
+  .split-slide .runtime .browser {
+    border: 1px solid var(--gold-rule);
+    border-radius: 6px;
+    background: var(--lacquer-deep);
+    height: 100%;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 24px 70px oklch(2% 0.004 95 / 0.5);
+  }
+  .split-slide .runtime .browser .bar {
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--gold-rule);
+  }
+  .split-slide .runtime .browser .bar .url {
+    flex: 1; padding: 6px 12px;
+    background: var(--graphite);
+    border-radius: 2px;
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+  }
+  .split-slide .runtime .browser .body {
+    flex: 1; padding: 36px 32px;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .split-slide .runtime .browser .ttl { font-family: var(--font); font-weight: 300; font-size: 32px; line-height: 1.05; color: var(--champagne); letter-spacing: -0.012em; }
+  .split-slide .runtime .browser .ttl .gold { color: var(--kinpaku); }
+  .split-slide .runtime .browser .bd { font-family: var(--font); font-size: 14px; color: var(--text); line-height: 1.6; max-width: 38ch; }
+  .split-slide .runtime .browser .cta {
+    align-self: flex-start;
+    background: var(--kinpaku); color: var(--lacquer-deep);
+    padding: 10px 18px; border-radius: 2px;
+    font-family: var(--font); font-size: 12px; letter-spacing: 0.04em;
+  }
+  .split-slide .runtime .browser .live {
+    margin-top: auto;
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--patina);
+  }
+  .split-slide .runtime .browser .live .pulse {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--patina);
+    box-shadow: 0 0 12px var(--patina);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .split-slide .overlay-caption {
+    position: absolute; left: 50%; bottom: clamp(60px, 8vw, 110px); transform: translateX(-50%);
+    text-align: center;
+    z-index: 4;
+  }
+  .split-slide .overlay-caption .display {
+    font-size: clamp(36px, 4.4vw, 64px);
+    background: rgba(7,5,3,0.7); backdrop-filter: blur(12px);
+    padding: 18px 28px; border-radius: 4px;
+    border: 1px solid var(--gold-rule);
+  }
+
+  /* ============ Demo card (slide 25) ============ */
+  .demo-card-slide { justify-content: center; align-items: center; padding: 0; }
+  .demo-card-slide .stage { display: flex; flex-direction: column; align-items: center; gap: 28px; max-width: 90%; }
+  .demo-card-slide .label { color: var(--patina); }
+  .demo-card-slide .demo-mark {
+    font-family: var(--font-display); font-weight: 300;
+    font-size: clamp(120px, 18vw, 320px);
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--kinpaku);
+    text-indent: 0.16em;
+  }
+  .demo-card-slide .seam { width: 40vw; max-width: 540px; }
+
+  /* ============ Demo preview (slide 26) ============ */
+  .demo-prev-slide { justify-content: center; }
+  .demo-prev-slide .stage { max-width: 1500px; width: 100%; display: flex; flex-direction: column; gap: 48px; }
+  .demo-prev-slide .headline { max-width: 22ch; }
+  .preview-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .preview-cell {
+    background: var(--lacquer-raised);
+    border: 1px solid var(--gold-rule);
+    border-radius: 3px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .preview-cell .pv-art {
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, var(--graphite), var(--lacquer-deep));
+    position: relative;
+    border-bottom: 1px solid var(--gold-rule);
+    overflow: hidden;
+  }
+  .preview-cell .pv-art .codeline {
+    position: absolute; height: 6px; border-radius: 1px;
+    background: var(--graphite-2);
+  }
+  .preview-cell .pv-art .gold-line { background: var(--kinpaku); }
+  .preview-cell .pv-art .patina-line { background: var(--patina); }
+  .preview-cell .pv-meta { padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .preview-cell .pv-num { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.22em; color: var(--kinpaku); }
+  .preview-cell .pv-cmd { font-family: var(--mono); font-size: 16px; color: var(--champagne); }
+  .preview-cell .pv-bd  { font-family: var(--font); font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+  /* ============ Try it slide (slide 30) ============ */
+  .try-slide { justify-content: center; }
+  .try-slide .stage { max-width: 1280px; display: flex; flex-direction: column; gap: 40px; }
+  .try-slide .headline { max-width: 18ch; }
+  .try-steps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+  .try-step {
+    border: 1px solid var(--gold-rule);
+    border-radius: 3px;
+    background: var(--lacquer-raised);
+    padding: 24px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .try-step .step-n { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; color: var(--kinpaku); }
+  .try-step .step-t { font-family: var(--font); font-weight: 300; font-size: 22px; color: var(--champagne); line-height: 1.15; }
+  .try-step .step-c {
+    font-family: var(--mono); font-size: 12.5px; color: var(--kinpaku-pale);
+    background: var(--lacquer-deep);
+    padding: 12px 14px;
+    border-radius: 2px;
+    border: 1px solid var(--gold-rule);
+  }
+  .try-step .step-b { font-family: var(--font); font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+  /* ============ Q&A (slide 31) ============ */
+  .qa-slide { justify-content: center; }
+  .qa-slide .stage { max-width: 1240px; display: flex; flex-direction: column; gap: 32px; }
+  .qa-slide .label { color: var(--patina); }
+  .qa-slide .display { max-width: 14ch; }
+  .qa-slide .sub {
+    font-family: var(--font); font-weight: 300;
+    font-size: clamp(20px, 1.7vw, 28px); color: var(--text); max-width: 42ch;
+  }
+
+  /* ============ Thank you (slide 32) ============ */
+  .ty-slide { justify-content: center; }
+  .ty-slide .stage { max-width: 1280px; display: flex; flex-direction: column; gap: 36px; }
+  .ty-slide .label { color: var(--patina); }
+  .ty-slide .display { font-size: clamp(60px, 7vw, 116px); }
+  .ty-slide .signoff {
+    margin-top: 24px; padding-top: 28px;
+    border-top: 1px solid var(--gold-rule);
+    display: grid; grid-template-columns: repeat(3, max-content); gap: 64px;
+  }
+  .ty-slide .signoff dt { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--faint); margin-bottom: 8px; }
+  .ty-slide .signoff dd { font-family: var(--font); font-size: 17px; color: var(--champagne); }
+
+  /* ============ Nav UI ============ */
+  .progress {
+    position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
+    display: flex; gap: 4px; z-index: 50;
+  }
+  .progress button {
+    width: 5px; height: 5px; border-radius: 50%; border: 0; padding: 0;
+    background: var(--graphite-2); cursor: pointer; transition: background 220ms;
+  }
+  .progress button.active { background: var(--kinpaku); width: 14px; border-radius: 2px; }
+  .progress button:hover { background: var(--kinpaku-deep); }
+  .navhint {
+    position: fixed; right: 18px; bottom: 16px;
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--faint); opacity: 0; transition: opacity 220ms;
+    pointer-events: none; z-index: 49;
+  }
+  body:hover .navhint { opacity: 0.6; }
+
+  @media print {
+    @page { size: 13.333in 7.5in; margin: 0; }
+    body { overflow: visible; }
+    .deck { height: auto; }
+    /* position needs !important: two caption-overlay slides carry inline
+       position:absolute that would stack every page on top of page one. */
+    .slide {
+      position: relative !important;
+      display: flex !important;
+      page-break-after: always;
+      break-inside: avoid;
+      height: 100vh;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, oklch(4% 0.004 95 / 0.78), oklch(3% 0.004 95 / 0.93)),
+        url("assets/neo-kinpaku/lacquer-grain.png") center top / 1800px auto,
+        linear-gradient(180deg, var(--lacquer), var(--lacquer-deep));
+    }
+    .slide:last-of-type { page-break-after: auto; }
+    .progress, .navhint { display: none; }
+    .caret, .pulse { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ============ 01 · TITLE ============ -->
+  <section class="slide s-title active">
+    <div class="meta-top">
+      <a class="brand-lockup" href="#1">
+        <span class="ks-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M5 2.5 L13.5 2.5 L5.5 21.5 L5 21.5 Q2.5 21.5 2.5 19 L2.5 5 Q2.5 2.5 5 2.5 Z"/>
+            <path d="M16.5 2.5 L19 2.5 Q21.5 2.5 21.5 5 L21.5 19 Q21.5 21.5 19 21.5 L8.5 21.5 Z"/>
+          </svg>
+        </span>
+        <span class="ks-wordmark">Impeccable</span>
+      </a>
+      <span>Designing with AI · June 2026</span>
+    </div>
+    <div class="stage">
+      <h1 class="display">Killing<br>the <span class="gold">handoff.</span></h1>
+      <p class="lede">Iterating design live in the browser, on real production code.</p>
+      <div class="anchor-rule" style="margin-top:48px;max-width:520px;"></div>
+      <dl class="credits" style="margin-top:28px;">
+        <div><dt>Speaker</dt><dd>Paul Bakaus</dd></div>
+        <div><dt>Format</dt><dd>~22 min, then Q&amp;A</dd></div>
+        <div><dt>Follow along</dt><dd>impeccable.style</dd></div>
+      </dl>
+    </div>
+    <div class="meta-bot"><span>Killing the handoff</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 02 · HANDOFF CHAIN (intact) ============ -->
+  <section class="slide chain-slide">
+    <div class="meta-top"><span>Chapter I · The contract</span><span>The chain of work</span></div>
+    <div class="stage">
+      <svg class="chain-svg" viewBox="0 0 1320 220" xmlns="http://www.w3.org/2000/svg">
+        <!-- 5 nodes connected -->
+        <g>
+          <line class="link" x1="170" y1="110" x2="334" y2="110"/>
+          <line class="link" x1="466" y1="110" x2="630" y2="110"/>
+          <line class="link" x1="762" y1="110" x2="926" y2="110"/>
+          <line class="link" x1="1058" y1="110" x2="1222" y2="110"/>
+        </g>
+        <g>
+          <circle class="node-fill" cx="100" cy="110" r="44"/>
+          <text x="100" y="115" text-anchor="middle">Figma</text>
+          <text x="100" y="190" text-anchor="middle" style="font-size:13px;letter-spacing:0.16em;fill:oklch(72% 0 0);">design</text>
+        </g>
+        <g>
+          <circle class="node-fill" cx="400" cy="110" r="44"/>
+          <text x="400" y="115" text-anchor="middle">Spec</text>
+          <text x="400" y="190" text-anchor="middle" style="font-size:13px;letter-spacing:0.16em;fill:oklch(72% 0 0);">document</text>
+        </g>
+        <g>
+          <circle class="node-fill" cx="696" cy="110" r="44"/>
+          <text x="696" y="115" text-anchor="middle">Dev</text>
+          <text x="696" y="190" text-anchor="middle" style="font-size:13px;letter-spacing:0.16em;fill:oklch(72% 0 0);">build</text>
+        </g>
+        <g>
+          <circle class="node-fill" cx="992" cy="110" r="44"/>
+          <text x="992" y="115" text-anchor="middle">QA</text>
+          <text x="992" y="190" text-anchor="middle" style="font-size:13px;letter-spacing:0.16em;fill:oklch(72% 0 0);">review</text>
+        </g>
+        <g>
+          <circle class="node-fill gold" cx="1266" cy="110" r="44"/>
+          <text x="1266" y="115" text-anchor="middle" style="fill:oklch(86% 0.07 84);">Ship</text>
+          <text x="1266" y="190" text-anchor="middle" style="font-size:13px;letter-spacing:0.16em;fill:oklch(84% 0.19 80.46);">production</text>
+        </g>
+      </svg>
+      <p class="caption">For twenty years, this was the chain. Five links, each one doing real work.</p>
+    </div>
+    <div class="meta-bot"><span>The chain of work</span><span class="num">02 / 32</span></div>
+  </section>
+
+  <!-- ============ 03 · STATEMENT: handoff WAS the contract ============ -->
+  <section class="slide s-statement">
+    <div class="meta-top"><span>Chapter I · The contract</span><span>What it was</span></div>
+    <div class="stage">
+      <h2 class="display">The handoff <span class="gold">was</span> the contract.</h2>
+      <p class="body">It was a delivery, yes. But it was also where the work got <em>seen</em>: where someone with taste looked at the thing and said "no, again." The handoff was the design org chart.</p>
+    </div>
+    <div class="meta-bot"><span>The handoff was the org chart</span><span class="num">03 / 32</span></div>
+  </section>
+
+  <!-- ============ 04 · CADENCE COMPRESSION ============ -->
+  <section class="slide cadence-slide">
+    <div class="meta-top"><span>Chapter I · What changed</span><span>Cadence compression</span></div>
+    <div class="stage">
+      <h2 class="headline" style="margin-bottom:64px;">A cycle that used to take <span class="gold">weeks</span><br>now takes <span class="gold">hours</span>.</h2>
+      <div class="cadence-bars">
+        <div class="cadence-row waterfall">
+          <span class="name">Waterfall</span>
+          <div class="bar-wrap"><div class="bar"></div></div>
+          <span class="scale">weeks</span>
+        </div>
+        <div class="cadence-row agile">
+          <span class="name">Agile</span>
+          <div class="bar-wrap"><div class="bar"></div></div>
+          <span class="scale">days</span>
+        </div>
+        <div class="cadence-row ai">
+          <span class="name">AI-native</span>
+          <div class="bar-wrap"><div class="bar"></div></div>
+          <span class="scale">hours</span>
+        </div>
+      </div>
+    </div>
+    <div class="meta-bot"><span>Cadence compression</span><span class="num">04 / 32</span></div>
+  </section>
+
+  <!-- ============ 05 · STATEMENT: 10x faster ============ -->
+  <section class="slide s-statement">
+    <div class="meta-top"><span>Chapter I · What changed</span><span>The new tempo</span></div>
+    <div class="stage">
+      <h2 class="display">Product teams ship<br><span class="gold">10x faster.</span></h2>
+      <p class="body">The handoff doesn't fit inside a one-day cycle, never mind a one-hour one. So teams quietly stopped doing it.</p>
+    </div>
+    <div class="meta-bot"><span>10x is not a metaphor</span><span class="num">05 / 32</span></div>
+  </section>
+
+  <!-- ============ 06 · CHAIN BROKEN ============ -->
+  <section class="slide chain-slide">
+    <div class="meta-top"><span>Chapter I · Damage</span><span>The chain breaks</span></div>
+    <div class="stage">
+      <svg class="chain-svg" viewBox="0 0 1320 220" xmlns="http://www.w3.org/2000/svg">
+        <g>
+          <line class="link" x1="170" y1="110" x2="334" y2="110"/>
+          <!-- broken link between Spec and Dev -->
+          <line class="link" x1="466" y1="110" x2="540" y2="110" stroke-dasharray="3 4" opacity="0.6"/>
+          <line class="break" x1="556" y1="92" x2="572" y2="128"/>
+          <line class="break" x1="572" y1="92" x2="588" y2="128"/>
+          <line class="link" x1="600" y1="110" stroke-dasharray="3 4" opacity="0.6" x2="630" y2="110"/>
+          <!-- broken link between QA and Ship -->
+          <line class="link" x1="762" y1="110" x2="836" y2="110" stroke-dasharray="3 4" opacity="0.6"/>
+          <line class="break" x1="852" y1="92" x2="868" y2="128"/>
+          <line class="break" x1="868" y1="92" x2="884" y2="128"/>
+          <line class="link" x1="896" y1="110" stroke-dasharray="3 4" opacity="0.6" x2="926" y2="110"/>
+          <line class="link" x1="1058" y1="110" stroke-dasharray="3 4" opacity="0.6" x2="1222" y2="110"/>
+        </g>
+        <g>
+          <circle class="node-fill" cx="100" cy="110" r="44" opacity="0.5"/>
+          <text x="100" y="115" text-anchor="middle" opacity="0.55">Figma</text>
+        </g>
+        <g>
+          <circle class="node-fill" cx="400" cy="110" r="44" opacity="0.5"/>
+          <text x="400" y="115" text-anchor="middle" opacity="0.55">Spec</text>
+        </g>
+        <g>
+          <circle class="node-fill gold" cx="696" cy="110" r="44"/>
+          <text x="696" y="115" text-anchor="middle" style="fill:oklch(86% 0.07 84);">Dev</text>
+          <text x="696" y="190" text-anchor="middle" style="font-size:13px;letter-spacing:0.16em;fill:oklch(84% 0.19 80.46);">+ AI</text>
+        </g>
+        <g>
+          <circle class="node-fill" cx="992" cy="110" r="44" opacity="0.5"/>
+          <text x="992" y="115" text-anchor="middle" opacity="0.55">QA</text>
+        </g>
+        <g>
+          <circle class="node-fill" cx="1266" cy="110" r="44"/>
+          <text x="1266" y="115" text-anchor="middle">Ship</text>
+        </g>
+      </svg>
+      <p class="caption">Most links snapped quietly. Dev plus AI ships directly to production. <span class="patina">No one with taste in between.</span></p>
+    </div>
+    <div class="meta-bot"><span>Quality silently degrades</span><span class="num">06 / 32</span></div>
+  </section>
+
+  <!-- ============ 07 · SPATIAL DIVERGENCE ============ -->
+  <section class="slide s-rooms">
+    <div class="meta-top"><span>Chapter I · The geography</span><span>Different rooms</span></div>
+    <div class="stage">
+      <h2 class="display">Designers stayed on the canvas.<br>Devs moved into <span class="gold">the running app.</span></h2>
+      <p class="sub">The work used to flow from one to the other. Now they live in different rooms, and the bridge between them is gone.</p>
+
+      <div class="rooms-grid">
+        <div class="room left">
+          <span class="roomlab">Designers · Canvas</span>
+          <div class="canvas" aria-hidden="true"></div>
+          <p class="roombody">Figma. Miro. Mocks of the thing.</p>
+        </div>
+        <div class="gap" aria-hidden="true">
+          <span class="arrow-broken">⤬</span>
+          <span class="gaplab">No bridge</span>
+        </div>
+        <div class="room right">
+          <span class="roomlab">Devs + AI · Live code</span>
+          <div class="liveapp" aria-hidden="true">
+            <div class="codebar"><span class="dot"></span>localhost:3000 · live</div>
+            <div class="codelines"><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+          <p class="roombody">Real components. Real responsive behavior. The actual ship.</p>
+        </div>
+      </div>
+    </div>
+    <div class="meta-bot"><span>Where each discipline now lives</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 08 · STATEMENT: critique missing ============ -->
+  <section class="slide s-statement">
+    <div class="meta-top"><span>Chapter I · The damage</span><span>Why this matters</span></div>
+    <div class="stage">
+      <h2 class="display">Without a replacement<br>for <span class="patina">critique</span>, quality<br>silently degrades.</h2>
+      <p class="body">It isn't dramatic. Nothing crashes. You just open a build six months later and notice it looks like every other one.</p>
+    </div>
+    <div class="meta-bot"><span>The slow drift</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 09 · 2022 SLOP (FULL BLEED) ============ -->
+  <section class="slide s-bleed">
+    <div class="meta-top"><span>Chapter II · Receipts</span><span>2022</span></div>
+    <div class="frame"><iframe src="slop/2022.html" title="2022 slop" loading="lazy"></iframe></div>
+    <div class="vignette"></div>
+    <div class="meta-bot"><span>Vintage slop</span><span class="num">08 / 32</span></div>
+  </section>
+
+  <!-- ============ 10 · 2022 SLOP CAPTION ============ -->
+  <section class="slide s-overlay" style="position:absolute;inset:0;background:transparent;">
+    <div class="meta-top"><span>Chapter II · Receipts</span><span>2022</span></div>
+    <!-- visual backdrop: same iframe, smaller and softer -->
+    <div style="position:absolute;inset:0;overflow:hidden;">
+      <div style="position:absolute;inset:0;background:var(--lacquer);"></div>
+      <iframe src="slop/2022.html" style="position:absolute;top:0;left:0;width:142.857%;height:142.857%;transform:scale(0.7);transform-origin:0 0;border:0;opacity:0.42;filter:saturate(0.7);"></iframe>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,5,3,0.65),rgba(7,5,3,0.4) 40%,rgba(7,5,3,0.95));"></div>
+    </div>
+    <div class="stage" style="position:relative;z-index:5;">
+      <span class="label gold">When I say AI slop</span>
+      <h2 class="display">You probably<br>think <span class="gold">of this.</span></h2>
+      <p class="sub">Purple-to-cyan gradients. Glassmorphism. Six emoji and a manifesto. You knew it on sight.</p>
+    </div>
+    <div class="meta-bot"><span>Generic on sight</span><span class="num">09 / 32</span></div>
+  </section>
+
+  <!-- ============ 11 · 2026 SLOP (FULL BLEED) ============ -->
+  <section class="slide s-bleed">
+    <div class="meta-top"><span>Chapter II · The twist</span><span>2026</span></div>
+    <div class="frame"><iframe src="slop/2026.html" title="2026 slop" loading="lazy"></iframe></div>
+    <div class="vignette"></div>
+    <div class="meta-bot"><span>Today's slop</span><span class="num">10 / 32</span></div>
+  </section>
+
+  <!-- ============ 12 · 2026 SLOP CAPTION ============ -->
+  <section class="slide s-overlay" style="position:absolute;inset:0;background:transparent;">
+    <div class="meta-top"><span>Chapter II · The twist</span><span>2026</span></div>
+    <div style="position:absolute;inset:0;overflow:hidden;">
+      <div style="position:absolute;inset:0;background:var(--lacquer);"></div>
+      <iframe src="slop/2026.html" style="position:absolute;top:0;left:0;width:142.857%;height:142.857%;transform:scale(0.7);transform-origin:0 0;border:0;opacity:0.32;filter:saturate(0.6);"></iframe>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,5,3,0.7),rgba(7,5,3,0.5) 40%,rgba(7,5,3,0.96));"></div>
+    </div>
+    <div class="stage" style="position:relative;z-index:5;">
+      <span class="label patina">This is also slop</span>
+      <h2 class="display">It just <span class="patina">wears<br>a suit.</span></h2>
+      <p class="sub">Crisp grid. One accent button. Tasteful neutrals. Inter 600. Stripe-flavored. Looks fine. Looks <em style="color:var(--champagne);font-style:normal;">familiar</em>. Looks like every other one.</p>
+    </div>
+    <div class="meta-bot"><span>Slop is a moving target</span><span class="num">11 / 32</span></div>
+  </section>
+
+  <!-- ============ 13 · CATALOG WALL ============ -->
+  <section class="slide catalog-slide">
+    <div class="meta-top"><span>Chapter II · Inventory</span><span>The full catalog</span></div>
+    <div class="stage">
+      <div class="catalog-grid" id="catalog"></div>
+    </div>
+    <div class="meta-bot"><span>The catalog wall</span><span class="num">12 / 32</span></div>
+  </section>
+
+  <!-- ============ 14 · STATEMENT: code slop too ============ -->
+  <section class="slide s-statement">
+    <div class="meta-top"><span>Chapter III · Not just us</span><span>Slop is universal</span></div>
+    <div class="stage">
+      <h2 class="display">Devs are drowning<br>in slop <span class="gold">too.</span></h2>
+      <p class="body">Coding agents ship sloppy code the same way they ship sloppy design: duplicated logic, dead abstractions, quiet tech debt. Engineering noticed early. <strong>And engineering did something about it.</strong></p>
+    </div>
+    <div class="meta-bot"><span>Code rots the same way</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 15 · TWO TOOLSHELVES ============ -->
+  <section class="slide shelves-slide">
+    <div class="meta-top"><span>Chapter III · The asymmetry</span><span>One side got tools</span></div>
+    <div class="stage">
+      <h2 class="headline" style="margin-bottom:56px;">Engineering filled its toolbench.<br><span class="gold">Design's stayed empty.</span></h2>
+      <div class="shelves">
+        <div>
+          <div class="shelf-head gold"><span class="title">Engineering</span><span class="count">12+ tools</span></div>
+          <div class="shelf-items">
+            <span class="tool-pill">Copilot</span>
+            <span class="tool-pill">Cursor</span>
+            <span class="tool-pill">Claude Code</span>
+            <span class="tool-pill">Codex</span>
+            <span class="tool-pill">CodeRabbit</span>
+            <span class="tool-pill">Greptile</span>
+            <span class="tool-pill">Sourcegraph</span>
+            <span class="tool-pill">Aider</span>
+            <span class="tool-pill">Windsurf</span>
+            <span class="tool-pill">Continue</span>
+            <span class="tool-pill">Tabnine</span>
+            <span class="tool-pill dim">+ more weekly</span>
+          </div>
+        </div>
+        <div>
+          <div class="shelf-head empty"><span class="title">Design</span><span class="count">0</span></div>
+          <div class="shelf-empty">
+            <span>Nothing here.</span>
+            <span class="note">A few hand-wringing posts on LinkedIn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="meta-bot"><span>That's the gap</span><span class="num">13 / 32</span></div>
+  </section>
+
+  <!-- ============ 16 · STATEMENT: never says nicer ============ -->
+  <section class="slide s-statement">
+    <div class="meta-top"><span>Chapter III · The lesson</span><span>What good direction sounds like</span></div>
+    <div class="stage">
+      <h2 class="display">A good designer<br>never says<br><span class="gold">"make it nicer."</span></h2>
+      <p class="body">With no designer in the loop, that's the prompt well-meaning engineers reach for. The model shrugs back the page you saw earlier. Good direction is <em>vocabulary</em>: constraints, references, a point of view. That is the input the agent has been missing.</p>
+    </div>
+    <div class="meta-bot"><span>Direction beats taste</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 17 · TWO MOVES (the bet) ============ -->
+  <section class="slide s-twomoves">
+    <div class="meta-top"><span>Chapter III · The honest pitch</span><span>Two moves, not one</span></div>
+    <div class="stage">
+      <h2 class="display">You can't make a model<br>better at <span class="gold">design.</span></h2>
+      <p class="setup">The obvious next idea: just teach the model design. We tried. Skills can't teach taste; it doesn't move the needle. But two things skills <em>can</em> do, together, get you most of the way:</p>
+
+      <div class="moves">
+        <div class="move">
+          <span class="sign">−</span>
+          <span class="lab">Subtract its bias</span>
+          <p class="body">Catch the slop the model can't see in itself. The defaults it would always reach for, gone.</p>
+          <span class="ref">The 40 patterns we just saw</span>
+        </div>
+        <div class="divider"></div>
+        <div class="move patina">
+          <span class="sign">+</span>
+          <span class="lab">Add the vocabulary</span>
+          <p class="body">Give designers the words to steer it. Bolder. Quieter. Distill. Polish. Critique.</p>
+          <span class="ref">What that looks like, next slide</span>
+        </div>
+      </div>
+
+      <p class="close">The model isn't suddenly a designer. It's just no longer the default voice in the room, and the designer is back at the <span class="gold">wheel</span>.</p>
+    </div>
+    <div class="meta-bot"><span>Two halves of one skill</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 18 · VOCABULARY SPREAD ============ -->
+  <section class="slide vocab-slide">
+    <div class="meta-top"><span>Chapter III · The lesson</span><span>What design brings</span></div>
+    <div class="stage">
+      <div class="row-head">
+        <span class="label">The designer's working vocabulary</span>
+        <span class="label gold">Highlighted: the ones we'll meet again</span>
+      </div>
+      <div class="vocab-spread">
+        <span class="s2">restrained</span>
+        <span class="s1">tasteful</span>
+        <span class="s3 gold">bolder</span>
+        <span class="s2">refined</span>
+        <span class="s1">editorial</span>
+        <span class="s2 gold">quieter</span>
+        <span class="s1">crisp</span>
+        <span class="s2">vertical rhythm</span>
+        <span class="s3 gold">distill</span>
+        <span class="s1">considered</span>
+        <span class="s2">expressive</span>
+        <span class="s1 gold">clarify</span>
+        <span class="s2">brutalist</span>
+        <span class="s1">precious</span>
+        <span class="s3">monastic</span>
+        <span class="s2 gold">polish</span>
+        <span class="s1">soft</span>
+        <span class="s2">architectural</span>
+        <span class="s1">optical alignment</span>
+        <span class="s4 gold">critique</span>
+        <span class="s1">tactile</span>
+        <span class="s2">spacious</span>
+        <span class="s1 gold">colorize</span>
+        <span class="s2">measured</span>
+        <span class="s1">noir</span>
+        <span class="s2 gold">animate</span>
+        <span class="s3">opinionated</span>
+        <span class="s1">whispered</span>
+        <span class="s2 gold">layout</span>
+        <span class="s1">eclectic</span>
+        <span class="s1">handsome</span>
+        <span class="s2 gold">typeset</span>
+        <span class="s1">negative space</span>
+        <span class="s2">stark</span>
+        <span class="s1 gold">audit</span>
+        <span class="s2">precise</span>
+        <span class="s1">austere</span>
+        <span class="s2 gold">delight</span>
+        <span class="s1">opulent</span>
+        <span class="s2">deliberate</span>
+        <span class="s1 gold">harden</span>
+        <span class="s2">tuned</span>
+        <span class="s2">hierarchy</span>
+        <span class="s1">vernacular</span>
+        <span class="s3 gold">live</span>
+      </div>
+    </div>
+    <div class="meta-bot"><span>The input the agent is missing</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 19 · ONE COMPONENT, FIVE PASSES (proof of add) ============ -->
+  <section class="slide passes-slide">
+    <div class="meta-top"><span>Chapter III · Proof</span><span>What vocabulary buys you</span></div>
+    <div class="stage">
+      <h2 class="headline">Same brief. <span class="gold">Five adjectives.</span> Five outcomes.</h2>
+      <div class="passes-row">
+        <div class="pass-cell">
+          <div class="step"><span class="num">00</span><span class="lab">baseline</span></div>
+          <div class="pass-card p0">
+            <span class="brand">Lumina</span>
+            <span class="pill">New</span>
+            <div class="ttl">A new way to ship.</div>
+            <div class="bd">Production-grade UI in minutes, not days.</div>
+            <span class="cta">Start free trial</span>
+          </div>
+          <div class="cmd">// what the model gives you</div>
+        </div>
+        <div class="pass-cell">
+          <div class="step"><span class="num">01</span><span class="lab">/bolder</span></div>
+          <div class="pass-card p1">
+            <div class="topline"><span>Lumina</span><span>26 · vol I</span></div>
+            <div class="ttl">Ship<br>the <em>thing.</em></div>
+            <span class="cta">Get access</span>
+          </div>
+          <div class="cmd">/bolder</div>
+        </div>
+        <div class="pass-cell">
+          <div class="step"><span class="num">02</span><span class="lab">/quieter</span></div>
+          <div class="pass-card p2">
+            <span class="mark">Lumina</span>
+            <div class="ttl">A new way<br>to ship.</div>
+            <span class="cta">Read more →</span>
+          </div>
+          <div class="cmd">/quieter</div>
+        </div>
+        <div class="pass-cell">
+          <div class="step"><span class="num">03</span><span class="lab">/distill</span></div>
+          <div class="pass-card p3">
+            <span class="corner">Lumina</span>
+            <div class="word">Ship</div>
+            <span class="footer">→ get it</span>
+          </div>
+          <div class="cmd">/distill</div>
+        </div>
+        <div class="pass-cell">
+          <div class="step"><span class="num">04</span><span class="lab">/polish</span></div>
+          <div class="pass-card p4">
+            <span class="brand">Lumina</span>
+            <div class="ttl">A new way<br>to <em>ship.</em></div>
+            <div class="bd">Production-grade UI for teams that move.</div>
+            <span class="cta">Get started</span>
+          </div>
+          <div class="cmd">/polish</div>
+        </div>
+      </div>
+    </div>
+    <div class="meta-bot"><span>Show, not tell</span><span class="num">17 / 32</span></div>
+  </section>
+
+  <!-- ============ 20 · WHAT IS IMPECCABLE (explainer) ============ -->
+  <section class="slide s-anatomy">
+    <div class="meta-top"><span>Chapter IV · The 30-second explainer</span><span>If you've never used an AI coding tool</span></div>
+    <div class="stage">
+      <h2 class="display">If you've never used<br>an <span class="gold">AI coding tool</span>: here's the shape.</h2>
+
+      <div class="anatomy-row">
+        <div class="anatomy-block">
+          <span class="step-n">01 · Your editor</span>
+          <span class="step-t">An AI coding tool.</span>
+          <p class="step-b">Cursor. Claude Code. Codex. A code editor with an AI you talk to in plain English.</p>
+          <div class="step-visual">
+            <div class="logos">
+              <div class="chip"><img src="assets/logos/claude-logo.png" alt=""></div>
+              <div class="chip"><img src="assets/logos/cursor-logo.png" alt=""></div>
+              <div class="chip"><img src="assets/logos/openai-logo.png" alt=""></div>
+              <div class="chip"><img src="assets/logos/gemini-logo.png" alt=""></div>
+            </div>
+          </div>
+        </div>
+        <div class="anatomy-arrow"></div>
+        <div class="anatomy-block">
+          <span class="step-n">02 · A skill</span>
+          <span class="step-t">A package the agent loads.</span>
+          <p class="step-b">Impeccable is one. Installing it adds design vocabulary to the agent. Takes 30 seconds.</p>
+          <div class="step-visual">
+            <div class="terminal"><span class="gold">$</span> npx impeccable skills install</div>
+          </div>
+        </div>
+        <div class="anatomy-arrow"></div>
+        <div class="anatomy-block">
+          <span class="step-n">03 · A command</span>
+          <span class="step-t">Talk to it.</span>
+          <p class="step-b">Type a command in chat. The agent reads the skill, applies the change to your real code, shows the result.</p>
+          <div class="step-visual">
+            <div class="terminal"><span class="gold">›</span> /impeccable critique</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="close">You don't have to write code. The vocabulary is yours. The agent is the brush.</p>
+    </div>
+    <div class="meta-bot"><span>Three concepts, thirty seconds</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 21 · IMPECCABLE WORDMARK ============ -->
+  <section class="slide s-mark">
+    <div class="meta-top"><span>Chapter IV · The tool</span><span>Open source, design-first</span></div>
+    <div class="stage">
+      <h2 class="big-mark">Impeccable</h2>
+      <div class="double-notch" style="width:min(50vw,640px);"></div>
+      <p class="body" style="text-align:center;max-width:60ch;color:var(--muted);">A rule engine that catches the slop, and 23 adjective commands that give designers the wheel. Two halves of one open-source skill. Runs in twelve AI coding tools.</p>
+    </div>
+    <div class="meta-bot"><span>impeccable.style</span><span class="num">19 / 32</span></div>
+  </section>
+
+  <!-- ============ 22 · PERIODIC TABLE ============ -->
+  <section class="slide pt-slide">
+    <div class="meta-top"><span>Chapter IV · The tool</span><span>The 23 commands</span></div>
+    <div class="stage">
+      <div class="row-head">
+        <h2 class="headline">Twenty-three <span class="gold">adjective commands.</span></h2>
+        <div class="legend">
+          <span class="item"><span class="dot" style="background:oklch(84% 0.19 80.46);"></span>create</span>
+          <span class="item"><span class="dot" style="background:oklch(70% 0.12 188);"></span>evaluate</span>
+          <span class="item"><span class="dot" style="background:oklch(84% 0.055 84);"></span>refine</span>
+          <span class="item"><span class="dot" style="background:oklch(70% 0.096 72);"></span>simplify</span>
+          <span class="item"><span class="dot" style="background:oklch(58% 0.085 185);"></span>harden</span>
+          <span class="item"><span class="dot" style="background:oklch(58% 0.028 82);"></span>system</span>
+        </div>
+      </div>
+      <div class="pt-grid" id="ptable"></div>
+    </div>
+    <div class="meta-bot"><span>A vocabulary the agent can speak</span><span class="num">20 / 32</span></div>
+  </section>
+
+  <!-- ============ 23 · TWO REGISTERS ============ -->
+  <section class="slide registers-slide">
+    <div class="meta-top"><span>Chapter IV · The tool</span><span>Two registers</span></div>
+    <div class="stage">
+      <div class="row-head">
+        <h2 class="headline">Two registers. <span class="gold">One discipline.</span></h2>
+        <span class="label">Brand vs Product</span>
+      </div>
+      <div class="registers">
+        <div class="register brand">
+          <span class="reg-label">Register · Brand</span>
+          <div>
+            <div class="br-issue">Issue No. 14 · Editorial</div>
+            <div class="br-title">The case for <span class="gold">distinctiveness</span> over comfort.</div>
+            <div class="br-rule"></div>
+            <div class="br-byline">Long read · 12 min</div>
+          </div>
+          <div style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.24em;color:var(--faint);">Landing · Marketing · Editorial</div>
+        </div>
+        <div class="register product">
+          <span class="reg-label">Register · Product</span>
+          <div class="pr-bar">
+            <span class="dot"></span>
+            <span class="crumb">Projects</span>
+            <span style="color:var(--faint);">/</span>
+            <span class="crumb active">Issues</span>
+          </div>
+          <div class="pr-grid">
+            <div class="pr-side">
+              <span class="it on">Open</span>
+              <span class="it">Closed</span>
+              <span class="it">Backlog</span>
+              <span class="it">Done</span>
+            </div>
+            <div class="pr-main">
+              <div class="pr-table-row"><span class="ix">01</span><span>Audit color tokens for AA compliance</span><span class="stat">in review</span><span class="stat dim">→</span></div>
+              <div class="pr-table-row"><span class="ix">02</span><span>Compress empty-state copy</span><span class="stat">ready</span><span class="stat dim">→</span></div>
+              <div class="pr-table-row"><span class="ix">03</span><span>Refine settings hierarchy</span><span class="stat dim">draft</span><span class="stat dim">→</span></div>
+              <div class="pr-table-row"><span class="ix">04</span><span>Tighten table density on mobile</span><span class="stat">ready</span><span class="stat dim">→</span></div>
+              <div class="pr-table-row"><span class="ix">05</span><span>Replace gradient header w/ hairline</span><span class="stat">in review</span><span class="stat dim">→</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="close">Already running a design system? Setup reads it before touching anything: your tokens, your DESIGN.md, your component idioms. <span class="gold">/extract</span> reverse-engineers one from the UI you already have. The commands steer inside your system, not around it.</p>
+    </div>
+    <div class="meta-bot"><span>Different bars, same discipline</span><span class="num">21 / 32</span></div>
+  </section>
+
+  <!-- ============ 24 · TWELVE HARNESSES ============ -->
+  <section class="slide harness-slide">
+    <div class="meta-top"><span>Chapter IV · The tool</span><span>Twelve harnesses</span></div>
+    <div class="stage">
+      <h2 class="headline">Runs inside <span class="gold">twelve</span> AI coding tools.</h2>
+      <div class="harness-grid">
+        <div class="harness-cell gold"><div class="logo-chip"><img src="assets/logos/claude-logo.png" alt=""></div><span class="nm">Claude Code</span></div>
+        <div class="harness-cell"><div class="logo-chip"><img src="assets/logos/cursor-logo.png" alt=""></div><span class="nm">Cursor</span></div>
+        <div class="harness-cell"><div class="logo-chip"><img src="assets/logos/openai-logo.png" alt=""></div><span class="nm">Codex</span></div>
+        <div class="harness-cell"><div class="logo-chip"><img src="assets/logos/gemini-logo.png" alt=""></div><span class="nm">Gemini CLI</span></div>
+        <div class="harness-cell"><div class="logo-chip"><img src="assets/logos/github-logo.png" alt=""></div><span class="nm">Copilot</span></div>
+        <div class="harness-cell"><div class="logo-chip"><img src="assets/logos/antigravity-logo.png" alt=""></div><span class="nm">Antigravity</span></div>
+        <div class="harness-cell"><div class="logo-chip"><img src="assets/logos/kiro-logo.png" alt=""></div><span class="nm">Kiro</span></div>
+        <div class="harness-cell"><div class="logo-chip"><img src="assets/logos/opencode-logo.png" alt=""></div><span class="nm">OpenCode</span></div>
+        <div class="harness-cell"><div class="logo-chip"><img src="assets/logos/pi-logo.svg" alt=""></div><span class="nm">Pi</span></div>
+        <div class="harness-cell"><div class="logo-chip"><img src="assets/logos/windsurf-logo.png" alt=""></div><span class="nm">Windsurf</span></div>
+        <div class="harness-cell"><div class="logo-chip"><img src="assets/logos/cline-logo.png" alt=""></div><span class="nm">Cline</span></div>
+        <div class="harness-cell"><div class="logo-chip"><img src="assets/logos/aider-logo.png" alt=""></div><span class="nm">Aider</span></div>
+      </div>
+    </div>
+    <div class="meta-bot"><span>Open source · MIT</span><span class="num">22 / 32</span></div>
+  </section>
+
+  <!-- ============ 25 · SPLIT-SCREEN: code + live ============ -->
+  <section class="slide split-slide">
+    <div class="meta-top"><span>Chapter IV · The radical move</span><span>Code on the left, the thing on the right</span></div>
+    <div class="split">
+      <div class="editor">
+        <div class="winhead"><i></i><i></i><i></i></div>
+        <div class="prompt"><span class="gold">$</span> /impeccable bolder hero</div>
+        <div class="reply">→ scanning <em>site/pages/index.astro</em></div>
+        <div class="reply">→ found 1 hero, 3 components</div>
+        <div class="reply">→ applying <span class="gold">/bolder</span> · register: brand</div>
+        <div class="reply">↳ tightening tracking, lifting weight from 300 → 400</div>
+        <div class="reply">↳ adding kinpaku accent on lead phrase</div>
+        <div class="reply">↳ trimming sub-copy by ~28%</div>
+        <div class="reply"><span class="patina">●</span> live · waiting for confirmation<span class="caret"></span></div>
+      </div>
+      <div class="divider"></div>
+      <div class="runtime">
+        <div class="browser">
+          <div class="bar">
+            <span style="width:8px;height:8px;border-radius:50%;background:oklch(40% 0.1 25);display:block;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:oklch(50% 0.1 85);display:block;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:oklch(50% 0.1 145);display:block;"></span>
+            <span class="url">localhost:3000</span>
+          </div>
+          <div class="body">
+            <span class="label gold" style="font-size:9.5px;">A new release</span>
+            <div class="ttl">Tune interfaces<br>while they <span class="gold">run.</span></div>
+            <div class="bd">A design skill for AI agents. No canvas. No translation. Iterate against the running app.</div>
+            <span class="cta">Get the skill →</span>
+            <div class="live"><span class="pulse"></span>live · 1.2s ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="meta-bot" style="z-index:6;"><span style="color:rgba(255,250,245,0.6);">Live editor + live app</span><span class="num" style="color:var(--kinpaku);">23 / 32</span></div>
+  </section>
+
+  <!-- ============ 26 · OVERLAY CAPTION ON SPLIT ============ -->
+  <section class="slide split-slide">
+    <div class="meta-top"><span>Chapter IV · The radical move</span><span>The trade</span></div>
+    <div class="split">
+      <div class="editor" style="opacity:0.35;">
+        <div class="winhead"><i></i><i></i><i></i></div>
+        <div class="prompt"><span class="gold">$</span> /impeccable bolder hero</div>
+        <div class="reply">→ applying /bolder</div>
+        <div class="reply"><span class="patina">●</span> live</div>
+      </div>
+      <div class="divider"></div>
+      <div class="runtime" style="opacity:0.35;">
+        <div class="browser">
+          <div class="bar"><span class="url">localhost:3000</span></div>
+          <div class="body">
+            <div class="ttl">Tune interfaces<br>while they <span class="gold">run.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="overlay-caption">
+      <h2 class="display">No canvas. No handoff. <span class="gold">No translation.</span></h2>
+    </div>
+    <div class="meta-bot" style="z-index:6;"><span style="color:rgba(255,250,245,0.6);">Concede the discomfort, take the trade</span><span class="num" style="color:var(--kinpaku);">24 / 32</span></div>
+  </section>
+
+  <!-- ============ 27 · DEMO CARD ============ -->
+  <section class="slide demo-card-slide">
+    <div class="meta-top"><span>Chapter V · Demo</span><span>Live, on real code</span></div>
+    <div class="stage">
+      <span class="leaf-chip">Better to show than tell</span>
+      <h2 class="demo-mark" style="margin-top:32px;">Demo</h2>
+      <div class="anchor-rule" style="width:min(46vw,620px);margin-top:24px;"></div>
+    </div>
+    <div class="meta-bot"><span>Switch to the terminal</span><span class="num">25 / 32</span></div>
+  </section>
+
+  <!-- ============ 28 · WHAT YOU'RE ABOUT TO SEE ============ -->
+  <section class="slide demo-prev-slide">
+    <div class="meta-top"><span>Chapter V · Demo</span><span>What you're about to see</span></div>
+    <div class="stage">
+      <h2 class="headline">Three passes on the <span class="gold">2026 slop page.</span></h2>
+      <div class="preview-row">
+        <div class="preview-cell">
+          <div class="pv-art">
+            <div class="codeline" style="left:8%;top:18%;width:24%;"></div>
+            <div class="codeline gold-line" style="left:8%;top:30%;width:38%;"></div>
+            <div class="codeline" style="left:8%;top:42%;width:30%;"></div>
+            <div class="codeline" style="left:8%;top:54%;width:42%;"></div>
+            <div class="codeline patina-line" style="left:8%;top:66%;width:18%;"></div>
+            <div class="codeline" style="left:8%;top:78%;width:28%;"></div>
+          </div>
+          <div class="pv-meta">
+            <span class="pv-num">01</span>
+            <span class="pv-cmd">/impeccable critique</span>
+            <p class="pv-bd">The agent reviews the rendered page and calls out its own slop, rule by rule. Receipts on the next slide.</p>
+          </div>
+        </div>
+        <div class="preview-cell">
+          <div class="pv-art">
+            <div style="position:absolute;left:8%;right:8%;top:18%;height:18%;border:1px solid var(--gold-rule);"></div>
+            <div style="position:absolute;left:8%;right:48%;top:42%;height:14%;border:1px solid var(--kinpaku);"></div>
+            <div style="position:absolute;left:48%;right:8%;top:42%;height:14%;background:var(--graphite-2);"></div>
+            <div style="position:absolute;left:8%;right:8%;top:62%;height:24%;border:1px dashed var(--patina);"></div>
+          </div>
+          <div class="pv-meta">
+            <span class="pv-num">02</span>
+            <span class="pv-cmd">/impeccable live</span>
+            <p class="pv-bd">The small-change case: grab one element in the running app, drag the parameters, accept. No prompt ping-pong, no Figma.</p>
+          </div>
+        </div>
+        <div class="preview-cell">
+          <div class="pv-art">
+            <div style="position:absolute;left:14%;right:14%;top:14%;bottom:14%;border:1px solid var(--gold-rule);border-radius:2px;display:flex;align-items:center;justify-content:center;">
+              <div style="width:62%;height:1px;background:var(--kinpaku);box-shadow:0 0 18px oklch(84% 0.19 80.46 / 0.5);"></div>
+            </div>
+          </div>
+          <div class="pv-meta">
+            <span class="pv-num">03</span>
+            <span class="pv-cmd">chrome extension</span>
+            <p class="pv-bd">The always-on slop tripwire on any URL. The agent's last line of defense against itself.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="meta-bot"><span>Pre-run, so we are not watching a model think</span><span class="num">26 / 32</span></div>
+  </section>
+
+  <!-- ============ 29 · PRE-RUN: CRITIQUE RECEIPTS ============ -->
+  <section class="slide run-slide">
+    <div class="meta-top"><span>Chapter V · Demo</span><span>Pre-run · real output</span></div>
+    <div class="stage">
+      <h2 class="headline">What <span class="gold">/impeccable critique</span> said.</h2>
+      <div class="term">
+        <div class="winhead"><i></i><i></i><i></i></div>
+        <div><span class="rule">$</span> /impeccable critique <span class="dim">· the 2026 page you just saw</span></div>
+        <div><span class="rule">[icon-tile-stack]</span> 3× icon tile above a heading <span class="dim">· the universal AI feature-card template</span></div>
+        <div><span class="rule">[hero-eyebrow-chip]</span> tracked-caps eyebrow above an oversized hero headline</div>
+        <div><span class="rule">[overused-font]</span> Inter for UI, Fraunces for display <span class="dim">· the 2026 default pairing</span></div>
+        <div><span class="rule">[cream-palette]</span> the safe warm off-white, reached for by reflex</div>
+        <div><span class="rule">[tight-leading]</span> hero line-height 1.24 <span class="dim">· readable starts at 1.3</span></div>
+        <span class="verdict">● 8 findings · the page that "looks fine" fails five distinct rules</span>
+      </div>
+    </div>
+    <div class="meta-bot"><span>Real output, run the night before</span><span class="num">27 / 32</span></div>
+  </section>
+
+  <!-- ============ 30 · DEMO FALLBACK / RESULTS ============ -->
+  <section class="slide demo-prev-slide">
+    <div class="meta-top"><span>Chapter V · Demo</span><span>The before / after</span></div>
+    <div class="stage">
+      <h2 class="headline">The 2026 slop page, <span class="gold">recovered</span>.</h2>
+      <div class="preview-row">
+        <div class="preview-cell">
+          <div class="pv-art" style="background:linear-gradient(135deg,oklch(90% 0.02 95),oklch(85% 0.04 80));">
+            <div style="position:absolute;left:12%;right:12%;top:24%;height:14%;background:oklch(20% 0 0);border-radius:1px;"></div>
+            <div style="position:absolute;left:12%;right:36%;top:44%;height:6%;background:oklch(70% 0 0);"></div>
+            <div style="position:absolute;left:12%;right:42%;top:54%;height:5%;background:oklch(70% 0 0);"></div>
+            <div style="position:absolute;left:12%;top:70%;width:60px;height:18px;background:oklch(20% 0 0);border-radius:999px;"></div>
+          </div>
+          <div class="pv-meta">
+            <span class="pv-num" style="color:var(--faint);">Before</span>
+            <span class="pv-cmd" style="color:var(--muted);">2026 slop</span>
+            <p class="pv-bd">Inter 600. Tasteful neutrals. One accent button. Six other sites already look like this.</p>
+          </div>
+        </div>
+        <div class="preview-cell">
+          <div class="pv-art" style="background:linear-gradient(135deg,var(--lacquer-raised),var(--lacquer-deep));">
+            <div style="position:absolute;left:12%;right:12%;top:14%;height:1px;background:linear-gradient(90deg,var(--kinpaku),transparent 60%);"></div>
+            <div style="position:absolute;left:12%;right:30%;top:26%;height:14%;background:var(--champagne);border-radius:1px;"></div>
+            <div style="position:absolute;left:12%;right:55%;top:42%;height:5%;background:var(--muted);"></div>
+            <div style="position:absolute;left:12%;top:62%;width:90px;height:20px;background:var(--kinpaku);border-radius:2px;"></div>
+            <div style="position:absolute;left:12%;right:12%;bottom:14%;height:1px;background:var(--gold-rule);"></div>
+          </div>
+          <div class="pv-meta">
+            <span class="pv-num">After · /critique → /distill → /polish</span>
+            <span class="pv-cmd">2026 slop, recovered</span>
+            <p class="pv-bd">Same brief. Same content. Three commands. A page that looks like itself instead of every other one.</p>
+          </div>
+        </div>
+        <div class="preview-cell">
+          <div class="pv-art" style="background:linear-gradient(135deg,oklch(11% 0.012 82),var(--lacquer-deep));">
+            <div style="position:absolute;left:14%;right:14%;top:24%;height:8%;border-radius:2px;background:oklch(84% 0.19 80.46 / 0.1);border:1px solid var(--kinpaku);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;letter-spacing:0.2em;color:var(--kinpaku);">41/41 PASSED</div>
+            <div style="position:absolute;left:14%;right:14%;top:50%;display:flex;gap:4px;">
+              <span style="flex:1;height:2px;background:var(--kinpaku);"></span><span style="flex:1;height:2px;background:var(--kinpaku);"></span><span style="flex:1;height:2px;background:var(--kinpaku);"></span><span style="flex:1;height:2px;background:var(--kinpaku);"></span><span style="flex:1;height:2px;background:var(--kinpaku);"></span><span style="flex:1;height:2px;background:var(--kinpaku);"></span><span style="flex:1;height:2px;background:var(--kinpaku);"></span>
+            </div>
+            <div style="position:absolute;left:14%;right:14%;bottom:18%;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:0.18em;color:var(--patina);">DETECTOR · CLEAN</div>
+          </div>
+          <div class="pv-meta">
+            <span class="pv-num">Verdict</span>
+            <span class="pv-cmd">41 / 41 rules pass</span>
+            <p class="pv-bd">The detector that flagged the page on slide 12 finds nothing to flag now.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="meta-bot"><span>Receipts for the demo</span><span class="num">28 / 32</span></div>
+  </section>
+
+  <!-- ============ 31 · CHAIN REFORGED (call-back to slides 2 + 6) ============ -->
+  <section class="slide chain-slide">
+    <div class="meta-top"><span>Chapter VI · Close</span><span>The chain, reforged</span></div>
+    <div class="stage">
+      <svg class="chain-svg" viewBox="0 0 1320 220" xmlns="http://www.w3.org/2000/svg">
+        <g>
+          <!-- the spec handoff stays dead -->
+          <line class="link" x1="170" y1="110" x2="334" y2="110" stroke-dasharray="3 4" opacity="0.35"/>
+          <line class="link" x1="466" y1="110" x2="630" y2="110" stroke-dasharray="3 4" opacity="0.35"/>
+          <!-- dev → taste → ship, rejoined -->
+          <line class="link gold" x1="762" y1="110" x2="926" y2="110"/>
+          <line class="link gold" x1="1058" y1="110" x2="1222" y2="110"/>
+          <!-- kintsugi seam over the old break -->
+          <polyline points="852,102 862,118 872,100 882,120 894,106" fill="none" stroke="oklch(84% 0.19 80.46)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <g opacity="0.35">
+          <circle class="node-fill" cx="100" cy="110" r="44"/>
+          <text x="100" y="115" text-anchor="middle">Figma</text>
+        </g>
+        <g opacity="0.35">
+          <circle class="node-fill" cx="400" cy="110" r="44"/>
+          <text x="400" y="115" text-anchor="middle">Spec</text>
+        </g>
+        <g>
+          <circle class="node-fill gold" cx="696" cy="110" r="44"/>
+          <text x="696" y="115" text-anchor="middle" style="fill:oklch(86% 0.07 84);">Dev</text>
+          <text x="696" y="190" text-anchor="middle" style="font-size:13px;letter-spacing:0.16em;fill:oklch(72% 0 0);">+ AI</text>
+        </g>
+        <g>
+          <circle class="node-fill gold" cx="992" cy="110" r="44"/>
+          <text x="992" y="115" text-anchor="middle" style="fill:oklch(86% 0.07 84);">Taste</text>
+          <text x="992" y="190" text-anchor="middle" style="font-size:13px;letter-spacing:0.16em;fill:oklch(84% 0.19 80.46);">inside the loop</text>
+        </g>
+        <g>
+          <circle class="node-fill gold" cx="1266" cy="110" r="44"/>
+          <text x="1266" y="115" text-anchor="middle" style="fill:oklch(86% 0.07 84);">Ship</text>
+          <text x="1266" y="190" text-anchor="middle" style="font-size:13px;letter-spacing:0.16em;fill:oklch(72% 0 0);">production</text>
+        </g>
+      </svg>
+      <p class="caption">Dev plus AI still ships straight to production. But <span class="gold">someone with taste</span> sits in between again. The break, repaired in gold.</p>
+    </div>
+    <div class="meta-bot"><span>Kintsugi, literally</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 32 · TAKEAWAY ============ -->
+  <section class="slide s-bet">
+    <div class="meta-top"><span>Chapter VI · Close</span><span>One sentence</span></div>
+    <div class="stage">
+      <h2 class="display">Killing the handoff<br>doesn't mean killing<br>the <span class="gold">critique.</span></h2>
+      <p class="tag">It means putting it inside the same loop that ships the code.</p>
+    </div>
+    <div class="meta-bot"><span>One thing to remember</span><span class="num">29 / 32</span></div>
+  </section>
+
+  <!-- ============ 33 · TRY IT THIS WEEK ============ -->
+  <section class="slide try-slide">
+    <div class="meta-top"><span>Chapter VI · Close</span><span>What to do Monday</span></div>
+    <div class="stage">
+      <h2 class="headline">Three commands. <span class="gold">Ten minutes.</span></h2>
+      <div class="try-steps">
+        <div class="try-step">
+          <span class="step-n">01 · Install</span>
+          <span class="step-t">Add the skill to your harness.</span>
+          <code class="step-c">npx impeccable skills install</code>
+          <p class="step-b">Adds /impeccable to Claude Code, Cursor, Codex, and nine more.</p>
+        </div>
+        <div class="try-step">
+          <span class="step-n">02 · Critique</span>
+          <span class="step-t">Have the agent review a real page.</span>
+          <code class="step-c">/impeccable critique</code>
+          <p class="step-b">Point it at the page you're least proud of. See the receipts.</p>
+        </div>
+        <div class="try-step">
+          <span class="step-n">03 · Iterate</span>
+          <span class="step-t">Tune it in the browser, live.</span>
+          <code class="step-c">/impeccable live</code>
+          <p class="step-b">Real responsive behavior. Real components. No round-trip.</p>
+        </div>
+      </div>
+    </div>
+    <div class="meta-bot"><span>Monday morning, before standup</span><span class="num">30 / 32</span></div>
+  </section>
+
+  <!-- ============ 34 · Q&A ============ -->
+  <section class="slide qa-slide">
+    <div class="meta-top"><span>Chapter VI · Q&amp;A</span><span>Now, the hard part</span></div>
+    <div class="stage">
+      <span class="label">Push back. Tell me where this breaks.</span>
+      <h2 class="display"><span class="patina">Questions?</span></h2>
+      <p class="sub">Especially the ones that start with "but what about" or "I don't buy that". Those are the ones I want.</p>
+    </div>
+    <div class="meta-bot"><span>End of talk</span><span class="num">31 / 32</span></div>
+  </section>
+
+  <!-- ============ 35 · THANK YOU ============ -->
+  <section class="slide ty-slide">
+    <div class="meta-top"><span>End</span><span>Thank you</span></div>
+    <div class="stage">
+      <h2 class="display">Thank <span class="gold">you.</span></h2>
+      <dl class="signoff">
+        <div><dt>Try it</dt><dd>impeccable.style</dd></div>
+        <div><dt>Source</dt><dd>github.com / pbakaus / impeccable</dd></div>
+        <div><dt>Reach me</dt><dd>paul@renaissance-geek.ai</dd></div>
+      </dl>
+    </div>
+    <div class="meta-bot"><span>Killing the handoff</span><span class="num">32 / 32</span></div>
+  </section>
+
+</div>
+
+<div class="progress" id="progress"></div>
+<div class="navhint">← / → / space · click dots · f for fullscreen</div>
+
+<script>
+  // ============ Catalog data — REAL rules from cli/engine/registry/antipatterns.mjs
+  //                                + LLM_ONLY_RULES from site/data/anti-patterns-catalog.js
+  // Tile = [name, layer ('det' | 'llm'), visual-spec]
+  // LLM tiles get the gold treatment because they're exactly what /critique exists for.
+  const CATALOG = [
+    // ── Slop (deterministic, 16) ──
+    ["Side-tab accent border",          "det", { img: "thick-border-cards.png" }],
+    ["Border accent on rounded",        "det", { sm: "sm-sidetab" }],
+    ["Overused font",                   "det", { img: "inter-everywhere.png" }],
+    ["Single font for everything",      "det", { sm: "sm-inter" }],
+    ["Flat type hierarchy",             "det", { sm: "sm-flat-hier" }],
+    ["Gradient text",                   "det", { sm: "sm-gradient-mc" }],
+    ["AI color palette",                "det", { img: "purple-gradients.png" }],
+    ["Nested cards",                    "det", { img: "cardocalypse.png" }],
+    ["Monotonous spacing",              "det", { sm: "sm-templates" }],
+    ["Everything centered",             "det", { sm: "sm-centered" }],
+    ["Bounce / elastic easing",         "det", { sm: "sm-bounce" }],
+    ["Dark mode + glowing accents",     "det", { sm: "sm-glow" }],
+    ["Icon tile above heading",         "det", { img: "massive-icons.png" }],
+    ["Italic serif display",            "det", { sm: "sm-italic" }],
+    ["Hero eyebrow / pill chip",        "det", { sm: "sm-eyebrow" }],
+    ["Repeated section kickers",        "det", { sm: "sm-kickers" }],
+    // ── Quality (deterministic, 12) ──
+    ["Gray text on color",              "det", { img: "bad-contrast.png" }],
+    ["Low contrast text",               "det", { sm: "sm-bad-contrast" }],
+    ["Layout property animation",       "det", { sm: "sm-layout-anim" }],
+    ["Line length too long",            "det", { sm: "sm-long-line" }],
+    ["Cramped padding",                 "det", { sm: "sm-cramped" }],
+    ["Text touching viewport edge",     "det", { sm: "sm-edge" }],
+    ["Tight line height",               "det", { sm: "sm-tight-leading" }],
+    ["Skipped heading level",           "det", { sm: "sm-skipped-h" }],
+    ["Justified text",                  "det", { sm: "sm-justified" }],
+    ["Tiny body text",                  "det", { sm: "sm-tiny" }],
+    ["All-caps body text",              "det", { sm: "sm-all-caps" }],
+    ["Wide letter spacing on body",     "det", { sm: "sm-tracked" }],
+    // ── LLM only (12) — highlighted in gold ──
+    ["Monospace as 'technical'",        "llm", { sm: "sm-mono-tech" }],
+    ["Default dark mode for 'safety'",  "llm", { sm: "sm-dark-default" }],
+    ["Wrapping everything in cards",    "llm", { sm: "sm-cards" }],
+    ["Identical card grids",            "llm", { sm: "sm-id-grid" }],
+    ["Hero metric layout",              "llm", { sm: "sm-stats" }],
+    ["Glassmorphism everywhere",        "llm", { sm: "sm-glass" }],
+    ["Sparklines as decoration",        "llm", { sm: "sm-spark" }],
+    ["Rect + generic drop shadow",      "llm", { sm: "sm-drop-shadow" }],
+    ["Reaching for modals by reflex",   "llm", { img: "modal-abuse.png" }],
+    ["Every button is primary",         "llm", { sm: "sm-all-primary" }],
+    ["Redundant headers / copy",        "llm", { img: "redundant-ux-writing.png" }],
+    ["Amputating mobile features",      "llm", { sm: "sm-mobile-amp" }],
+  ];
+  const catalog = document.getElementById('catalog');
+  CATALOG.forEach(([name, layer, spec], i) => {
+    const t = document.createElement('div');
+    t.className = 'catalog-tile' + (layer === 'llm' ? ' gold' : '');
+    const sampleCls = spec.img ? 'sample img' : 'sample ' + spec.sm;
+    const sampleStyle = spec.img ? ' style="background-image:url(assets/patterns/' + spec.img + ')"' : '';
+    t.innerHTML =
+      '<div class="' + sampleCls + '"' + sampleStyle + '></div>' +
+      '<div class="meta">' +
+        '<span class="num">' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<span class="name">' + name + '</span>' +
+      '</div>';
+    catalog.appendChild(t);
+  });
+
+  // ============ Periodic table data ============
+  const PT = [
+    { sym: 'Cf', name: 'craft',     cat: 'create' },
+    { sym: 'Sh', name: 'shape',     cat: 'create' },
+    { sym: 'Cr', name: 'critique',  cat: 'evaluate' },
+    { sym: 'Au', name: 'audit',     cat: 'evaluate' },
+    { sym: 'Ty', name: 'typeset',   cat: 'refine' },
+    { sym: 'La', name: 'layout',    cat: 'refine' },
+    { sym: 'Co', name: 'colorize',  cat: 'refine' },
+    { sym: 'An', name: 'animate',   cat: 'refine' },
+    { sym: 'De', name: 'delight',   cat: 'refine' },
+    { sym: 'Bo', name: 'bolder',    cat: 'refine' },
+    { sym: 'Qu', name: 'quieter',   cat: 'refine' },
+    { sym: 'Od', name: 'overdrive', cat: 'refine' },
+    { sym: 'Di', name: 'distill',   cat: 'simplify' },
+    { sym: 'Cl', name: 'clarify',   cat: 'simplify' },
+    { sym: 'Ad', name: 'adapt',     cat: 'simplify' },
+    { sym: 'Po', name: 'polish',    cat: 'harden' },
+    { sym: 'Op', name: 'optimize',  cat: 'harden' },
+    { sym: 'Ha', name: 'harden',    cat: 'harden' },
+    { sym: 'On', name: 'onboard',   cat: 'harden' },
+    { sym: 'Te', name: 'teach',     cat: 'system' },
+    { sym: 'Dc', name: 'document',  cat: 'system' },
+    { sym: 'Ex', name: 'extract',   cat: 'system' },
+    { sym: 'Li', name: 'live',      cat: 'system' },
+  ];
+  const ptable = document.getElementById('ptable');
+  PT.forEach((c, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'pt-cell ' + c.cat;
+    cell.innerHTML = '<span class="pt-num">' + String(i + 1).padStart(2, '0') + '</span>' +
+                     '<span class="pt-sym">' + c.sym + '</span>' +
+                     '<span class="pt-name">/' + c.name + '</span>';
+    ptable.appendChild(cell);
+  });
+
+  // ============ Deck nav ============
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const progress = document.getElementById('progress');
+  let idx = 0;
+
+  // Auto-number slides so the deck doesn't have hand-maintained page numbers
+  const total = String(slides.length).padStart(2, '0');
+  slides.forEach((s, i) => {
+    const numEl = s.querySelector('.meta-bot .num');
+    if (numEl) numEl.textContent = String(i + 1).padStart(2, '0') + ' / ' + total;
+  });
+
+  slides.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+    b.addEventListener('click', () => go(i));
+    progress.appendChild(b);
+  });
+
+  function go(n) {
+    idx = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    Array.from(progress.children).forEach((b, i) => b.classList.toggle('active', i === idx));
+    history.replaceState(null, '', '#' + (idx + 1));
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'l' || e.key === 'j') { e.preventDefault(); go(idx + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'h' || e.key === 'k') { e.preventDefault(); go(idx - 1); }
+    else if (e.key === 'Home') { go(0); }
+    else if (e.key === 'End') { go(slides.length - 1); }
+    else if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.progress')) return;
+    if (e.target.closest('a')) return;
+    if (e.target.closest('iframe')) return;
+    const half = window.innerWidth / 2;
+    if (e.clientX > half) go(idx + 1); else go(idx - 1);
+  });
+
+  const fromHash = parseInt((location.hash || '#1').slice(1), 10);
+  if (!Number.isNaN(fromHash)) go(fromHash - 1);
+  else go(0);
+</script>
+</body>
+</html>

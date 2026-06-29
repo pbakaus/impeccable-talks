@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Design at the Speed of Adjectives / Impeccable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700&family=Alumni+Sans:wght@400;500;600;700&family=Alumni+Sans+Pinstripe&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Surfaces — lacquer ground */
+    --lacquer:        oklch(7%  0.006 95);
+    --lacquer-deep:   oklch(4%  0.004 95);
+    --lacquer-raised: oklch(11% 0.006 95);
+    --graphite:       oklch(15% 0.008 95);
+    --graphite-2:     oklch(19% 0.008 95);
+
+    /* Gold system — kinpaku */
+    --kinpaku:        oklch(84% 0.19  80.46);
+    --kinpaku-deep:   oklch(61% 0.085 78);
+    --kinpaku-pale:   oklch(86% 0.07  84);
+    --gold-rule:        oklch(58% 0.065 82 / 0.42);
+    --gold-rule-strong: oklch(74% 0.09  82 / 0.62);
+    --gold-wash:        oklch(84% 0.19  80.46 / 0.10);
+
+    /* Patina + alarm */
+    --patina:    oklch(70% 0.12 188);
+    --oxide:     oklch(49% 0.08 188);
+    --vermilion: oklch(60% 0.16 35);
+
+    /* Neutral bright ramp */
+    --champagne: oklch(92% 0 0);
+    --text:      oklch(87% 0 0);
+    --muted:     oklch(70% 0 0);
+    --faint:     oklch(58% 0 0);
+    --ghost:     oklch(44% 0 0);
+
+    --font:      "Albert Sans", "Avenir Next", "Helvetica Neue", Arial, system-ui, sans-serif;
+    --font-disp: "Alumni Sans Pinstripe", "Alumni Sans", Arial, sans-serif;
+    --font-head: "Alumni Sans", "Albert Sans", Arial, sans-serif;
+    --mono:      ui-monospace, "SF Mono", "SFMono-Regular", "JetBrains Mono", Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    color: var(--text);
+    font-family: var(--font);
+    font-weight: 400;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+    background:
+      radial-gradient(120% 90% at 78% 8%, oklch(12% 0.01 90 / 0.55), transparent 60%),
+      radial-gradient(120% 120% at 12% 100%, oklch(9% 0.012 95 / 0.5), transparent 55%),
+      linear-gradient(180deg, var(--lacquer), var(--lacquer-deep));
+  }
+  /* fine lacquer grain, fully inline so the deck is self-contained */
+  body::after {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9;
+    opacity: 0.05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* progress hairline */
+  #prog { position: fixed; top: 0; left: 0; height: 2px; width: 0; z-index: 20;
+    background: linear-gradient(90deg, var(--kinpaku-deep), var(--kinpaku)); transition: width .4s ease; }
+
+  /* ============ Deck shell ============ */
+  .deck { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute; inset: 0;
+    padding: clamp(40px, 4.4vw, 76px) clamp(44px, 6vw, 116px);
+    display: none; flex-direction: column;
+  }
+  .slide.active { display: flex; animation: rise .5s cubic-bezier(.2,.7,.2,1); }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  /* Title slide — full-bleed kintsugi hero (gold seam + verdigris + the
+     measurement ruler that rhymes with the deck's altitude spectrum).
+     Left scrim keeps the title text legible over the dark lacquer zone. */
+  .s-title {
+    background-image:
+      linear-gradient(90deg, oklch(4% 0.004 95 / 0.86) 0%, oklch(4% 0.004 95 / 0.52) 30%, oklch(4% 0.004 95 / 0.12) 52%, transparent 70%),
+      url("assets/kintsugi-hero-diagonal.png");
+    background-size: cover, cover;
+    background-position: center, center;
+    background-repeat: no-repeat;
+  }
+  .s-title .stage { max-width: 70%; }
+  .s-title .lede, .s-title .credits dd { text-shadow: 0 1px 18px oklch(4% 0 0 / 0.6); }
+
+  /* ===== Full-bleed slop page + caption overlay (reused handoff pattern) ===== */
+  .s-bleed { padding: 0; background: var(--lacquer); }
+  .s-bleed .frame { position: absolute; inset: 0; overflow: hidden; }
+  .s-bleed .frame iframe {
+    position: absolute; top: 0; left: 0;
+    width: 142.857%; height: 142.857%;
+    transform: scale(0.7); transform-origin: 0 0;
+    border: 0; background: white;
+  }
+  .s-bleed .vignette {
+    position: absolute; inset: 0; pointer-events: none; z-index: 2;
+    background:
+      linear-gradient(180deg, oklch(5% 0.004 70 / 0.5) 0%, transparent 15%, transparent 42%, oklch(4% 0.004 70 / 0.95) 100%),
+      linear-gradient(90deg, oklch(4% 0.004 70 / 0.7) 0%, transparent 48%);
+  }
+  .s-bleed .vignette.heavy {
+    background:
+      linear-gradient(180deg, oklch(4% 0.004 70 / 0.64) 0%, oklch(4% 0.004 70 / 0.42) 38%, oklch(3% 0.004 70 / 0.97) 100%),
+      linear-gradient(90deg, oklch(4% 0.004 70 / 0.88) 0%, transparent 62%);
+  }
+  .s-bleed .overlay-stage {
+    position: absolute; z-index: 3;
+    left: clamp(44px, 6vw, 116px); right: clamp(44px, 6vw, 116px);
+    bottom: clamp(60px, 7.5vw, 112px); max-width: 900px;
+  }
+  .s-bleed .overlay-stage .sub {
+    margin-top: 20px; font-family: var(--font); font-weight: 300;
+    font-size: clamp(15px, 1.4vw, 21px); line-height: 1.5; color: var(--muted); max-width: 50ch;
+  }
+  .s-bleed .overlay-stage .sub em { color: var(--kinpaku); font-style: normal; }
+  .s-bleed .overlay-stage .sub strong { color: var(--champagne); font-weight: 600; }
+  .prompt-strip {
+    position: absolute; z-index: 3; top: clamp(62px, 7vw, 94px); left: 50%; transform: translateX(-50%);
+    width: min(640px, 84%); display: flex; align-items: center; gap: 13px;
+    border: 1px solid var(--gold-rule); border-radius: 13px;
+    background: oklch(8% 0.005 95 / 0.82); backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+    padding: 14px 18px; box-shadow: 0 18px 50px -18px oklch(0% 0 0 / 0.7);
+  }
+  .prompt-strip .pc { color: var(--kinpaku); font-family: var(--mono); font-size: 17px; }
+  .prompt-strip .pt { flex: 1; font-family: var(--font); font-size: clamp(13px,1.05vw,17px); color: var(--text); }
+  .prompt-strip .ps { font-family: var(--mono); color: var(--faint); border: 1px solid var(--gold-rule); border-radius: 6px; padding: 4px 10px; font-size: 12px; }
+
+  .stage { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+  .stage.center { align-items: center; text-align: center; }
+
+  /* ============ Chrome ============ */
+  .meta-top, .meta-bot {
+    position: absolute; left: clamp(44px, 6vw, 116px); right: clamp(44px, 6vw, 116px);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--faint); z-index: 5;
+  }
+  .meta-top { top: clamp(26px, 3vw, 40px); }
+  .meta-bot { bottom: clamp(26px, 3vw, 40px); }
+  .meta-bot .num { color: var(--kinpaku); font-weight: 500; }
+  .meta-bot .num::before {
+    content: ""; display: inline-block; width: 14px; height: 1px; background: var(--gold-rule-strong);
+    vertical-align: middle; margin-right: 10px;
+  }
+  .meta-top .ch { color: var(--kinpaku-deep); }
+
+  /* brand lockup */
+  .brand-lockup { display: inline-flex; align-items: center; gap: 9px; color: var(--kinpaku); text-decoration: none; }
+  .brand-lockup svg { width: 16px; height: 16px; display: block; }
+  .brand-lockup .wm { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--champagne); }
+
+  /* Persistent corner chrome — logo top-left, talk title bottom-left (all slides but the title) */
+  .deck-brand { position: fixed; z-index: 6; top: clamp(24px,3vw,40px); left: clamp(44px,6vw,116px);
+    display: inline-flex; align-items: center; gap: 10px; color: var(--kinpaku); }
+  .deck-brand svg { width: 26px; height: 26px; display: block; }
+  .deck-brand .wm { font-family: var(--mono); font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--champagne); }
+  .deck-foot { position: fixed; z-index: 6; bottom: clamp(24px,3vw,40px); left: clamp(44px,6vw,116px);
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--faint); }
+  .deck:has(.s-title.active) .deck-brand, .deck:has(.s-title.active) .deck-foot { display: none; }
+  /* content slides: chapter -> top-right, page number -> bottom-right, drop the duplicate labels */
+  .slide:not(.s-title) .meta-top { justify-content: flex-end; }
+  .slide:not(.s-title) .meta-top > span:last-child { display: none; }
+  .slide:not(.s-title) .meta-bot { justify-content: flex-end; }
+  .slide:not(.s-title) .meta-bot > span:first-child { display: none; }
+
+  /* ============ Type scale ============ */
+  .kicker { font-family: var(--mono); font-size: clamp(11px,0.85vw,13px); font-weight: 500;
+    letter-spacing: 0.24em; text-transform: uppercase; color: var(--kinpaku); margin-bottom: 26px; }
+  .kicker.patina { color: var(--patina); }
+
+  .display { font-family: var(--font-disp); font-weight: 300;
+    font-size: clamp(50px, 7vw, 128px); line-height: 1.0; letter-spacing: 0.004em; color: var(--champagne); }
+  .display .gold   { color: var(--kinpaku); }
+  .display .patina { color: var(--patina); }
+  .display .ghost  { color: var(--ghost); }
+
+  .headline { font-family: var(--font-head); font-weight: 400;
+    font-size: clamp(32px, 4.1vw, 60px); line-height: 1.08; letter-spacing: -0.005em; color: var(--champagne); }
+  .headline .gold   { color: var(--kinpaku); font-weight: 500; }
+  .headline .faint  { color: var(--faint); font-weight: 400; }
+  .headline .patina { color: var(--patina); font-weight: 500; }
+
+  .lede { font-family: var(--font); font-weight: 300; font-size: clamp(17px,1.6vw,24px);
+    line-height: 1.5; color: var(--muted); max-width: 40ch; margin-top: 26px; }
+
+  .body { font-family: var(--font); font-size: clamp(15px,1.12vw,18.5px); line-height: 1.72;
+    color: var(--text); max-width: 60ch; }
+  .body em { color: var(--kinpaku); font-style: normal; }
+  .body strong { color: var(--champagne); font-weight: 600; }
+  .body.lg { font-size: clamp(17px,1.35vw,21px); max-width: 52ch; }
+
+  .caption { font-family: var(--font); font-size: clamp(14px,1.05vw,17px); line-height: 1.6;
+    color: var(--muted); max-width: 56ch; }
+  .caption em { color: var(--kinpaku); font-style: normal; }
+
+  /* dividers */
+  .anchor-rule { color: var(--kinpaku); display: flex; align-items: center; height: 13px; }
+  .anchor-rule::before { content: ""; width: 11px; height: 11px; border: 1.5px solid currentColor; border-radius: 50%; flex: none; }
+  .anchor-rule::after  { content: ""; flex: 1; height: 1.5px; background: currentColor; }
+  .double-notch { position: relative; height: 8px; color: var(--kinpaku); }
+  .double-notch::before, .double-notch::after { content: ""; position: absolute; left: 0; right: 0; height: 1.5px; background: currentColor; }
+  .double-notch::before { top: 0; background: linear-gradient(90deg, currentColor 0 9%, transparent 9% 11.5%, currentColor 11.5%); }
+  .double-notch::after  { bottom: 0; }
+
+  /* title credits */
+  .credits { display: flex; gap: clamp(28px,4vw,64px); margin-top: 30px; }
+  .credits dt { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--faint); margin-bottom: 6px; }
+  .credits dd { font-size: 15px; color: var(--text); }
+  .credits dd a { color: var(--kinpaku); text-decoration: none; }
+
+  /* ===================================================================
+     Spectrum — the recurring spine (pixels / adjectives / prompts)
+     =================================================================== */
+  .spectrum { position: relative; width: min(1060px, 94%); margin: 8px auto 0; display: grid; grid-template-columns: 1fr 1fr 1fr; }
+  .spectrum .line { position: absolute; left: 16.66%; right: 16.66%; top: 28px; height: 2px; z-index: 0;
+    background: linear-gradient(90deg, var(--faint), var(--gold-rule-strong) 50%, var(--faint)); }
+  .station { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 22px; }
+  .station .glyph { height: 56px; display: flex; align-items: center; justify-content: center; }
+  .station .name { font-family: var(--mono); font-size: clamp(12px,1.05vw,15px); font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+  .station .sub  { font-family: var(--font); font-size: clamp(12px,0.95vw,14.5px); color: var(--faint); max-width: 19ch; line-height: 1.45; }
+  .station.dim { opacity: 0.46; }
+  .station.gold .name { color: var(--kinpaku); }
+  .station.gold .sub  { color: var(--kinpaku-pale); }
+
+  /* pixels glyph — many tiny ticks (over-granular) */
+  .g-ticks { display: flex; gap: 5px; align-items: center; }
+  .g-ticks i { width: 2px; height: 26px; background: var(--muted); display: block; }
+  /* prompts glyph — one coarse blob (over-sweeping) */
+  .g-disc { width: 46px; height: 46px; border-radius: 50%; background: radial-gradient(circle at 38% 34%, oklch(70% 0 0 / .55), oklch(50% 0 0 / .18)); border: 1px solid oklch(60% 0 0 / .35); }
+  /* adjectives glyph — the precise gold node */
+  .g-node { width: 26px; height: 26px; border-radius: 50%; background: var(--kinpaku);
+    box-shadow: 0 0 0 7px transparent, 0 0 0 8px var(--gold-rule-strong), 0 0 32px 4px oklch(84% 0.19 80.46 / .35); }
+  .g-node.you { position: relative; }
+  .g-node.you::after { content: "▾"; position: absolute; top: -30px; left: 50%; transform: translateX(-50%); color: var(--kinpaku); font-size: 16px; }
+  /* adjectives glyph — unknown (frame state) */
+  .g-q { width: 50px; height: 50px; border-radius: 50%; border: 1.5px dashed var(--gold-rule-strong);
+    display: flex; align-items: center; justify-content: center; color: var(--kinpaku); font-family: var(--font-head); font-size: 26px; }
+
+  /* ===================================================================
+     Slide 5 — the old tool (sliders + pickers), deliberately muted
+     =================================================================== */
+  .oldtool { width: min(560px, 92%); border: 1px solid var(--gold-rule); border-radius: 14px;
+    background: linear-gradient(180deg, var(--lacquer-raised), oklch(8% 0.005 95)); padding: 26px 30px; opacity: 0.92; }
+  .ot-head { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--faint); margin-bottom: 20px; }
+  .ot-row { display: grid; grid-template-columns: 92px 1fr 38px; align-items: center; gap: 16px; padding: 11px 0; border-top: 1px solid oklch(20% 0 0); }
+  .ot-row:first-of-type { border-top: 0; }
+  .ot-label { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; }
+  .ot-track { position: relative; height: 3px; border-radius: 2px; background: var(--graphite-2); }
+  .ot-track i { position: absolute; top: 50%; width: 14px; height: 14px; border-radius: 50%; background: var(--faint); border: 2px solid var(--lacquer-raised); transform: translate(-50%,-50%); }
+  .ot-val { font-family: var(--mono); font-size: 12px; color: var(--faint); text-align: right; }
+  .ot-swatches { display: flex; gap: 8px; }
+  .ot-swatches b { width: 22px; height: 22px; border-radius: 5px; display: block; border: 1px solid oklch(30% 0 0 / .6); }
+
+  /* ===================================================================
+     Slide 6 — the prompt box + a plausible, empty result
+     =================================================================== */
+  .promptbox { width: min(620px, 94%); display: flex; align-items: center; gap: 14px;
+    border: 1px solid var(--gold-rule); border-radius: 13px; background: var(--lacquer-raised); padding: 17px 20px; }
+  .promptbox .pc { color: var(--kinpaku); font-family: var(--mono); font-size: 18px; }
+  .promptbox .pt { flex: 1; font-family: var(--font); font-size: clamp(14px,1.15vw,18px); color: var(--text); }
+  .promptbox .ps { font-family: var(--mono); color: var(--faint); border: 1px solid var(--gold-rule); border-radius: 6px; padding: 3px 9px; font-size: 12px; }
+  .pb-arrow { color: var(--ghost); font-size: 22px; margin: 16px 0; }
+  /* the generic cream result — looks finished, says nothing */
+  .slop-card { width: min(440px, 90%); border-radius: 12px; overflow: hidden; box-shadow: 0 24px 60px -20px oklch(0% 0 0 / .6);
+    background: oklch(96% 0.012 92); color: oklch(26% 0.02 64); }
+  .slop-card .sc-nav { display: flex; justify-content: space-between; align-items: center; padding: 13px 18px; font-size: 11px; color: oklch(45% 0.02 60); }
+  .slop-card .sc-nav b { font-family: var(--font); font-weight: 700; letter-spacing: 0.02em; }
+  .slop-card .sc-dots { display: flex; gap: 14px; }
+  .slop-card .sc-body { padding: 26px 26px 30px; }
+  .slop-card .sc-h { font-family: "Alumni Sans", Georgia, serif; font-style: italic; font-weight: 400; font-size: 34px; line-height: 1.04; color: oklch(24% 0.03 60); margin-bottom: 14px; }
+  .slop-card .sc-p { font-size: 12.5px; line-height: 1.55; color: oklch(45% 0.02 60); max-width: 34ch; margin-bottom: 18px; }
+  .slop-card .sc-btn { display: inline-block; background: oklch(30% 0.03 60); color: oklch(95% 0.01 90); font-size: 12px; padding: 9px 18px; border-radius: 999px; }
+
+  /* ===================================================================
+     Slide 9 — the brief, as questions
+     =================================================================== */
+  .brief { width: min(720px, 94%); display: flex; flex-direction: column; gap: 0; }
+  .brief .q { display: flex; align-items: baseline; gap: 18px; padding: 22px 4px; border-bottom: 1px solid oklch(22% 0.004 90); }
+  .brief .q:last-child { border-bottom: 0; }
+  .brief .q .dot { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--kinpaku); flex: none; transform: translateY(-2px); }
+  .brief .q .txt { font-family: var(--font-head); font-weight: 400; font-size: clamp(22px,2.7vw,40px); line-height: 1.12; color: var(--champagne); }
+
+  /* ===================================================================
+     Slide 12 — the three director commands
+     =================================================================== */
+  /* Slide 12 — the adjective wall (the vocabulary itself, as hero) */
+  .adjwall { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.16em 0.5em; max-width: 26ch;
+    font-family: var(--font-disp); font-weight: 300; font-size: clamp(30px,4vw,68px); line-height: 1.0;
+    color: var(--champagne); margin: 12px 0 8px; }
+  .adjwall b { color: var(--kinpaku); font-weight: 400; }
+  .adjwall .xs { font-size: 0.52em; color: var(--faint); }
+  .adjwall .sm { font-size: 0.72em; color: var(--muted); }
+  .adjwall .lg { font-size: 1.18em; }
+
+  /* ===================================================================
+     Slide 13 — the quadrant (why the adjective is the right altitude)
+     =================================================================== */
+  .quad-wrap { display: flex; gap: clamp(30px,5vw,80px); align-items: center; flex-wrap: wrap; }
+  .quad { width: min(680px, 94%); }
+  .quad svg { width: 100%; height: auto; display: block; }
+
+  /* ===================================================================
+     Slide 15 — same brief (a debut fragrance), baseline + three adjectives
+     =================================================================== */
+  .passes { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(11px,1.5vw,22px); width: 100%; }
+  .pass { display: flex; flex-direction: column; gap: 11px; }
+  .pass .tag { font-family: var(--mono); font-size: clamp(11px,0.95vw,14px); letter-spacing: 0.1em; color: var(--kinpaku); }
+  .pass .tag.base { color: var(--faint); }
+  .mini { aspect-ratio: 3 / 4; border-radius: 12px; overflow: hidden; padding: clamp(13px,1.25vw,20px); display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 22px 54px -30px oklch(0% 0 0 / .72); }
+  .mini .mt { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; }
+
+  /* baseline — the model's default: cream, serif, eyebrow, pill. plausible + empty */
+  .mini.base { background: linear-gradient(180deg, #faf7f0, #f0ede4); color: #4f5a51; align-items: center; text-align: center; border: 1px solid #e1e4d9; }
+  .mini.base .eb { font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: #8a6a40; }
+  .mini.base .bh { font-family: "Alumni Sans", Georgia, serif; font-style: italic; font-weight: 400; font-size: clamp(17px,1.85vw,25px); line-height: 1.04; color: #2a2a26; }
+  .mini.base .bp { font-size: 8.5px; color: #6a6256; line-height: 1.5; max-width: 22ch; }
+  .mini.base .bpill { font-size: 8.5px; background: #1f1a15; color: #faf7f0; padding: 6px 14px; border-radius: 999px; }
+
+  /* bolder — dark, loud, vermilion */
+  .mini.bolder { background: radial-gradient(120% 80% at 70% 8%, oklch(13% 0.012 40), oklch(7% 0.006 40)); border: 1px solid oklch(26% 0.02 40 / .6); color: var(--champagne); }
+  .mini.bolder .mt { color: oklch(66% 0.09 40); }
+  .mini.bolder .bar { width: 38px; height: 5px; background: var(--vermilion); margin-bottom: 11px; }
+  .mini.bolder .ah { font-family: "Alumni Sans", sans-serif; font-weight: 700; font-size: clamp(22px,2.5vw,40px); line-height: 0.9; letter-spacing: -0.01em; text-transform: uppercase; }
+  .mini.bolder .ah b { color: var(--vermilion); }
+  .mini.bolder .bc { display: flex; justify-content: space-between; align-items: center; font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .mini.bolder .bc .cta { color: var(--champagne); border: 1px solid oklch(60% 0.14 35 / .6); border-radius: 999px; padding: 5px 11px; }
+
+  /* quieter — pale, restrained, lots of air */
+  .mini.quieter { background: oklch(94% 0.008 85); color: oklch(34% 0.015 70); border: 1px solid oklch(86% 0.01 85); }
+  .mini.quieter .mt { color: oklch(56% 0.02 60); }
+  .mini.quieter .qmid { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+  .mini.quieter .qh { font-family: "Alumni Sans", Georgia, serif; font-style: italic; font-weight: 400; font-size: clamp(18px,2vw,28px); line-height: 1.04; color: oklch(30% 0.02 64); }
+  .mini.quieter .qp { font-size: 8.5px; line-height: 1.6; color: oklch(50% 0.02 60); max-width: 24ch; }
+  .mini.quieter .ul { font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(40% 0.02 60); border-bottom: 1px solid oklch(62% 0.02 60); padding-bottom: 3px; align-self: flex-start; }
+
+  /* distill — near-empty, one word */
+  .mini.distill { background: linear-gradient(180deg, var(--lacquer-raised), oklch(8% 0.005 95)); border: 1px solid oklch(24% 0.004 90); align-items: center; text-align: center; }
+  .mini.distill .mt { color: var(--faint); align-self: flex-start; }
+  .mini.distill .dmid { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+  .mini.distill .dh { font-family: var(--font-disp); font-weight: 300; font-size: clamp(26px,2.9vw,46px); color: var(--kinpaku-pale); }
+  .mini.distill .dd { width: 7px; height: 7px; border-radius: 50%; background: var(--kinpaku); }
+
+  /* ===================================================================
+     Lessons (16 / 17) — numbered list
+     =================================================================== */
+  .lessons { display: flex; flex-direction: column; gap: clamp(16px,2.4vh,30px); width: min(860px, 96%); }
+  .lesson { display: grid; grid-template-columns: 54px 1fr; gap: 22px; align-items: start; }
+  .lesson .ln { font-family: var(--font-disp); font-weight: 300; font-size: clamp(30px,3.4vw,52px); line-height: 1; color: var(--kinpaku); }
+  .lesson.bad .ln { color: var(--vermilion); }
+  .lesson .lt { font-family: var(--font-head); font-weight: 500; font-size: clamp(19px,1.9vw,27px); line-height: 1.12; color: var(--champagne); margin-bottom: 7px; }
+  .lesson .lb { font-size: clamp(13.5px,1.05vw,16.5px); line-height: 1.6; color: var(--muted); max-width: 62ch; }
+
+  /* command pills (slide 14) */
+  .pills { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+  .pill { font-family: var(--mono); font-size: clamp(13px,1.1vw,16px); color: var(--kinpaku);
+    border: 1px solid var(--gold-rule); border-radius: 999px; padding: 8px 18px; }
+  .pill.ghost { color: var(--faint); }
+
+  .wordmark-xl { font-family: var(--font-head); font-weight: 600; letter-spacing: 0.04em;
+    font-size: clamp(54px,9vw,150px); line-height: 0.9; color: var(--kinpaku); text-transform: uppercase; }
+
+  /* sign-off */
+  .signoff { display: flex; gap: clamp(20px,3vw,44px); margin-top: 34px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; }
+  .signoff a, .signoff span { color: var(--muted); text-decoration: none; }
+  .signoff .g { color: var(--kinpaku); }
+
+  /* two-role columns (slides 2/3) */
+  .roles { display: flex; align-items: center; gap: clamp(20px,4vw,70px); }
+  .role { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .role .ic { width: clamp(78px,9vw,120px); height: clamp(78px,9vw,120px); border-radius: 18px; border: 1.5px solid var(--gold-rule); display: flex; align-items: center; justify-content: center; color: var(--muted); }
+  .role .ic svg { width: 64%; height: 64%; }
+  .role .rn { font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+  .role .rs { font-size: 12px; color: var(--faint); }
+  .role.merged .ic { border-color: var(--gold-rule-strong); color: var(--kinpaku); box-shadow: 0 0 40px -8px oklch(84% 0.19 80.46 / .3); }
+  .role.merged .rn { color: var(--kinpaku); }
+  .gap-mark { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--faint); display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .gap-mark .ln { width: 1px; height: 46px; background: linear-gradient(180deg, transparent, var(--gold-rule), transparent); }
+
+  .hint { position: absolute; bottom: clamp(26px,3vw,40px); left: 50%; transform: translateX(-50%);
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ghost); z-index: 5; }
+
+  @media (max-width: 760px) {
+    .passes { grid-template-columns: 1fr; }
+    .roles { flex-direction: column; }
+    .quad-wrap { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+<div class="deck" id="deck">
+
+  <div class="deck-brand" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 2.5 L13.5 2.5 L5.5 21.5 L5 21.5 Q2.5 21.5 2.5 19 L2.5 5 Q2.5 2.5 5 2.5 Z"/><path d="M16.5 2.5 L19 2.5 Q21.5 2.5 21.5 5 L21.5 19 Q21.5 21.5 19 21.5 L8.5 21.5 Z"/></svg>
+    <span class="wm">Impeccable</span>
+  </div>
+  <div class="deck-foot">Design at the speed of adjectives</div>
+
+  <!-- ============ 01 · TITLE ============ -->
+  <section class="slide active s-title">
+    <div class="meta-top">
+      <a class="brand-lockup" href="https://impeccable.style">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M5 2.5 L13.5 2.5 L5.5 21.5 L5 21.5 Q2.5 21.5 2.5 19 L2.5 5 Q2.5 2.5 5 2.5 Z"/>
+          <path d="M16.5 2.5 L19 2.5 Q21.5 2.5 21.5 5 L21.5 19 Q21.5 21.5 19 21.5 L8.5 21.5 Z"/>
+        </svg>
+        <span class="wm">Impeccable</span>
+      </a>
+    </div>
+    <div class="stage">
+      <h1 class="display">Design at the speed<br>of <span class="gold">adjectives.</span></h1>
+      <p class="lede">The right control surface for AI design isn't pixels. It isn't prompts.</p>
+      <div class="anchor-rule" style="margin-top:46px;max-width:520px;"></div>
+      <dl class="credits">
+        <div><dt>Speaker</dt><dd>Paul Bakaus · Renaissance Geek</dd></div>
+        <div><dt>Session</dt><dd>Day 3 · 1:30pm · Room 2014</dd></div>
+        <div><dt>Follow along</dt><dd><a href="https://impeccable.style">impeccable.style</a></dd></div>
+      </dl>
+    </div>
+    <div class="meta-bot"><span>Design at the speed of adjectives</span><span class="num"></span></div>
+    <div class="hint">→ / space to advance</div>
+  </section>
+
+  <!-- ============ 02 · TWO ROLES ============ -->
+  <section class="slide">
+    <div class="meta-top"><span><span class="ch">I</span> · The wrong altitude</span><span>Two roles, two speeds</span></div>
+    <div class="stage center">
+      <p class="kicker">The world our tools were built for</p>
+      <div class="roles" style="margin-bottom:40px;">
+        <div class="role">
+          <div class="ic"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="5" y="7" width="38" height="34" rx="3"/>
+            <circle cx="19" cy="21" r="5.5" fill="currentColor" stroke="none" opacity="0.42"/>
+            <rect x="13" y="31" width="22" height="2.4" rx="1.2" fill="currentColor" stroke="none" opacity="0.3"/>
+            <g fill="var(--kinpaku)" stroke="none"><rect x="11.5" y="13.5" width="3" height="3"/><rect x="23.5" y="13.5" width="3" height="3"/><rect x="11.5" y="25.5" width="3" height="3"/><rect x="23.5" y="25.5" width="3" height="3"/></g>
+          </svg></div>
+          <span class="rn">Designer</span><span class="rs">decides · on a canvas</span>
+        </div>
+        <div class="gap-mark"><span class="ln"></span>handoff<span class="ln"></span></div>
+        <div class="role">
+          <div class="ic"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="5" y="8" width="38" height="32" rx="3"/>
+            <line x1="5" y1="15.5" x2="43" y2="15.5"/>
+            <g fill="currentColor" stroke="none"><circle cx="9.5" cy="11.8" r="1"/><circle cx="13.5" cy="11.8" r="1"/><circle cx="17.5" cy="11.8" r="1"/><rect x="10" y="21" width="16" height="2" rx="1" opacity="0.55"/><rect x="10" y="26" width="23" height="2" rx="1" opacity="0.4"/><rect x="14" y="31" width="12" height="2" rx="1" opacity="0.4"/></g>
+          </svg></div>
+          <span class="rn">Engineer</span><span class="rs">builds · in code</span>
+        </div>
+      </div>
+      <h2 class="headline" style="max-width:18ch;">Two people. <span class="faint">Separate roles, separate speeds.</span></h2>
+      <p class="caption" style="margin-top:22px;">The slider, the color picker, the spec, the handoff. Every design tool we have assumes a gap between deciding and building.</p>
+    </div>
+    <div class="meta-bot"><span>Two roles, two speeds</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 03 · ONE PERSON NOW ============ -->
+  <section class="slide">
+    <div class="meta-top"><span><span class="ch">I</span> · The wrong altitude</span><span>One person now</span></div>
+    <div class="stage center">
+      <p class="kicker">The world we actually work in</p>
+      <div class="roles" style="margin-bottom:40px;">
+        <div class="role merged">
+          <div class="ic"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="5" y="8" width="38" height="32" rx="3"/>
+            <line x1="5" y1="15.5" x2="43" y2="15.5"/>
+            <g fill="currentColor" stroke="none"><circle cx="9.5" cy="11.8" r="1"/><circle cx="13.5" cy="11.8" r="1"/><circle cx="17.5" cy="11.8" r="1"/></g>
+            <circle cx="17" cy="28" r="4.5" fill="var(--kinpaku)" stroke="none"/>
+            <g fill="currentColor" stroke="none" opacity="0.5"><rect x="26" y="23" width="11" height="2" rx="1"/><rect x="26" y="28" width="9" height="2" rx="1"/><rect x="26" y="33" width="11" height="2" rx="1"/></g>
+          </svg></div>
+          <span class="rn">Design engineer</span><span class="rs">decides and builds · same loop</span>
+        </div>
+      </div>
+      <h2 class="display" style="font-size:clamp(40px,5.4vw,92px);">Now the designer <span class="gold">is</span> the engineer.</h2>
+      <p class="caption" style="margin-top:26px;max-width:50ch;">Same person. Same keyboard. Same loop. The roles merged. The tools didn't. They still sit at the altitude they were built for, and it's the wrong one.</p>
+    </div>
+    <div class="meta-bot"><span>One person now</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 04 · THE SPECTRUM (frame) ============ -->
+  <section class="slide">
+    <div class="meta-top"><span><span class="ch">I</span> · The wrong altitude</span><span>A question of altitude</span></div>
+    <div class="stage center">
+      <h2 class="headline" style="margin-bottom:64px;max-width:24ch;">Every design tool sits somewhere on one line.</h2>
+      <div class="spectrum">
+        <div class="line"></div>
+        <div class="station">
+          <div class="glyph"><div class="g-ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+          <span class="name">Pixels</span><span class="sub">too low</span>
+        </div>
+        <div class="station gold">
+          <div class="glyph"><div class="g-q">?</div></div>
+          <span class="name">&nbsp;</span><span class="sub">the level nobody built a tool for</span>
+        </div>
+        <div class="station">
+          <div class="glyph"><div class="g-disc"></div></div>
+          <span class="name">Prompts</span><span class="sub">too high</span>
+        </div>
+      </div>
+      <p class="caption" style="margin-top:62px;">Both ends are wrong for a world where the designer is also the engineer.</p>
+    </div>
+    <div class="meta-bot"><span>A question of altitude</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 05 · TOO LOW (pixels) ============ -->
+  <section class="slide">
+    <div class="meta-top"><span><span class="ch">I</span> · The wrong altitude</span><span>Too low</span></div>
+    <div class="stage">
+      <div style="display:flex;gap:clamp(34px,6vw,90px);align-items:center;flex-wrap:wrap;">
+        <div style="flex:1;min-width:300px;">
+          <p class="kicker"><span class="ghost" style="color:var(--faint)">↙</span>&nbsp; The low end</p>
+          <h2 class="display" style="font-size:clamp(42px,5.6vw,100px);"><span class="ghost">Too low.</span><br>Pixels.</h2>
+          <p class="body lg" style="margin-top:24px;">Padding sliders. Color pickers. Hex fields. You move one property at a time, by hand. Precise, slow, and <em>silent about why</em>. This is the altitude of a designer handing pixels to an engineer. There is no engineer left to hand them to.</p>
+        </div>
+        <div class="oldtool">
+          <div class="ot-head">Inspector</div>
+          <div class="ot-row"><span class="ot-label">Padding</span><div class="ot-track"><i style="left:34%"></i></div><span class="ot-val">24</span></div>
+          <div class="ot-row"><span class="ot-label">Radius</span><div class="ot-track"><i style="left:20%"></i></div><span class="ot-val">8</span></div>
+          <div class="ot-row"><span class="ot-label">Gap</span><div class="ot-track"><i style="left:48%"></i></div><span class="ot-val">16</span></div>
+          <div class="ot-row"><span class="ot-label">Tracking</span><div class="ot-track"><i style="left:42%"></i></div><span class="ot-val">-.01</span></div>
+          <div class="ot-row"><span class="ot-label">Fill</span><div class="ot-swatches"><b style="background:oklch(60% 0.13 30)"></b><b style="background:oklch(70% 0.12 80)"></b><b style="background:oklch(62% 0.1 150)"></b><b style="background:oklch(58% 0.12 250)"></b><b style="background:oklch(55% 0.14 320)"></b></div><span class="ot-val"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="meta-bot"><span>Too low · pixels</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 06 · TOO HIGH (prompts) — full-bleed slop reveal ============ -->
+  <section class="slide s-bleed">
+    <div class="frame"><iframe src="assets/slop-page.html" title="The page a prompt tool produces" scrolling="no" loading="eager"></iframe></div>
+    <div class="vignette"></div>
+    <div class="meta-top"><span><span class="ch">I</span> · The wrong altitude</span><span>Too high</span></div>
+    <div class="prompt-strip">
+      <span class="pc">›</span>
+      <span class="pt">Build me a landing page for my SaaS startup</span>
+      <span class="ps">↵ Generate</span>
+    </div>
+    <div class="overlay-stage">
+      <h2 class="display" style="font-size:clamp(38px,4.8vw,80px);"><span class="ghost">Too high.</span> Prompts.</h2>
+      <p class="sub">One sentence in. A whole page out. And it arrives looking <em>finished</em>.</p>
+    </div>
+    <div class="meta-bot"><span>Too high · prompts</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 07 · LOOKS LIKE IT'S WORKING — overlay on the slop page ============ -->
+  <section class="slide s-bleed">
+    <div class="frame"><iframe src="assets/slop-page.html" title="The same page, examined" scrolling="no" loading="eager"></iframe></div>
+    <div class="vignette heavy"></div>
+    <div class="meta-top"><span><span class="ch">I</span> · The wrong altitude</span><span>The trap</span></div>
+    <div class="overlay-stage">
+      <p class="kicker">The trap</p>
+      <h2 class="display" style="font-size:clamp(40px,5vw,86px);">More dangerous, because<br>it <span class="gold">looks</span> like it's working.</h2>
+      <p class="sub">A slider that does the wrong thing, you catch. A page this finished, you <em>ship</em>. The failure is invisible.</p>
+    </div>
+    <div class="meta-bot"><span>The trap</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 08 · THE BRIEF COMES FIRST ============ -->
+  <section class="slide">
+    <div class="meta-top"><span><span class="ch">II</span> · The brief</span><span>Where real design starts</span></div>
+    <div class="stage">
+      <p class="kicker">The brief comes first</p>
+      <h2 class="display">No serious design director hears<br>a prompt and starts pushing <span class="gold">pixels.</span></h2>
+      <p class="body lg" style="margin-top:32px;">Direction isn't a sentence typed once and accepted. Before a single pixel moves, there's a question that decides everything that follows.</p>
+    </div>
+    <div class="meta-bot"><span>The brief comes first</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 09 · WHAT THE BRIEF ASKS ============ -->
+  <section class="slide">
+    <div class="meta-top"><span><span class="ch">II</span> · The brief</span><span>Discovery</span></div>
+    <div class="stage center">
+      <p class="kicker" style="align-self:flex-start;">What a brief actually asks</p>
+      <div class="brief">
+        <div class="q"><span class="dot"></span><span class="txt">What's the emotional territory?</span></div>
+        <div class="q"><span class="dot"></span><span class="txt">What should this <em style="color:var(--kinpaku);font-style:normal;">never</em> feel like?</span></div>
+        <div class="q"><span class="dot"></span><span class="txt">What's the reference? The point of view?</span></div>
+      </div>
+      <p class="caption" style="margin-top:42px;align-self:flex-start;">This is discovery. It's where intent gets decided. Today's AI tools skip it entirely and go straight to pixels on a screen.</p>
+    </div>
+    <div class="meta-bot"><span>Discovery</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 10 · OUTPUT WITHOUT INTENT — the page dissected ============ -->
+  <section class="slide s-bleed">
+    <div class="frame"><iframe src="assets/slop-page.html" title="The same page, named" scrolling="no" loading="eager"></iframe></div>
+    <div class="vignette heavy"></div>
+    <div class="meta-top"><span><span class="ch">II</span> · The brief</span><span>The cost of skipping it</span></div>
+    <div class="overlay-stage">
+      <h2 class="display" style="font-size:clamp(38px,4.6vw,76px);">Technically competent.<br><span class="patina">Strategically empty.</span></h2>
+      <p class="sub">The eyebrow caps. The tasteful serif. One accent on cream. The icon-tile features. The page six other startups also have this week. <strong>Output without intent.</strong></p>
+    </div>
+    <div class="meta-bot"><span>Output without intent</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 11 · THE ANSWER: ADJECTIVES (spectrum filled) ============ -->
+  <section class="slide">
+    <div class="meta-top"><span><span class="ch">III</span> · The right altitude</span><span>The answer</span></div>
+    <div class="stage center">
+      <div class="spectrum" style="margin-bottom:58px;">
+        <div class="line"></div>
+        <div class="station dim">
+          <div class="glyph"><div class="g-ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+          <span class="name">Pixels</span><span class="sub">too low</span>
+        </div>
+        <div class="station gold">
+          <div class="glyph"><div class="g-node"></div></div>
+          <span class="name">Adjectives</span><span class="sub">intent, at the speed of thought</span>
+        </div>
+        <div class="station dim">
+          <div class="glyph"><div class="g-disc"></div></div>
+          <span class="name">Prompts</span><span class="sub">too high</span>
+        </div>
+      </div>
+      <h2 class="display">Not pixels. Not prompts. <span class="gold">Adjectives.</span></h2>
+    </div>
+    <div class="meta-bot"><span>Not pixels. Not prompts. Adjectives.</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 12 · THE CONTROLS A DIRECTOR THINKS IN ============ -->
+  <section class="slide">
+    <div class="meta-top"><span><span class="ch">III</span> · The right altitude</span><span>The vocabulary</span></div>
+    <div class="stage">
+      <p class="kicker">The controls a creative director thinks in</p>
+      <div class="adjwall">
+        <span class="lg">bolder</span><span class="sm">quieter</span><b class="lg">warmer</b><span class="xs">calmer</span><span class="sm">denser</span><span>airier</span><b class="lg">leaner</b><span class="xs">richer</span><span class="sm">softer</span><span>cooler</span><span class="xs">starker</span><b class="lg">sharper</b><span class="sm">brighter</span><span>moodier</span><span class="xs">cleaner</span><span class="sm">punchier</span><span>lusher</span><span class="xs">grittier</span><span class="sm">crisper</span><span>heavier</span><span class="xs">lighter</span>
+      </div>
+      <p class="caption" style="margin-top:32px;">Every one an adjective. Every one an intent, not a parameter. This is the level the machine has been missing.</p>
+    </div>
+    <div class="meta-bot"><span>The vocabulary</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 13 · WHY THIS ALTITUDE (quadrant) ============ -->
+  <section class="slide">
+    <div class="meta-top"><span><span class="ch">III</span> · The right altitude</span><span>Why it's the right one</span></div>
+    <div class="stage">
+      <div class="quad-wrap">
+        <div class="quad">
+          <svg viewBox="0 0 780 560" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">
+            <!-- good quadrant wash (top-right) + the abyss (bottom-left) -->
+            <rect x="390" y="74" width="300" height="206" fill="var(--gold-wash)"/>
+            <rect x="96" y="280" width="294" height="206" fill="oklch(60% 0.16 35 / 0.06)"/>
+            <!-- axes -->
+            <line x1="390" y1="74" x2="390" y2="486" stroke="var(--gold-rule)" stroke-width="2"/>
+            <line x1="96"  y1="280" x2="684" y2="280" stroke="var(--gold-rule)" stroke-width="2"/>
+            <path d="M390 64 l-9 16 h18 z" fill="var(--gold-rule-strong)"/>
+            <path d="M694 280 l-16 -9 v18 z" fill="var(--gold-rule-strong)"/>
+            <!-- axis labels -->
+            <text x="404" y="64"  fill="var(--muted)" font-size="22" letter-spacing="2" font-weight="600">CARRIES INTENT</text>
+            <text x="678" y="312" fill="var(--muted)" font-size="22" letter-spacing="2" font-weight="600" text-anchor="end">STEERABLE</text>
+            <text x="104" y="312" fill="var(--faint)" font-size="19" letter-spacing="2">ONE-SHOT</text>
+            <text x="404" y="510" fill="var(--faint)" font-size="19" letter-spacing="2">NO INTENT</text>
+            <!-- the abyss: no intent + one-shot — white flag of surrender -->
+            <g stroke="oklch(63% 0.15 35)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="233" y1="332" x2="233" y2="372"/>
+              <path d="M233 335 L262 343 L233 351 Z" fill="oklch(63% 0.15 35 / 0.18)"/>
+            </g>
+            <text x="247" y="400" fill="oklch(63% 0.15 35)" font-size="23" font-style="italic" text-anchor="middle" font-family="'Albert Sans', sans-serif">cognitive</text>
+            <text x="247" y="426" fill="oklch(63% 0.15 35)" font-size="23" font-style="italic" text-anchor="middle" font-family="'Albert Sans', sans-serif">surrender</text>
+            <!-- prompt: intent, but one-shot (top-left) -->
+            <circle cx="246" cy="172" r="11" fill="var(--muted)"/>
+            <text x="246" y="146" fill="var(--text)" font-size="26" text-anchor="middle" letter-spacing="1">prompt</text>
+            <text x="246" y="204" fill="var(--faint)" font-size="17" text-anchor="middle">a view, one shot</text>
+            <!-- ...which decays into surrender once you accept it unsteered -->
+            <line x1="246" y1="220" x2="246" y2="312" stroke="oklch(60% 0.16 35 / 0.4)" stroke-width="1.6" stroke-dasharray="2 7" stroke-linecap="round"/>
+            <path d="M246 320 l-5 -9 h10 z" fill="oklch(60% 0.16 35 / 0.6)"/>
+            <text x="262" y="270" fill="oklch(60% 0.16 35 / 0.85)" font-size="14" font-style="italic" font-family="'Albert Sans', sans-serif">accept it</text>
+            <!-- slider: steerable, but no intent (bottom-right) -->
+            <circle cx="534" cy="404" r="11" fill="var(--muted)"/>
+            <text x="534" y="378" fill="var(--text)" font-size="26" text-anchor="middle" letter-spacing="1">slider</text>
+            <text x="534" y="434" fill="var(--faint)" font-size="17" text-anchor="middle">just a number</text>
+            <!-- adjective: both (top-right) -->
+            <circle cx="534" cy="172" r="20" fill="none" stroke="var(--gold-rule-strong)" stroke-width="2"/>
+            <circle cx="534" cy="172" r="11" fill="var(--kinpaku)"/>
+            <text x="534" y="132" fill="var(--kinpaku)" font-size="26" text-anchor="middle" letter-spacing="1" font-weight="600">adjective</text>
+            <text x="534" y="218" fill="var(--kinpaku-pale)" font-size="17" text-anchor="middle">intent + control</text>
+          </svg>
+        </div>
+        <div style="flex:1;min-width:280px;">
+          <h2 class="headline" style="margin-bottom:24px;">Carries intent. <span class="gold">Still steerable.</span></h2>
+          <p class="body">A pixel gives you control but no intent. A prompt carries intent but no control after the first shot. An adjective carries <em>both</em>: a point of view you can keep steering. Fast enough to keep up with code, loaded enough to hold a brief.</p>
+        </div>
+      </div>
+    </div>
+    <div class="meta-bot"><span>Why the adjective is the right altitude</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 14 · CASE STUDY: IMPECCABLE ============ -->
+  <section class="slide">
+    <div class="meta-top"><span><span class="ch">IV</span> · Lessons from building it</span><span>What I built to test this</span></div>
+    <div class="stage">
+      <p class="kicker">What I built to test the idea</p>
+      <div class="wordmark-xl">Impeccable</div>
+      <div class="double-notch" style="max-width:560px;margin:24px 0 30px;"></div>
+      <p class="body lg" style="max-width:54ch;">An open-source design tool. Twenty-four adjective-level commands that run inside your coding agent, on your real production code. The adjective goes in. A reviewable diff comes out.</p>
+      <div class="pills">
+        <span class="pill">/bolder</span><span class="pill">/quieter</span><span class="pill">/distill</span>
+        <span class="pill ghost">/polish</span><span class="pill ghost">/critique</span><span class="pill ghost">/live</span><span class="pill ghost">+18 more</span>
+      </div>
+    </div>
+    <div class="meta-bot"><span>Impeccable · 24 adjective commands</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 15 · SAME BRIEF, THREE ADJECTIVES ============ -->
+  <section class="slide">
+    <div class="meta-top"><span><span class="ch">IV</span> · Lessons from building it</span><span>An adjective is a control</span></div>
+    <div class="stage">
+      <p class="kicker" style="margin-bottom:6px;">The brief &mdash; launch a debut fragrance, &ldquo;Dusk.&rdquo;</p>
+      <div class="passes" style="margin-top:16px;">
+        <div class="pass">
+          <span class="tag base">baseline · the default</span>
+          <div class="mini base">
+            <div class="eb">New · Eau de Parfum</div>
+            <div class="bh">Discover<br>Dusk</div>
+            <div class="bp">A new fragrance for the modern individual. Crafted with care.</div>
+            <div class="bpill">Shop now</div>
+          </div>
+        </div>
+        <div class="pass">
+          <span class="tag">/bolder</span>
+          <div class="mini bolder">
+            <div class="mt">Dusk · N°1</div>
+            <div><div class="bar"></div><div class="ah">The hour<br>everything<br><b>turns.</b></div></div>
+            <div class="bc"><span>Eau de Parfum</span><span class="cta">Discover</span></div>
+          </div>
+        </div>
+        <div class="pass">
+          <span class="tag">/quieter</span>
+          <div class="mini quieter">
+            <div class="mt">Dusk</div>
+            <div class="qmid"><div class="qh">A study<br>in restraint.</div><div class="qp">Eau de parfum. Cedar, dusk air, and the quiet after.</div></div>
+            <span class="ul">Explore</span>
+          </div>
+        </div>
+        <div class="pass">
+          <span class="tag">/distill</span>
+          <div class="mini distill">
+            <div class="mt">N°1</div>
+            <div class="dmid"><div class="dh">Dusk.</div><div class="dd"></div></div>
+            <div class="mt" style="align-self:center;">eau de parfum</div>
+          </div>
+        </div>
+      </div>
+      <p class="caption" style="margin-top:26px;">Same brief. One default, three decisions. The baseline is what the model ships unasked; each adjective turns it into a <em>point of view</em>. That's the proof an adjective is a control, not a vibe.</p>
+    </div>
+    <div class="meta-bot"><span>An adjective is a control</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 16 · WHAT WORKED ============ -->
+  <section class="slide">
+    <div class="meta-top"><span><span class="ch">IV</span> · Lessons from building it</span><span>What worked</span></div>
+    <div class="stage">
+      <p class="kicker">What worked</p>
+      <div class="lessons">
+        <div class="lesson"><div class="ln">01</div><div><div class="lt">A shared vocabulary.</div><div class="lb">The same word means the same move to the human and the model. Direction stops getting lost in translation between deciding and building.</div></div></div>
+        <div class="lesson"><div class="ln">02</div><div><div class="lt">Subtract, then add.</div><div class="lb">Strip the model's defaults first, the slop it reaches for, then hand over the words to steer. Order matters. Vocabulary lands only once the bias is gone.</div></div></div>
+        <div class="lesson"><div class="ln">03</div><div><div class="lt">Steer in the running product.</div><div class="lb">Adjust live, in the browser, on real code. Drag the result instead of re-prompting it. Small visual decisions stop costing a round-trip.</div></div></div>
+      </div>
+    </div>
+    <div class="meta-bot"><span>What worked</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 17 · WHAT DIDN'T ============ -->
+  <section class="slide">
+    <div class="meta-top"><span><span class="ch">IV</span> · Lessons from building it</span><span>What didn't</span></div>
+    <div class="stage">
+      <p class="kicker patina">What didn't</p>
+      <div class="lessons">
+        <div class="lesson bad"><div class="ln">01</div><div><div class="lt">You can't teach the model taste.</div><div class="lb">We tried to make it a better designer directly. It doesn't move. Taste is personal and always shifting. You can remove the tells, you can't install the judgment.</div></div></div>
+        <div class="lesson bad"><div class="ln">02</div><div><div class="lt">Some adjectives are too personal.</div><div class="lb">"Warmer" means one thing to you, another to me. The ambiguous ones need the brief in context, a reference, a point of view. Without it they regress to the average.</div></div></div>
+        <div class="lesson bad"><div class="ln">03</div><div><div class="lt">An adjective with no brief behind it is just a nicer prompt.</div><div class="lb">The vocabulary only works on top of intent. Hand it to someone with nothing to say and you get output without intent all over again.</div></div></div>
+      </div>
+    </div>
+    <div class="meta-bot"><span>What didn't</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 18 · GENERALIZE (past the chat box) ============ -->
+  <section class="slide">
+    <div class="meta-top"><span><span class="ch">V</span> · The bigger idea</span><span>Past the chat box</span></div>
+    <div class="stage">
+      <p class="kicker">This isn't really about design</p>
+      <h2 class="display">Find the level the expert<br>actually <span class="gold">thinks</span> in.</h2>
+      <p class="body lg" style="margin-top:32px;">Any AI interface where creative intent matters more than parameter control has the same problem. The slider is too low. The chat box is too high. The work is to find the abstraction the expert reaches for, and build the controls there.</p>
+      <p class="body lg" style="margin-top:18px;color:var(--champagne);">For design, that level is the adjective. <em>Find yours.</em></p>
+    </div>
+    <div class="meta-bot"><span>Past the chat box</span><span class="num"></span></div>
+  </section>
+
+  <!-- ============ 19 · CLOSE ============ -->
+  <section class="slide">
+    <div class="meta-top"><span>Coda</span><span>Thank you</span></div>
+    <div class="stage center">
+      <div class="spectrum" style="max-width:760px;margin-bottom:54px;">
+        <div class="line"></div>
+        <div class="station dim"><div class="glyph"><div class="g-ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><span class="name">Pixels</span><span class="sub">&nbsp;</span></div>
+        <div class="station gold"><div class="glyph"><div class="g-node you"></div></div><span class="name">You are here</span><span class="sub">&nbsp;</span></div>
+        <div class="station dim"><div class="glyph"><div class="g-disc"></div></div><span class="name">Prompts</span><span class="sub">&nbsp;</span></div>
+      </div>
+      <h2 class="display">Direct at the speed of <span class="gold">adjectives.</span></h2>
+      <div class="signoff">
+        <span class="g">impeccable.style</span>
+        <span>open source · MIT</span>
+        <span>@pbakaus</span>
+      </div>
+    </div>
+    <div class="meta-bot"><span>Paul Bakaus · Renaissance Geek</span><span class="num"></span></div>
+  </section>
+
+</div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const total = slides.length;
+  const prog = document.getElementById('prog');
+  let i = 0;
+
+  // stamp page numbers once
+  slides.forEach((s, k) => {
+    const n = s.querySelector('.meta-bot .num');
+    if (n) n.textContent = String(k + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+  });
+
+  function show(n) {
+    i = Math.max(0, Math.min(total - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    prog.style.width = ((i + 1) / total * 100) + '%';
+    history.replaceState(null, '', '#' + (i + 1));
+  }
+  const go = d => show(i + d);
+
+  addEventListener('keydown', e => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); go(1); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); go(-1); }
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(total - 1);
+  });
+  addEventListener('click', e => {
+    if (e.target.closest('a')) return;
+    go((e.clientX / innerWidth) < 0.28 ? -1 : 1);
+  });
+
+  const start = parseInt(location.hash.slice(1), 10);
+  show(Number.isFinite(start) && start > 0 ? start - 1 : 0);
+  setTimeout(() => { const h = document.querySelector('.hint'); if (h) h.style.transition = 'opacity 1s', h.style.opacity = '0'; }, 3500);
+</script>
+</body>
+</html>

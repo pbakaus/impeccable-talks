@@ -1,0 +1,1373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>The Dark Arts of Skill Engineering / Impeccable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700&family=Alumni+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Surfaces — lacquer ground, from kinpaku-tokens.css */
+    --lacquer:        oklch(7%  0.006 95);
+    --lacquer-deep:   oklch(4%  0.004 95);
+    --lacquer-raised: oklch(11% 0.006 95);
+    --graphite:       oklch(15% 0.008 95);
+    --graphite-2:     oklch(19% 0.008 95);
+
+    /* Gold (kinpaku) */
+    --kinpaku:        oklch(84% 0.19  80.46);
+    --kinpaku-rich:   oklch(77% 0.13  82);
+    --kinpaku-deep:   oklch(61% 0.085 78);
+    --kinpaku-pale:   oklch(86% 0.07  84);
+    --gold-rule:      oklch(58% 0.065 82 / 0.42);
+    --gold-rule-strong: oklch(74% 0.09 82 / 0.6);
+    --gold-faint:     oklch(70% 0.06 82 / 0.16);
+
+    /* Patina / accents */
+    --patina:         oklch(70% 0.12  188);
+    --oxide:          oklch(49% 0.08  188);
+    --vermilion:      oklch(60% 0.17  32);
+
+    /* Text */
+    --champagne:      oklch(92% 0 0);
+    --text:          oklch(88% 0 0);
+    --muted:         oklch(70% 0 0);
+    --faint:         oklch(58% 0 0);
+
+    --font: "Albert Sans", "Avenir Next", "Helvetica Neue", Arial, system-ui, sans-serif;
+    --font-display: "Alumni Sans", "Albert Sans", Arial, sans-serif;
+    --font-wordmark: "Alumni Sans", "Albert Sans", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", "JetBrains Mono", "Roboto Mono", Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    background: var(--lacquer-deep);
+    color: var(--text);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+    overflow: hidden;
+  }
+
+  /* ---------- deck shell ---------- */
+  .deck { position: fixed; inset: 0; }
+  .slide {
+    position: absolute; inset: 0;
+    display: none;
+    padding: 5.2vh 6.4vw;
+    background:
+      radial-gradient(110% 80% at 82% 4%, oklch(12% 0.012 90 / 0.5), transparent 55%),
+      radial-gradient(80% 70% at 2% 110%, oklch(9% 0.012 60 / 0.42), transparent 48%),
+      var(--lacquer);
+    overflow: hidden;
+  }
+  .slide.active { display: grid; animation: fade .42s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes fade { from { transform: translateY(10px); } to { transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .slide.active { animation: none; } }
+
+  /* subtle lacquer grain via layered noise */
+  .slide::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+
+  /* meta chrome */
+  .meta { position: absolute; left: 6.4vw; right: 6.4vw; display: flex; justify-content: space-between;
+          font-family: var(--mono); font-size: .72rem; letter-spacing: .08em; color: var(--faint); text-transform: uppercase; z-index: 5; }
+  .meta-top { top: 3.4vh; }
+  .meta-bot { bottom: 3.4vh; }
+  .meta img.mark { height: 4.2rem; width: auto; display: block; opacity: .95; }
+  .meta .mvt { color: var(--kinpaku-deep); }
+
+  /* title → cold open transition (book pulses to a golden bloom, then
+     dissolves into the next slide) */
+  .flip-transition {
+    position: fixed; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; background: #000;
+    z-index: 50; opacity: 0; pointer-events: none; visibility: hidden;
+    transition: opacity .55s ease, visibility 0s linear .55s;
+  }
+  .flip-transition.playing { opacity: 1; visibility: visible; transition: none; }
+  @media (prefers-reduced-motion: reduce) { .flip-transition { display: none !important; } }
+
+  /* progress dots */
+  .progress { position: absolute; bottom: 1.4vh; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 30; }
+  .progress button { width: 6px; height: 6px; padding: 0; border: 0; border-radius: 50%; background: oklch(40% 0 0); cursor: pointer; transition: background .2s, transform .2s; }
+  .progress button:hover { transform: scale(1.5); }
+  .progress button.active { background: var(--kinpaku); }
+
+  /* ---------- typography helpers ---------- */
+  .kicker { font-family: var(--mono); font-size: .82rem; letter-spacing: .26em; text-transform: uppercase; color: var(--kinpaku-deep); }
+  .display { font-family: var(--font-display); font-weight: 400; line-height: .92; letter-spacing: .01em; color: var(--champagne); }
+  .lead { font-size: clamp(1.05rem, 1.7vw, 1.5rem); line-height: 1.5; color: var(--text); max-width: 34ch; }
+  strong, b { color: var(--champagne); font-weight: 600; }
+  em { color: var(--kinpaku-pale); font-style: italic; }
+  .gold { color: var(--kinpaku); }
+  .verm { color: var(--vermilion); }
+  .pat { color: var(--patina); }
+
+  /* ---------- code panel (the inscribed spell) ---------- */
+  pre.spell {
+    font-family: var(--mono); font-size: clamp(.72rem, .98vw, .95rem); line-height: 1.62;
+    color: oklch(86% 0 0);
+    background: linear-gradient(180deg, var(--lacquer-deep), oklch(5% 0.005 90));
+    border: 1px solid var(--gold-rule);
+    border-radius: 4px; padding: 1.1em 1.3em; overflow: hidden;
+    box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.04);
+  }
+  pre.spell .c { color: var(--kinpaku-deep); font-style: italic; }   /* comment */
+  pre.spell .k { color: var(--patina); }                            /* keyword */
+  pre.spell .s { color: var(--kinpaku-pale); }                      /* string */
+  pre.spell .f { color: var(--champagne); }                         /* fn / ident */
+  pre.spell .v { color: var(--vermilion); }                         /* danger / accent */
+  pre.spell .d { color: var(--faint); }                             /* dim */
+  .filetag { font-family: var(--mono); font-size: .72rem; color: var(--faint); letter-spacing: .04em; margin-top: .55rem; }
+  .filetag::before { content: "› "; color: var(--kinpaku-deep); }
+  /* harness-differences table */
+  .hdiff { display:flex; flex-direction:column; border:1px solid var(--gold-rule); border-radius:5px; overflow:hidden;
+    background: linear-gradient(180deg, var(--lacquer-deep), oklch(5% 0.005 90)); }
+  .hd-row { display:grid; grid-template-columns: 0.4fr 0.6fr; gap:1.1rem; padding:.78rem 1.15rem; border-top:1px solid var(--gold-faint); }
+  .hd-row:first-child { border-top:0; }
+  .hd-k { font-family:var(--font-wordmark); text-transform:uppercase; letter-spacing:.04em; font-weight:600; color:var(--champagne); font-size:clamp(.82rem,1.05vw,1rem); align-self:center; }
+  .hd-v { font-family:var(--mono); font-size:clamp(.74rem,.92vw,.9rem); color:var(--muted); line-height:1.45; align-self:center; }
+  .hd-v b { color:var(--kinpaku-pale); font-weight:600; }
+  .hd-v code { color:var(--kinpaku-pale); background:none; }
+
+  /* ---------- TITLE ---------- */
+  .s-title { align-content: end; justify-items: start;
+    background:
+      linear-gradient(180deg, transparent 54%, oklch(4% 0.004 95 / .62) 100%),
+      url("assets/title-grimoire-cover.png") center / cover no-repeat,
+      var(--lacquer); }
+  .s-title .title-inner { position:relative; z-index:2; max-width: 58ch; margin-bottom: 5.4vh; }
+  .s-title .sub { max-width: 42ch; color: var(--text); font-size: clamp(.94rem,1.2vw,1.08rem); line-height:1.55; }
+  .s-title .by { position:absolute; left:6.4vw; bottom:3.4vh; z-index:5; font-family: var(--mono); font-size: .72rem; letter-spacing:.08em; color: var(--muted); text-transform:uppercase; }
+  .s-title .by b { color: var(--kinpaku); }
+  /* thanks (reuses m-01 seam art) */
+  .s-thanks { align-content:center; justify-items:center; text-align:center;
+    background: linear-gradient(0deg, oklch(6% 0.006 95 / .62), oklch(6% 0.006 95 / .62)),
+      url("assets/neo-kinpaku/m-01-v2-01.png") center / cover no-repeat, var(--lacquer); }
+  .s-thanks .wm { font-family: var(--font-wordmark); font-weight:700; text-transform:uppercase; font-size:clamp(3rem,9vw,8rem); line-height:.86; color:var(--champagne); }
+  .s-thanks .wm .arts { color:var(--kinpaku); display:block; }
+  .s-thanks .by { font-family:var(--mono); font-size:.85rem; letter-spacing:.1em; color:var(--muted); margin-top:1.8rem; }
+  .s-thanks .by b { color:var(--kinpaku); }
+
+  /* ---------- media: real images, placeholders, logos ---------- */
+  .imgph { display:flex; flex-direction:column; gap:.55rem; align-items:center; justify-content:center; text-align:center;
+    border:1.5px dashed var(--gold-rule-strong); border-radius:6px; padding:1.5rem; height:100%; width:100%; min-height:120px;
+    background: repeating-linear-gradient(45deg, oklch(10% 0.007 90) 0 14px, oklch(8% 0.006 90) 14px 28px); }
+  .imgph .tag { font-family:var(--mono); font-size:.62rem; letter-spacing:.2em; text-transform:uppercase; color:var(--lacquer-deep); background:var(--kinpaku); padding:.22em .7em; border-radius:3px; font-weight:600; }
+  .imgph .cap { font-size:clamp(.82rem,1.05vw,1.02rem); line-height:1.42; color:var(--text); max-width:42ch; }
+  .imgph .cap b { color:var(--kinpaku-pale); font-weight:600; }
+  .imgph .hint { font-family:var(--mono); font-size:.8rem; color:var(--faint); letter-spacing:.03em; }
+  /* real <img> drop-in: replace .imgph with <img class="media-real">  */
+  .media-real { width:100%; height:100%; object-fit:cover; border-radius:6px; border:1px solid var(--gold-rule); display:block; }
+  /* image-backed statement (full-bleed photo + overlaid headline at the bottom) */
+  /* NB: do NOT set position here — inherit .slide's absolute inset:0 fill so
+     it stays full-bleed and acts as the containing block for the text. */
+  .ifill { position:absolute; inset:0; z-index:0; background-size:cover; background-position:center; }
+  .ifill.ph { display:flex; flex-direction:column; gap:.5rem; align-items:center; justify-content:center; text-align:center; padding:6vh 12vw 22vh;
+    background: repeating-linear-gradient(45deg, oklch(9% 0.007 90) 0 16px, oklch(7% 0.006 90) 16px 32px); }
+  .ifill.ph .tag { font-family:var(--mono); font-size:.64rem; letter-spacing:.2em; text-transform:uppercase; color:var(--lacquer-deep); background:var(--kinpaku); padding:.22em .7em; border-radius:3px; font-weight:600; }
+  .ifill.ph .cap { font-size:clamp(.9rem,1.25vw,1.15rem); color:var(--champagne); max-width:52ch; line-height:1.42; }
+  .ifill.ph .hint { font-family:var(--mono); font-size:.7rem; color:var(--faint); }
+  .igrad { position:absolute; inset:0; z-index:1; background:linear-gradient(0deg, oklch(4% 0.006 95 / .95) 0%, oklch(5% 0.006 95 / .6) 38%, oklch(5% 0.006 95 / .08) 80%); }
+  .imgstate-text { position:absolute; left:6.4vw; right:6.4vw; bottom:8vh; z-index:2; max-width:60ch; }
+  .imgstate-text .big { font-family:var(--font); font-weight:700; letter-spacing:-.02em; font-size:clamp(2.4rem,6vw,5.4rem); line-height:1; color:var(--champagne); max-width:20ch; }
+  .imgstate-text .sub { margin-top:1rem; color:var(--text); max-width:50ch; font-size:clamp(1rem,1.45vw,1.3rem); line-height:1.5; }
+  .imgstate-text .kicker { margin-bottom:.7rem; }
+  /* logo grid (compile slide) — borderless, icons sit on the lacquer */
+  .logo-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:2vh 1.2rem; width:100%; }
+  .logo-cell { display:flex; flex-direction:column; align-items:center; gap:.75rem; padding:.5rem .4rem; }
+  .logo-cell img { width:44px; height:44px; object-fit:contain; }
+  .logo-cell img.lite { filter: invert(1) brightness(1.7); }   /* dark monochrome marks → light on lacquer */
+  .logo-cell span { font-family:var(--mono); font-size:.68rem; color:var(--muted); letter-spacing:.04em; text-align:center; }
+  .art-right .media-cap, .filetag.media-cap { color:var(--faint); }
+
+  /* ---------- EDUTAINMENT BEATS (clean, no grimoire) ---------- */
+  /* punch: one big line, lots of air. The failure or the payoff. */
+  .s-punch { align-content: center; padding: 8vh 9vw; }
+  .s-punch .punch-inner { display:flex; flex-direction:column; align-items:flex-start; }
+  .s-punch .rail { margin-bottom: 2.6rem; }
+  .s-punch .beat-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.6vw,1.5rem); letter-spacing:.05em; margin-bottom:1.1rem; }
+  .s-punch .punch-big { font-family:var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.004em; line-height:.94; font-size:clamp(2.8rem,7.2vw,6.2rem); color:var(--champagne); max-width:18ch; }
+  .s-punch .punch-sub { margin-top:1.7rem; font-size:clamp(1.05rem,1.7vw,1.5rem); line-height:1.45; color:var(--muted); max-width:42ch; }
+  .s-punch .punch-sub strong { color:var(--champagne); }
+  .s-punch .punch-sub code { font-family:var(--mono); color:var(--kinpaku-pale); font-size:.9em; }
+  /* general use-cases: where this art wins beyond Impeccable */
+  .s-punch .punch-uses { margin-top:1.9rem; display:flex; flex-wrap:wrap; gap:.55rem; align-items:center; max-width:52ch; }
+  .s-punch.center .punch-uses { justify-content:center; }
+  .s-punch .punch-uses .ulabel { font-family:var(--mono); font-size:.64rem; letter-spacing:.18em; text-transform:uppercase; color:var(--kinpaku-deep); margin-right:.2rem; }
+  .s-punch .punch-uses .chip { font-family:var(--mono); font-size:clamp(.72rem,.98vw,.9rem); padding:.4rem .85rem; border:1px solid var(--gold-faint); border-radius:999px; color:var(--text); }
+  /* generic use-cases row (image + logos slides) */
+  .uses-row { margin-top:1.1rem; display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; }
+  .uses-row .ulabel { font-family:var(--mono); font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; color:var(--kinpaku-deep); }
+  .uses-row .chip { font-family:var(--mono); font-size:clamp(.7rem,.95vw,.88rem); padding:.35rem .8rem; border:1px solid var(--gold-faint); border-radius:999px; color:var(--text); background:oklch(8% 0.005 90 /.45); }
+  /* centered variant: payoff/conclusion slides, sits over the ghost-seal accent */
+  .s-punch.center { justify-items:center; }
+  .s-punch.center .punch-inner { align-items:center; text-align:center; }
+  .s-punch.center .punch-big { max-width:22ch; }
+  .s-punch.center .punch-sub { max-width:46ch; }
+
+  /* code: the snippet IS the slide, big and centered */
+  .s-code { align-content:center; justify-items:center; }
+  .s-code .code-wrap { width:fit-content; max-width:92vw; }
+  .s-code .beat-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.5vw,1.4rem); letter-spacing:.05em; margin-bottom:1rem; }
+  .s-code pre.spell.hero { font-size:clamp(.92rem,1.3vw,1.4rem); line-height:1.6; padding:1.5em 1.8em; }
+  .s-code .code-cap { margin-top:1.3rem; color:var(--muted); font-size:clamp(1.02rem,1.5vw,1.32rem); line-height:1.45; max-width:64ch; }
+  .s-code .code-cap strong { color:var(--champagne); }
+
+  /* poster: a contained full image on lacquer (movie-poster gags) */
+  .s-poster { align-content:center; justify-items:center; padding:2.5vh 0; }
+  .s-poster img { max-height:93vh; max-width:92vw; width:auto; object-fit:contain; border-radius:4px; box-shadow:0 22px 90px oklch(0% 0 0 /.65); }
+
+  /* meme: a square image gag with an eyebrow + one-line takeaway */
+  .s-meme { align-content:center; justify-items:center; text-align:center; gap:1.4rem; }
+  .s-meme .beat-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.6vw,1.5rem); letter-spacing:.05em; }
+  .s-meme img { max-height:60vh; width:auto; border-radius:8px; box-shadow:0 16px 60px oklch(0% 0 0 /.55); }
+  .s-meme .meme-cap { color:var(--muted); font-size:clamp(1.05rem,1.6vw,1.35rem); line-height:1.45; max-width:52ch; }
+  .s-meme .meme-cap strong { color:var(--champagne); }
+
+  /* htable: a comparison table as the hero (clean, no grimoire) */
+  .s-htable { align-content:center; justify-items:center; }
+  .s-htable .ht-wrap { width:min(92vw,940px); }
+  .s-htable .ht-wrap .beat-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.5vw,1.4rem); letter-spacing:.05em; margin-bottom:1rem; }
+  .s-htable .ht-wrap .code-cap { margin-top:1.2rem; color:var(--muted); font-size:clamp(1.02rem,1.5vw,1.32rem); line-height:1.45; max-width:64ch; }
+  .s-htable .ht-wrap .code-cap strong { color:var(--champagne); }
+
+  /* ---------- diagram slides (route MoE, memory snapshot+trend) ---------- */
+  .s-route, .s-memory { align-content:center; justify-items:center; }
+  .s-route .diag-eyebrow, .s-memory .diag-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.6vw,1.5rem); letter-spacing:.05em; margin-bottom:2.4vh; }
+  .s-route .code-cap, .s-memory .code-cap { margin-top:2.4vh; color:var(--muted); font-size:clamp(1rem,1.45vw,1.28rem); line-height:1.45; max-width:62ch; text-align:center; }
+  .s-route .code-cap strong, .s-memory .code-cap strong { color:var(--champagne); }
+  /* route: command → router → one expert lit; register switch */
+  .route-flow { display:flex; align-items:center; gap:1.4vw; }
+  .route-col { display:flex; flex-direction:column; gap:.55rem; }
+  .route-col .rcell { font-family:var(--mono); font-size:clamp(.72rem,1vw,.94rem); padding:.5rem .8rem; border:1px solid var(--gold-faint); border-radius:6px; color:var(--muted); background:oklch(10% 0.006 90 /.4); white-space:nowrap; }
+  .route-col .rcell.on { color:var(--champagne); border-color:var(--kinpaku); background:oklch(22% 0.05 85 /.2); }
+  .route-col .rcell.off { opacity:.34; }
+  .route-col .rcell .rload { color:var(--kinpaku); margin-left:.4rem; }
+  .route-col .rmore { font-family:var(--mono); font-size:.72rem; color:var(--faint); padding-left:.15rem; }
+  .route-arrow { color:var(--kinpaku); font-size:1.5rem; }
+  .router { font-family:var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.02em; color:var(--champagne); border:1.5px solid var(--gold-rule); border-radius:8px; padding:1rem 1.3rem; text-align:center; background:linear-gradient(180deg, oklch(13% 0.006 90), oklch(9% 0.005 90)); font-size:clamp(.95rem,1.3vw,1.2rem); }
+  .router small { display:block; font-family:var(--mono); font-weight:400; text-transform:none; color:var(--kinpaku-deep); font-size:.6em; letter-spacing:.1em; margin-top:.25rem; }
+  .route-register { margin-top:2.6vh; display:flex; align-items:center; gap:.5rem; font-family:var(--mono); font-size:clamp(.78rem,1.05vw,.98rem); color:var(--muted); border:1px solid var(--gold-faint); border-radius:999px; padding:.5rem 1.15rem; }
+  .route-register .rk { color:var(--kinpaku-deep); text-transform:uppercase; letter-spacing:.14em; font-size:.82em; }
+  .route-register b { color:var(--champagne); font-weight:600; }
+  .route-register .swap { color:var(--kinpaku); }
+  .route-register .rsub { color:var(--faint); }
+  /* memory: a real snapshot file beside a compounding-trend chart */
+  .mem-wrap { display:flex; align-items:stretch; gap:2.4vw; }
+  .snapfile { border:1px solid var(--gold-rule); border-radius:8px; overflow:hidden; background:linear-gradient(180deg, oklch(12% 0.006 90), oklch(8% 0.005 90)); }
+  .snap-name { font-family:var(--mono); font-size:clamp(.64rem,.82vw,.8rem); color:var(--kinpaku-pale); padding:.55rem .85rem; border-bottom:1px solid var(--gold-faint); background:oklch(16% 0.006 90 /.6); }
+  .snap-body { font-family:var(--mono); font-size:clamp(.72rem,.92vw,.9rem); line-height:1.5; color:var(--muted); padding:.9em 1.1em; margin:0; white-space:pre; }
+  .snap-body .k { color:var(--kinpaku-deep); } .snap-body .v { color:var(--champagne); }
+  .snap-body .h { color:var(--kinpaku); } .snap-body .d { color:var(--faint); }
+  .trend { display:flex; flex-direction:column; justify-content:center; align-items:center; gap:1rem; padding:0 1vw; }
+  .trend-title { font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--kinpaku-deep); }
+  .trend svg { width:clamp(190px,18vw,260px); height:auto; }
+  .trend svg text { font-family:var(--mono); }
+  .trend-runs { display:flex; gap:1.1rem; font-family:var(--mono); font-size:.74rem; color:var(--muted); }
+  .trend-runs b { color:var(--kinpaku-pale); }
+
+  /* diverge: the monoculture cluster, and the escape from it */
+  .s-diverge { align-content:center; justify-items:center; }
+  .s-diverge .diag-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.6vw,1.5rem); letter-spacing:.05em; margin-bottom:2vh; }
+  .s-diverge svg { width:min(86vw,860px); height:auto; }
+  .s-diverge svg text { font-family:var(--mono); }
+  .s-diverge .code-cap { margin-top:2vh; color:var(--muted); font-size:clamp(1rem,1.45vw,1.28rem); line-height:1.45; max-width:64ch; text-align:center; }
+  .s-diverge .code-cap strong { color:var(--champagne); }
+
+  /* system: a capability map — what Impeccable can do that a prompt can't */
+  .s-system { align-content:center; justify-items:center; }
+  .s-system .sys-head { text-align:center; margin-bottom:3vh; }
+  .s-system .sys-head .t { font-family:var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.02em; font-size:clamp(1.8rem,4vw,3.4rem); color:var(--champagne); }
+  .s-system .sys-head .s { margin-top:.6rem; font-family:var(--font-display); font-size:clamp(1rem,1.7vw,1.4rem); color:var(--kinpaku); }
+  .cap-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2.2vh 3vw; width:min(94vw,1140px); }
+  .cap-cell { display:flex; flex-direction:column; gap:.35rem; }
+  .cap-top { display:flex; align-items:center; gap:.7rem; }
+  .cap-sig { width:30px; height:30px; flex:0 0 auto; }
+  .cap-no { font-family:var(--font-display); color:var(--kinpaku-deep); font-size:.85rem; }
+  .cap-h { font-family:var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.01em; font-size:clamp(.92rem,1.25vw,1.14rem); color:var(--champagne); line-height:1; }
+  .cap-s { font-family:var(--mono); font-size:clamp(.72rem,.92vw,.88rem); color:var(--muted); line-height:1.4; padding-left:calc(30px + .7rem); }
+  .cap-s b { color:var(--kinpaku-pale); font-weight:400; }
+  .cap-file { font-family:var(--mono); font-size:.66rem; color:var(--kinpaku-deep); letter-spacing:.02em; padding-left:calc(30px + .7rem); margin-top:.15rem; }
+  .s-system .cap-foot { margin-top:3vh; font-family:var(--mono); font-size:clamp(.82rem,1.1vw,1rem); color:var(--muted); letter-spacing:.03em; }
+  .s-system .cap-foot b { color:var(--kinpaku); font-weight:600; }
+  .s-system .code-cap strong { color:var(--champagne); }
+
+  /* ---------- STATEMENT ---------- */
+  .s-statement { align-content: center; justify-items: start; }
+  .s-statement .big { font-family: var(--font); font-weight:700; letter-spacing:-.02em; font-size: clamp(2.4rem, 6.5vw, 6rem); line-height: 1; color: var(--champagne); max-width: 20ch; }
+  .s-statement .sub { margin-top: 1.6rem; color: var(--muted); max-width: 40ch; font-size: clamp(1rem,1.5vw,1.3rem); line-height: 1.5; }
+
+  /* ---------- THESIS ---------- */
+  .s-thesis { align-content: center; justify-items: center; text-align: center; }
+  .s-thesis .ineq { font-family: var(--font-wordmark); font-weight: 700; letter-spacing: .01em;
+                    font-size: clamp(2.6rem, 8vw, 7.4rem); line-height: 1; color: var(--champagne); }
+  .s-thesis .ineq .lt { color: var(--kinpaku); font-family: var(--font-display); padding: 0 .2em; }
+  .s-thesis .ineq .h { color: var(--kinpaku); }
+  .s-thesis .whisper { margin-top: 2rem; font-family: var(--font-display); font-size: clamp(1.1rem,2vw,1.7rem); color: var(--kinpaku-deep); letter-spacing:.02em; }
+  .s-thesis .remember { margin-top: 3.2rem; font-family: var(--mono); font-size:.74rem; letter-spacing:.24em; text-transform:uppercase; color: var(--faint); }
+
+  /* ---------- DIVIDER (movement) ---------- */
+  .s-divider { align-content: center; justify-items: center; text-align: center; }
+  .s-divider .rom { font-family: var(--font-display); font-size: clamp(5rem, 16vw, 15rem); line-height:.78; color: oklch(74% 0.075 82 / 0.34); }
+  .s-divider .mname { margin-top: -1vh; font-family: var(--font-wordmark); font-weight:700; text-transform: uppercase; letter-spacing:.04em;
+                      font-size: clamp(1.8rem, 4.4vw, 3.6rem); color: var(--champagne); }
+  .s-divider .mline { margin-top: 1.3rem; font-family: var(--font-display); font-size: clamp(1.1rem,2.1vw,1.8rem); color: var(--kinpaku); letter-spacing:.02em; }
+
+  /* ---------- GRIMOIRE PAGE (a dark art) ---------- */
+  .s-art { grid-template-columns: 0.92fr 1.08fr; gap: 4.4vw; align-content: center; }
+  /* content columns aligned to the two pages of the open-book spread art:
+     left page ≈ 17-44%, gutter ≈ 46-54%, right page ≈ 56-83% of width. */
+  .s-art-spread {
+    grid-template-columns: 1fr 1fr;
+    gap: 10vw;
+    padding: 12vh 18vw;
+    background:
+      linear-gradient(90deg, oklch(3% 0.004 95 / .16), transparent 18%, transparent 82%, oklch(3% 0.004 95 / .16)),
+      linear-gradient(180deg, oklch(3% 0.004 95 / .34), transparent 22%, transparent 78%, oklch(3% 0.004 95 / .34)),
+      url("assets/dark-art-open-spread.png") center / cover no-repeat,
+      var(--lacquer); }
+  .art-left { display: flex; flex-direction: column; justify-content: flex-start; gap: 1.1rem; min-width: 0; position:relative; z-index:2; }
+  .art-sigil { width: clamp(78px, 8vw, 120px); height: clamp(78px, 8vw, 120px); }
+  /* level-up rail: the spellbook igniting from prompt → harness */
+  .rail { display:flex; align-items:center; gap:.5rem; margin-bottom:1.3rem; position:relative; }
+  .rail::before { content:''; position:absolute; left:16px; right:16px; top:50%; height:1px; background:var(--gold-faint); z-index:0; }
+  .rail .pip { width:32px; height:32px; flex:0 0 auto; position:relative; z-index:1; background:var(--lacquer); border-radius:50%; }
+  .rail .pip.locked { opacity:.34; }
+  .rail .pip.done { opacity:.72; }
+  .rail .pip.active { opacity:1; transform:scale(1.2); }
+  .rail .rail-end { font-family:var(--mono); font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); margin-left:.3rem; }
+  .rail .rail-end.lit { color:var(--kinpaku); }
+  .art-eyebrow { display:flex; align-items:baseline; gap:.7rem; }
+  .art-no { font-family: var(--font-display); font-size: clamp(1.1rem,1.8vw,1.6rem); color: var(--kinpaku); letter-spacing:.06em; }
+  .art-tag { font-family: var(--mono); font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color: var(--faint); }
+  .art-name { font-family: var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.01em;
+              font-size: clamp(2rem, 4.6vw, 4rem); line-height:.92; color: var(--champagne); }
+  .art-problem { font-size: clamp(.98rem,1.45vw,1.28rem); line-height:1.5; color: var(--muted); max-width: 34ch; }
+  .art-reveal { background: oklch(13% 0.012 85 / 0.55); border-radius: 6px; padding: .85rem 1.05rem; font-size: clamp(.92rem,1.3vw,1.15rem); line-height:1.46; color: var(--text); max-width: 40ch; }
+  .art-reveal .lbl { display:block; font-family: var(--mono); font-size:.66rem; letter-spacing:.2em; text-transform:uppercase; color: var(--kinpaku-deep); margin-bottom:.3rem; }
+  .art-steal { margin-top:.35rem; padding-top:.9rem; border-top:1px solid var(--gold-faint); font-family: var(--font-display); font-size: clamp(1.05rem,1.8vw,1.5rem); color: var(--kinpaku); line-height:1.35; }
+  .art-right { display:flex; flex-direction: column; justify-content:center; min-width:0; position:relative; z-index:2; }
+  /* code panels must fit inside the right page of the spread (no overflow off-page) */
+  .s-art-spread .art-right pre.spell {
+    width:100%; max-width:100%; box-sizing:border-box;
+    /* sized purely to the column so the longest line never clips at any
+       viewport (no rem floor that would overflow on narrow windows) */
+    font-size: min(.62vw, .9rem); line-height:1.55;
+    padding: .85em 1em;
+  }
+
+  /* ---------- SPELLBOOK grid (viral card) ---------- */
+  .s-spellbook { align-content: center; justify-items: center; }
+  .sb-head { text-align:center; margin-bottom: 2.4vh; }
+  .sb-head .t { font-family: var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.03em; font-size: clamp(1.6rem,3.6vw,3rem); color: var(--champagne); }
+  .sb-head .s { margin-top:.5rem; font-family: var(--font-display); font-size: clamp(1rem,1.7vw,1.4rem); color: var(--kinpaku); }
+  .sb-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 1.1vw; width: min(92vw, 1180px); }
+  .sb-cell { position:relative; border:1px solid var(--gold-rule); border-radius:6px; padding: 1.1rem 1.15rem 1rem;
+             background: linear-gradient(180deg, oklch(10% 0.006 90 / .7), oklch(6% 0.005 90 / .5));
+             display:flex; flex-direction:column; gap:.55rem; min-height: 0; overflow:hidden; }
+  .sb-cell .sb-top { display:flex; align-items:center; justify-content:space-between; }
+  .sb-cell .sb-no { font-family: var(--font-display); color: var(--kinpaku); font-size:1.2rem; }
+  .sb-cell .sb-sig { width:32px; height:32px; opacity:.95; }
+  .sb-cell .sb-name { font-family: var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.01em; font-size: clamp(.95rem,1.3vw,1.18rem); color: var(--champagne); line-height:1; }
+  .sb-cell .sb-mech { font-size: clamp(.74rem,.95vw,.9rem); line-height:1.34; color: var(--muted); }
+  .sb-cell .sb-file { margin-top:auto; font-family: var(--mono); font-size:.8rem; color: var(--kinpaku-deep); letter-spacing:.02em; }
+  /* lighter preview grid */
+  .sb-grid-lite { gap:1.4vw; }
+  .sb-cell.sb-lite { align-items:center; justify-content:center; text-align:center; gap:.85rem; min-height:160px; }
+  .sb-sig-lg { width:54px; height:54px; }
+  .sb-cell.sb-lite .sb-name { font-size:clamp(1rem,1.45vw,1.3rem); }
+  .sb-no-lite { font-family:var(--font-display); color:var(--kinpaku-deep); font-size:1rem; letter-spacing:.06em; }
+  .sb-cell.locked .sb-sig-lg, .sb-cell.locked .sb-name { opacity:.4; }
+
+  /* ---------- HARNESS TABLE ---------- */
+  .s-table { align-content:center; }
+  table.harness { border-collapse: collapse; width: 100%; font-size: clamp(.78rem,1.05vw,1rem); }
+  table.harness th, table.harness td { text-align:left; padding:.6em .8em; border-bottom:1px solid var(--gold-faint); }
+  table.harness th { font-family: var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color: var(--kinpaku-deep); }
+  table.harness td:first-child { color: var(--champagne); font-weight:600; }
+  table.harness .yes { color: var(--kinpaku); }
+  table.harness .no { color: var(--faint); }
+
+  /* ---------- LIVE LOOP diagram ---------- */
+  .loop-wrap { display:grid; grid-template-columns: 1fr; gap: 2vh; justify-items:center; align-content:center; }
+  .loop-cap { font-family: var(--mono); font-size:.8rem; color: var(--muted); letter-spacing:.06em; text-align:center; max-width: 60ch; }
+
+  /* ---------- DEMO card ---------- */
+  .s-demo { grid-template-columns: 1.05fr 0.95fr; gap: 4vw; align-content:center; }
+  .s-demo .demo-left { display:flex; flex-direction:column; align-items:flex-start; min-width:0; }
+  .s-demo .demo-right { display:flex; align-items:center; min-width:0; }
+  .s-demo .demo-right .imgph { aspect-ratio:16/11; }
+  .s-demo .chip { font-family: var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color: var(--lacquer); background: var(--kinpaku); padding:.3em .7em; border-radius:3px; }
+  .s-demo .big { font-family: var(--font); font-weight:700; letter-spacing:-.02em; font-size: clamp(2.4rem,6vw,5rem); color: var(--champagne); margin-top:1.2rem; line-height:1; }
+  .s-demo .steps { margin-top:1.6rem; display:flex; flex-direction:column; gap:.7rem; }
+  .s-demo .step { display:flex; gap:.9rem; align-items:baseline; font-size: clamp(.95rem,1.4vw,1.25rem); color: var(--text); }
+  .s-demo .step .n { font-family: var(--font-display); color: var(--kinpaku); font-size:1.3rem; min-width:1.4rem; }
+  .s-demo code { font-family: var(--mono); background: var(--graphite-2); color: var(--kinpaku-pale); padding:.12em .4em; border-radius:3px; font-size:.92em; }
+
+  /* ---------- faked agent-thread app window (Demo 2: the hook fires) ---------- */
+  .appwin { width:100%; border:1px solid var(--gold-rule); border-radius:10px; overflow:hidden;
+    background: linear-gradient(180deg, oklch(13% 0.006 90), oklch(9% 0.005 90));
+    box-shadow: 0 24px 70px oklch(0% 0 0 / .55); font-size: clamp(.7rem,.92vw,.92rem); }
+  .appbar { display:flex; align-items:center; gap:.5rem; padding:.6rem .85rem; border-bottom:1px solid var(--gold-faint);
+    background: oklch(16% 0.006 90 / .6); }
+  .appbar .dot { width:9px; height:9px; border-radius:50%; background: oklch(40% 0.02 30); }
+  .appbar .dot:nth-child(2){ background: oklch(50% 0.04 80); } .appbar .dot:nth-child(3){ background: oklch(48% 0.05 145); }
+  .appbar .apptitle { margin-left:.5rem; font-family:var(--mono); font-size:.72em; color:var(--muted); letter-spacing:.03em; }
+  .thread { padding: 1rem 1.05rem 1.15rem; display:flex; flex-direction:column; gap:.7rem; }
+  .thread .msg { max-width:86%; padding:.6rem .8rem; border-radius:9px; line-height:1.45; color:var(--text); }
+  .thread .msg .who { display:block; font-family:var(--mono); font-size:.66em; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); margin-bottom:.25rem; }
+  .thread .msg.user { align-self:flex-end; background: oklch(26% 0.03 80 / .5); border:1px solid var(--gold-faint); }
+  .thread .msg.bot { align-self:flex-start; background: oklch(17% 0.005 90); border:1px solid oklch(26% 0.006 90); }
+  .thread .msg .diff { margin-top:.45rem; font-family:var(--mono); font-size:.92em; color: var(--patina); background: oklch(10% 0.006 90); border-radius:5px; padding:.35rem .55rem; }
+  .thread .msg .diff::before { content:"diff "; color:var(--faint); }
+  .thread .sysrem { align-self:stretch; border:1px solid var(--kinpaku); border-radius:9px; padding:.65rem .85rem;
+    background: oklch(20% 0.05 85 / .22); color: var(--text); line-height:1.5; box-shadow: 0 0 0 oklch(74% 0.12 85 / 0); }
+  .thread .sysrem .sr-label { display:block; font-family:var(--mono); font-size:.64em; letter-spacing:.16em; text-transform:uppercase; color:var(--kinpaku); margin-bottom:.35rem; }
+  .thread .sysrem .sr-body { line-height:1.5; }
+  .thread .sysrem .sr-env { font-family:var(--mono); color: var(--kinpaku-pale); }
+  .thread .sysrem .sr-find { margin-top:.4rem; font-family:var(--mono); font-size:.9em; color:var(--muted); line-height:1.55; }
+  .thread .sysrem .sr-rule { color: var(--vermilion); }
+  .thread .sysrem code { font-family:var(--mono); color: var(--kinpaku-pale); background:none; }
+  /* staged reveal: the thread builds, then the hook fires on its own */
+  @keyframes msgIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform:none; } }
+  @keyframes srPulse { 0%{ box-shadow:0 0 0 oklch(74% 0.12 85 / 0); } 30%{ box-shadow:0 0 26px oklch(74% 0.14 85 / .55); } 100%{ box-shadow:0 0 10px oklch(74% 0.12 85 / .18); } }
+  .thread .msg, .thread .sysrem { opacity:0; animation: msgIn .5s cubic-bezier(.2,.7,.2,1) forwards; }
+  .thread .m1 { animation-delay:.4s; }
+  .thread .m2 { animation-delay:1.4s; }
+  .thread .m3 { animation: msgIn .5s cubic-bezier(.2,.7,.2,1) 2.9s forwards, srPulse 1.6s ease-out 3.3s 1; }
+  .thread .m4 { animation-delay:4.4s; }
+  @media (prefers-reduced-motion: reduce){ .thread .msg, .thread .sysrem { opacity:1; animation:none; } }
+
+  /* ---------- CTA / close ---------- */
+  .s-cta { align-content:center; justify-items:start; }
+  .s-cta .big { font-family: var(--font); font-weight:700; letter-spacing:-.02em; font-size: clamp(2.2rem,5vw,4.4rem); color: var(--champagne); line-height:1; max-width: 18ch; }
+  .s-cta ol { margin-top:1.8rem; list-style:none; display:flex; flex-direction:column; gap:.9rem; }
+  .s-cta li { display:flex; gap:1rem; align-items:baseline; font-size: clamp(1rem,1.5vw,1.3rem); }
+  .s-cta li .n { font-family: var(--font-display); color: var(--kinpaku); }
+  .s-cta code { font-family: var(--mono); background: var(--lacquer-deep); border:1px solid var(--gold-rule); color: var(--kinpaku-pale); padding:.18em .55em; border-radius:4px; font-size:.92em; }
+  .s-cta .links { margin-top:2.4rem; font-family: var(--mono); font-size:.85rem; color: var(--muted); letter-spacing:.04em; }
+  .s-cta .links b { color: var(--kinpaku); }
+
+  /* full-bleed center variant */
+  .center { align-content:center; justify-items:center; text-align:center; }
+
+  /* kintsugi seam accent (decorative) */
+  .seam { position:absolute; inset:0; pointer-events:none; z-index:1; opacity:.5; }
+</style>
+</head>
+<body>
+<div class="deck" id="deck"></div>
+<video class="flip-transition" id="flip" src="assets/book_title_transition.web.mp4" muted playsinline preload="auto"></video>
+<div class="progress" id="progress"></div>
+
+<script>
+/* ============================================================
+   THE DARK ARTS OF SKILL ENGINEERING — deck data + renderer
+   Edit SLIDES below to change content. Each slide is one object.
+   Nav: arrows / space / click. F = fullscreen.
+   ============================================================ */
+
+/* ---- gold sigils (original geometric marks, no occult clichés) ---- */
+const SEAL = (inner) =>
+  `<svg viewBox="0 0 100 100" fill="none" stroke="var(--kinpaku)" stroke-width="1.5"
+        stroke-linecap="round" stroke-linejoin="round">
+     <circle cx="50" cy="50" r="46" stroke="var(--gold-rule)" stroke-width="1"/>
+     ${inner}</svg>`;
+const SIGILS = {
+  argue:   SEAL('<path d="M34 36 L48 50 L34 64"/><path d="M66 36 L52 50 L66 64"/><path d="M50 37 V63" stroke="var(--vermilion)"/>'),
+  route:   SEAL('<circle cx="30" cy="50" r="4" fill="var(--kinpaku)" stroke="none"/><path d="M30 50 H56"/><path d="M56 50 L74 32"/><path d="M56 50 L74 50"/><path d="M56 50 L74 68"/><circle cx="74" cy="32" r="3"/><circle cx="74" cy="50" r="3"/><circle cx="74" cy="68" r="3"/>'),
+  diverge: SEAL('<circle cx="34" cy="50" r="3.5" fill="var(--kinpaku)" stroke="none"/><path d="M34 50 L78 26"/><path d="M34 50 L80 50"/><path d="M34 50 L78 74"/>'),
+  memory:  SEAL('<ellipse cx="50" cy="33" rx="20" ry="7"/><path d="M30 33 V67 a20 7 0 0 0 40 0 V33"/><path d="M30 50 a20 7 0 0 0 40 0"/>'),
+  hooks:   SEAL('<path d="M50 22 V54 a16 16 0 0 1 -32 0"/><path d="M30 44 L18 54 L30 60" stroke="var(--vermilion)"/>'),
+  script:  SEAL('<rect x="24" y="28" width="52" height="44" rx="4"/><path d="M33 42 L41 50 L33 58"/><path d="M46 60 H60"/><path d="M70 76 L82 76 L82 64" stroke="var(--kinpaku)"/>'),
+  live:    SEAL('<rect x="22" y="30" width="56" height="40" rx="4"/><path d="M22 41 H78"/><circle cx="29" cy="35.5" r="1.5" fill="var(--kinpaku)" stroke="none"/><circle cx="35" cy="35.5" r="1.5" fill="var(--kinpaku)" stroke="none"/><circle cx="50" cy="56" r="4.5" fill="var(--vermilion)" stroke="none"/>'),
+  compile: SEAL('<circle cx="26" cy="50" r="4" fill="var(--kinpaku)" stroke="none"/><path d="M26 50 H46"/><path d="M46 50 L64 34"/><path d="M46 50 H64"/><path d="M46 50 L64 66"/><rect x="64" y="30" width="12" height="8" rx="1.5"/><rect x="64" y="46" width="12" height="8" rx="1.5"/><rect x="64" y="62" width="12" height="8" rx="1.5"/>'),
+  weak:    SEAL('<path d="M22 70 H78"/><path d="M34 70 V58 H66 V70"/><path d="M42 58 V46 H58 V58"/><path d="M48 46 V34 H52 V46"/>'),
+};
+
+/* the build order: each dark art is one level-up from prompt to harness.
+   The rail shows the spellbook filling in as we go. */
+const ART_ORDER = ['argue','diverge','route','memory','script','hooks','live','compile','weak'];
+function rail(activeId){
+  const ai = ART_ORDER.indexOf(activeId);
+  return `<div class="rail">`+ART_ORDER.map((id,i)=>{
+    const st = i<ai?'done':i===ai?'active':'locked';
+    return `<span class="pip ${st}">${SIGILS[id]}</span>`;
+  }).join('')+`</div>`;
+}
+
+/* small inline SVG of the live loop, used full-size on the diagram slide */
+function liveLoopSVG(){
+  return `<svg viewBox="0 0 760 360" width="min(82vw,900px)" font-family="var(--mono)">
+    <defs>
+      <marker id="ah" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto">
+        <path d="M0 0 L9 4.5 L0 9 z" fill="var(--kinpaku)"/></marker>
+      <marker id="ahv" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto">
+        <path d="M0 0 L9 4.5 L0 9 z" fill="var(--patina)"/></marker>
+    </defs>
+    <!-- nodes -->
+    <g stroke="var(--gold-rule)" fill="oklch(10% 0.006 90)">
+      <rect x="40" y="140" width="190" height="80" rx="8"/>
+      <rect x="285" y="140" width="190" height="80" rx="8"/>
+      <rect x="530" y="140" width="190" height="80" rx="8"/>
+    </g>
+    <g fill="var(--champagne)" font-size="17" text-anchor="middle" font-family="var(--font-wordmark)" font-weight="700">
+      <text x="135" y="175">AGENT THREAD</text>
+      <text x="380" y="175">live-server.mjs</text>
+      <text x="625" y="175">BROWSER (app)</text>
+    </g>
+    <g fill="var(--faint)" font-size="11.5" text-anchor="middle" font-family="var(--mono)">
+      <text x="135" y="198">long-poll loop</text>
+      <text x="380" y="198">zero-dependency</text>
+      <text x="625" y="198">EventSource + DOM</text>
+    </g>
+    <!-- agent <-> server : self-restarting long poll -->
+    <path d="M230 165 H285" stroke="var(--kinpaku)" stroke-width="2" marker-end="url(#ah)"/>
+    <path d="M285 195 H230" stroke="var(--kinpaku)" stroke-width="2" marker-end="url(#ah)"/>
+    <text x="257" y="120" fill="var(--kinpaku)" font-size="12.5" text-anchor="middle">/poll  ≤270s</text>
+    <text x="257" y="232" fill="var(--faint)" font-size="11" text-anchor="middle">loop on timeout</text>
+    <!-- server -> browser : SSE -->
+    <path d="M475 165 H530" stroke="var(--patina)" stroke-width="2" marker-end="url(#ahv)"/>
+    <text x="502" y="120" fill="var(--patina)" font-size="12.5" text-anchor="middle">SSE push</text>
+    <!-- browser -> server : POST -->
+    <path d="M530 195 H475" stroke="var(--kinpaku)" stroke-width="2" marker-end="url(#ah)"/>
+    <text x="502" y="232" fill="var(--faint)" font-size="11" text-anchor="middle">POST event</text>
+    <!-- captions -->
+    <text x="380" y="300" fill="var(--muted)" font-size="13" text-anchor="middle">drag a knob → POST → agent edits variant → SSE → DOM updates · zero regeneration</text>
+  </svg>`;
+}
+
+/* grimoire seal with a kintsugi seam — title-slide decoration */
+function grimoireSeal(){
+  return `<svg viewBox="0 0 400 400" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="200" cy="200" r="186" stroke="var(--gold-rule)" stroke-width="1"/>
+    <circle cx="200" cy="200" r="160" stroke="var(--gold-faint)" stroke-width="1" stroke-dasharray="2 10"/>
+    <circle cx="200" cy="200" r="120" stroke="var(--gold-rule)" stroke-width="1.2"/>
+    <circle cx="200" cy="200" r="120" stroke="oklch(74% 0.075 82 / 0.06)" stroke-width="22"/>
+    <!-- ring sigils: the nine arts, abstracted as ticks -->
+    <g stroke="var(--gold-rule-strong)" stroke-width="1.4">
+      ${Array.from({length:9},(_,i)=>{const a=(i/9)*Math.PI*2-Math.PI/2;const x1=200+Math.cos(a)*120,y1=200+Math.sin(a)*120,x2=200+Math.cos(a)*132,y2=200+Math.sin(a)*132;return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/>`;}).join('')}
+    </g>
+    <!-- kintsugi seam: a crack repaired in gold -->
+    <path d="M70 110 L150 175 L120 215 L205 250 L185 300 L270 285 L320 330"
+          stroke="var(--vermilion)" stroke-width="5" opacity="0.32"/>
+    <path d="M70 110 L150 175 L120 215 L205 250 L185 300 L270 285 L320 330"
+          stroke="var(--kinpaku)" stroke-width="2"/>
+    <g fill="var(--kinpaku)">
+      <circle cx="150" cy="175" r="3"/><circle cx="205" cy="250" r="3"/><circle cx="270" cy="285" r="3"/>
+    </g>
+    <!-- center mark -->
+    <circle cx="200" cy="200" r="4.5" fill="var(--kinpaku)"/>
+  </svg>`;
+}
+
+const SLIDES = [
+  /* 0 — TITLE */
+  { type:'title' },
+
+  /* 1 — cold open: median slop (IMAGE) */
+  { type:'imgstate', mvt:'Cold open',
+    bg:'assets/frontend_design_slop.png',
+    big:'“Yeah, AI made&nbsp;that.”',
+    sub:'You can call it on sight. And it came out of the <strong>most popular design skill there is.</strong>' },
+
+  /* 2 — Level 0: the spell (Anthropic's frontend-design) */
+  { type:'punch', level:0, tag:'the spell',
+    big:'A system prompt<br>and a&nbsp;prayer.',
+    sub:'Impeccable started as Anthropic’s <strong>frontend-design</strong> skill: ~55 lines of named bans. No scripts, no routing. Pure prose.' },
+
+  { type:'code', level:0, tag:'frontend-design · the original',
+    code:
+`<span class="c"># frontend-design / SKILL.md  ·  the original, ~55 lines</span>
+<span class="s">"NEVER use generic AI aesthetics: overused</span>
+<span class="s"> fonts (Inter, Roboto, Arial, system fonts)"</span>
+<span class="s">"...cliched color schemes (particularly</span>
+<span class="s"> purple gradients on white backgrounds)"</span>
+<span class="s">"Never converge on common choices</span>
+<span class="s"> (Space Grotesk, for example)"</span>`,
+    file:'github.com/anthropics/skills · frontend-design (the original)',
+    cap:'Named bans, applied to every project. Two deep flaws: it <strong>over-applies</strong>, and a ban just <strong>relocates</strong> the model to the next cluster. Fixing them is the whole build.' },
+
+  /* 3 — the enemy named (IMAGE: literal gravity) */
+  { type:'imgstate', mvt:'Cold open',
+    tag:'IMAGE · render / stock',
+    ph:'A literal gravity well: a marble spiralling down a funnel, or a black-hole accretion-disk render, everything pulled toward one point. Visual pun on “gravity.”',
+    bg:'assets/generated/placeholders/slide-05-gravity-well-v01.png',
+    big:'The median is the model’s <span class="gold">gravity</span>.',
+    sub:'Even 250 lines of real taste can’t out-write it. A great prompt is necessary, <strong>and nowhere near enough.</strong>' },
+
+  /* 4 — THESIS */
+  { type:'thesis' },
+
+  /* 5 — spellbook preview = the locked climb */
+  { type:'spellbook', preview:true, accent:'accent-07-foil-fragment.png', head:{ t:'From a spell to a harness.', s:'' } },
+
+  /* ===== THE BUILD begins ===== */
+
+  /* ===== Level 1 · ARGUE — rebuilt as an edutainment beat ===== */
+  /* the problem, as one line */
+  { type:'punch', id:'argue', level:1, tag:'make them argue',
+    big:'It grades its own&nbsp;homework.',
+    sub:'A model reviews a page, anchors on its <strong>first</strong> guess, and ships it. One confident, lonely reviewer.' },
+
+  /* the gag: two wizards, equal and opposed (needs art) */
+  { type:'imgstate',
+    tag:'IMAGE · the gag',
+    ph:'Gandalf vs Saruman — the staff-duel staredown from Fellowship. Two wizards, equal and opposed, locked in a fight.',
+    bg:'assets/generated/placeholders/slide-09-argue-wizards-v02.png',
+    big:'So make them&nbsp;argue.',
+    sub:'Two sub-agents. They never see each other’s work.' },
+
+  /* the code, big */
+  { type:'code', level:1, tag:'/impeccable critique',
+    code:
+`<span class="c">// two blind sub-agents, one forced synthesis</span>
+A = <span class="f">subagent</span>(<span class="s">"design director: hierarchy, slop, heuristics"</span>)
+B = <span class="f">subagent</span>(<span class="s">"detector + browser evidence (deterministic)"</span>)
+
+report = <span class="f">synthesize</span>(A, B)   <span class="c">// weave, never concatenate</span>`,
+    file:'skill/reference/critique.md:7-40, 92-95',
+    cap:'Ordering debiases: the deterministic detector is <strong>withheld</strong> until the human-style review commits, so the cheap, confident signal can’t anchor the expensive one.' },
+
+  /* the payoff, tweetable */
+  { type:'punch', center:true,
+    big:'Two blind opinions<br>beat one confident&nbsp;guess.',
+    sub:'Two verdicts, one synthesis. The trick travels far past design:',
+    uses:['code review','design review','security audit','plan / RFC critique','ranking outputs'] },
+
+  /* Level 1 · the harness wrinkle (Codex) */
+  { type:'meme', level:1, tag:'the wrinkle',
+    src:'assets/mem_codex_sub_agents.jpg', alt:'Codex: Y U NO let me spawn sub-agents?',
+    cap:'Sub-agents aren’t portable. Some harnesses won’t spawn one unless the <strong>user</strong> already asked for parallel work.' },
+
+  { type:'code', level:1, tag:'detect &amp; degrade',
+    code:
+`<span class="k">&lt;codex&gt;</span>
+<span class="c">- if spawn_agent exposed AND user allowed sub-agents:</span>
+    spawn A, B immediately
+<span class="c">- if exposed but NOT allowed:</span>
+    ask <span class="s">exactly once</span>, then <span class="v">STOP until they answer</span>
+<span class="c">- if not exposed: don't ask. run sequentially.</span>
+    report <span class="s">"Assessment independence: degraded (…)"</span>
+<span class="k">&lt;/codex&gt;</span>`,
+    file:'skill/reference/critique.md:32-40',
+    cap:'Detect the capability, ask once, <strong>degrade loudly</strong>. Never assume the runtime you wrote for.' },
+
+  /* Demo 1 */
+  { type:'demo', chip:'Live demo · 1 of 2', big:'Watch them argue.',
+    steps:[
+      ['', 'A deliberately median page. One command:'],
+      ['$', '<code>/impeccable critique</code>'],
+      ['→', 'Two assessments come back independently…'],
+      ['→', 'Synthesis flags what the eye <em>missed</em> but the detector <em>caught</em>.'],
+    ],
+    media:{ tag:'GIF · pre-recorded', cap:'Screen capture of <b>/impeccable critique</b> on the median page: two sub-agents, then a synthesis listing the findings.', hint:'record during the pre-run' } },
+
+  /* ===== Level 2 · DIVERGE ===== */
+  { type:'punch', id:'diverge', level:2, tag:'force divergence',
+    big:'A ban just moves the&nbsp;problem.',
+    sub:'Ban Inter, the model grabs Space Grotesk. Ban that, it grabs the next cluster. The list just <strong>chases the model around</strong>.' },
+
+  { type:'diverge' },
+
+  /* divergence punch line (IMAGE: three divergent variants) */
+  { type:'imgstate', mvt:'The build',
+    tag:'IMAGE · 3-up comparison',
+    ph:'The SAME brief rendered three radically different ways, side by side: e.g. brutalist / editorial-magazine / cockpit-dashboard. Shows divergence at a glance. (Generate three with Impeccable, screenshot each.)',
+    bg:'assets/generated/placeholders/slide-17-divergence-3up-v01.png',
+    big:'Divergence is the<br><span class="gold">hard</span> part.',
+    sub:'Every model can hit the average. The real skill is steering one somewhere else.',
+    uses:['naming & branding','content ideation','variant generation','breaking boilerplate'] },
+
+  /* ===== Level 3 · ROUTE ===== */
+  { type:'punch', id:'route', level:3, tag:'route like a model',
+    big:'One rulebook can’t fit&nbsp;everything.',
+    sub:'Level 0 banned system fonts for everyone. But a product dashboard should feel <strong>native</strong>. Brand and product need different rules.' },
+
+  { type:'route' },
+
+  { type:'punch', center:true,
+    big:'One skill,<br>two <span class="gold">registers</span>.',
+    sub:'Brand wants distinctiveness, product wants the familiar. Route to the register and the right rules load.',
+    uses:['big multi-tool skills','context on demand','per-audience behavior','agent toolkits'] },
+
+  /* ===== Level 4 · MEMORY ===== */
+  { type:'punch', id:'memory', level:4, tag:'give them memory',
+    big:'Every run starts from&nbsp;zero.',
+    sub:'Re-finding the same problems, forgetting what we just fixed. Nobody chose to make the skill stateless. It just never got memory.' },
+
+  { type:'memory' },
+
+  { type:'punch', center:true,
+    big:'Make the runs&nbsp;compound.',
+    sub:'Persist a tiny snapshot keyed by a stable id. One command hands off to the next.',
+    uses:['resumable agents','progress tracking','multi-session refactors','migrations'] },
+
+  /* ===== Level 5 · SCRIPT TALKS BACK ===== */
+  { type:'punch', id:'script', level:5, tag:'the script talks back',
+    big:'Buried rules get&nbsp;skimmed.',
+    sub:'Sharp prose still gets skimmed, weak models worst. The win is timing: deliver the rule <strong>at the moment it’s needed</strong>.' },
+
+  { type:'code', level:5, tag:'stdout is the instruction',
+    code:
+`<span class="c">// the skill body literally says: "Follow whatever it prints."</span>
+$ node context.mjs
+<span class="v">NO_PRODUCT_MD</span>            <span class="c">→ agent stops, runs init</span>
+<span class="v">UPDATE_AVAILABLE</span> v3.9     <span class="c">→ agent offers update</span>
+
+$ node live.mjs
+{ <span class="f">hint</span>: <span class="s">"Ask which app, then rerun"</span>,
+  <span class="f">nextCommand</span>: <span class="s">"init"</span> }   <span class="c">// shaped to the exact state</span>`,
+    file:'skill/scripts/live.mjs:64-90 · SKILL.src.md:15',
+    cap:'The script reads the environment and <strong>writes the next instruction back</strong>. It steers harder than anything static. The trade-off: it breaks prompt caching.' },
+
+  { type:'punch', center:true,
+    big:'The exit value<br>is the&nbsp;prompt.',
+    sub:'Move the decision into a script that emits the instruction.',
+    uses:['environment-aware setup','dynamic onboarding','repo-state gating','adaptive flows'] },
+
+  /* ===== Level 6 · HOOKS ===== */
+  { type:'punch', id:'hooks', level:6, tag:'hooks that fight back',
+    big:'It only helps when you&nbsp;call it.',
+    sub:'But the agent makes its worst edits <strong>when nobody called the skill at all.</strong>' },
+
+  /* the gag: grappling hooks (needs art) */
+  { type:'imgstate',
+    tag:'IMAGE · the gag',
+    ph:'Lord of the Rings grappling hooks — the Uruk-hai siege of Helm’s Deep, iron hooks biting the wall as ladders go up. Hooks coming over the top, uninvited.',
+    bg:'assets/generated/placeholders/slide-28-hooks-v02.png',
+    big:'So the hooks come to&nbsp;you.',
+    sub:'A guardrail that fires on every edit, invited or not.' },
+
+  { type:'code', level:6, tag:'PostToolUse + a write-gate',
+    code:
+`<span class="c">// PostToolUse: after EVERY edit, run the detector,</span>
+<span class="c">// inject findings as a system-reminder. No invocation needed.</span>
+hook(<span class="f">event</span>) → detect(file) → <span class="k">additionalContext</span>
+
+<span class="c">// Cursor: PreToolUse write-gate. BLOCK the bad edit</span>
+<span class="c">// before it ever lands on disk.</span>
+<span class="k">if</span> (detector.fails(proposedEdit)) <span class="k">return</span> <span class="v">DENY</span>`,
+    file:'skill/scripts/hook.mjs · hook-before-edit.mjs',
+    cap:'Your skill keeps working when <strong>nobody called it</strong>. PostToolUse injects findings; Cursor’s pre-gate blocks the bad edit before it lands.' },
+
+  { type:'punch', center:true,
+    big:'Passive guardrails beat a command<br>no one remembers to&nbsp;run.',
+    sub:'Ship a hook with your skill.',
+    uses:['lint & format','secret detection','a11y checks','policy enforcement'] },
+
+  /* Demo 2 — faked agent thread (the hook fires on its own) */
+  { type:'demo', app:'hook', chip:'Live demo · 2 of 2', big:'The hook fires<br>unprompted.',
+    steps:[
+      ['', 'I never invoke the skill. I just make one bad edit:'],
+      ['+', '<code>img:hover { transform: scale(1.1) }</code>'],
+      ['→', 'A system-reminder appears in the thread, uninvited.'],
+      ['→', 'The skill caught it the moment it hit disk.'],
+    ] },
+
+  /* ===== Level 7 · LIVE (live-wire the browser) ===== */
+  { type:'punch', id:'live', level:7, tag:'live-wire the browser',
+    big:'You can’t tune pixels<br>through a chat&nbsp;box.',
+    sub:'Describing visual nudges in prose is slow and miserable. So give the agent a <strong>second input</strong>: the live browser. Grab the real element, drag it, and it iterates with you.' },
+
+  { type:'code', level:7, tag:'the agent thread is the loop',
+    code:
+`<span class="c">// 1. a tiny server injects a picker into your dev page.</span>
+<span class="c">// 2. your agent runs ONE blocking command and waits:</span>
+$ node live-poll.mjs        <span class="c">// blocks until you act</span>
+
+<span class="c">// 3. you drag the radius knob in the running app →</span>
+{ <span class="f">type</span>: <span class="s">"steer"</span>, <span class="f">param</span>: <span class="s">"radius"</span>, <span class="f">value</span>: <span class="v">18</span> }
+
+<span class="c">// 4. the poll returns. the agent edits the file, then:</span>
+$ node live-poll.mjs --reply <span class="f">&lt;id&gt;</span> done   <span class="c">// page updates</span>`,
+    file:'skill/scripts/live-poll.mjs · live-server.mjs',
+    cap:'No MCP, no plugin. A <strong>blocking poll</strong> turns your browser action into the agent’s next instruction, in the same chat thread you’re already in.' },
+
+  /* DA-7 the loop diagram */
+  { type:'loop', mvt:'The build' },
+
+  /* DA-7 the money shot: live in motion (GIF) */
+  { type:'imgstate', mvt:'The build',
+    tag:'GIF · the money shot',
+    ph:'Screen recording of <b>/impeccable live</b>: split screen, code on the left, the running app on the right. User drags a parameter knob in the browser and the hero updates instantly, then clicks Accept. This is the slide that sells it.',
+    big:'…and it’s <span class="gold">live</span>.',
+    sub:'Drag a knob in the running app; the agent rewrites the variant and the page updates. No regeneration.',
+    uses:['visual iteration','dashboard tuning','3D / game tweaking','any painful-to-type UI'] },
+
+  /* ===== Level 8 · COMPILE ===== */
+  { type:'meme', id:'compile', level:8, tag:'compile to every harness',
+    src:'assets/it_worked_on_my_machine_elon_cybertruck.jpg', alt:'It worked on my machine',
+    cap:'Great in your harness, on your model. The differences that break it for a teammate are <strong>behavioral</strong>: who can spawn an agent, who wakes the thread.' },
+
+  /* DA-8 the symlink myth */
+  { type:'punch', accent:'accent-06-right-patina-edge.png',
+    big:'“Just symlink .claude<br>to&nbsp;.agents.”',
+    sub:'The advice all over X. I wish it worked, the way I wish french fries were healthy. But harnesses don’t share a folder, or a behavior.' },
+
+  { type:'htable', level:8, tag:'the differences that bite',
+    diff:[
+      ['Sub-agents', 'widely supported now · <b>who can spawn one</b> differs: Claude programmatic · Codex needs user OK · Cursor agent-chosen'],
+      ['Ask the user', 'Claude + Cursor: anytime · Codex: <b>plan mode only</b>'],
+      ['Background jobs', 'Claude <b>auto-wakes</b> the thread when a job exits · others don’t'],
+      ['Watchers', 'tail-and-watch exists, but throttled harder than a job-exit wakeup'],
+      ['Edit hooks', 'Claude Post · Codex Post · Cursor Pre-gate · rest none'],
+    ],
+    cap:'The mechanical gaps the build absorbs. The behavioral ones your skill must <strong>detect and degrade around</strong> at runtime.' },
+
+  /* DA-8 the logos: one source, every harness */
+  { type:'logos', kicker:'Dark art 08 · one source, every harness',
+    big:'Write once. Ship to all of&nbsp;them.',
+    file:'each build gets the right paths, command syntax, and per-model patches',
+    uses:['multi-IDE plugins','cross-runtime libs','write-once distribution','per-model patches'] },
+
+  /* DA-8 the receipt: a real, harness-specific installer */
+  { type:'punch', center:true,
+    big:'So I built a<br>real installer.',
+    sub:'<code>npx skills</code> copies one folder and clones it to every harness. My PR to fix that is still hanging. <code>npx impeccable skills install</code> ships a <strong>harness-specific build</strong> to each harness’s own place.' },
+
+  /* DA-8 the laugh: model tells (self-contained WANTED-poster meme) */
+  { type:'imgstate', mvt:'The build',
+    bg:'assets/generated/placeholders/rap-sheet-text-tests/rap-sheet-prompt-c-most-wanted-code-v02.png' },
+
+  /* ===== Level 9 · WEAKEST MODEL ===== */
+  { type:'punch', id:'weak', level:9, tag:'design for the weakest model',
+    big:'It falls apart on a weaker&nbsp;model.',
+    sub:'A weaker model has opinions just fine. What it loses is the <strong>discipline to follow yours</strong>.' },
+
+  { type:'code', level:9, tag:'non-compressible gates',
+    code:
+`<span class="c">// craft.md: gates that must NOT be compressed</span>
+<span class="v">You must stop at every gate.</span>
+Shape confirmation alone is <span class="v">NOT</span> a green light to code.
+<span class="c">// "compressing gates 2-4 is the dominant failure mode."</span>
+
+<span class="c">// Codex is trigger-happy to infer context →</span>
+<span class="c">//   give it an explicit stop-and-gather strategy.</span>
+<span class="c">// live.md is written for the lowest common denominator</span>
+<span class="c">//   (Haiku / conductor); nothing implicit survives.</span>`,
+    file:'skill/reference/craft.md:9-20 · CLAUDE.md:159,173,188',
+    cap:'Most authors write for the smartest model in the room. The dark art is writing for the <strong>dumbest one you’ll actually ship on</strong>: explicit gates, hard stops, no inference.' },
+
+  { type:'punch', center:true,
+    big:'If the gate can be skipped,<br>it will&nbsp;be.',
+    sub:'Test on the weak model. Make it un-skippable.',
+    uses:['cheap-model deploys','reliability-critical agents','long agentic flows','CI gates'] },
+
+  /* the gag that sets up the reveal */
+  { type:'poster', src:'assets/one_skill_to_rule_them_all.webp', alt:'One skill to rule them all' },
+
+  /* the reveal: v9 = a harness extension = Impeccable */
+  { type:'statement', mvt:'Level 9', accent:'accent-11-ritual-brackets.png', big:'We just built a<br><span class="gold">harness extension.</span>',
+    sub:'We started from Anthropic’s prompt, rewrote every line of it, then did the nine things a prompt <em>can’t</em>. <strong>This is Impeccable.</strong>' },
+
+  /* the whole system + take-home (capability map; merges the old spellbook) */
+  { type:'system' },
+
+  /* CTA */
+  { type:'cta', accent:'accent-07-foil-fragment.png' },
+
+  /* Q&A */
+  { type:'statement', mvt:'', center:true, accent:'accent-08-ghost-seal.png', big:'<span class="gold">Questions?</span>',
+    sub:'Where does this break? What did I get wrong? Pushback welcome.' },
+
+  /* thank you */
+  { type:'title', thanks:true },
+];
+
+/* ============================================================
+   RENDERERS
+   ============================================================ */
+function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstElementChild; }
+function usesRow(uses){ return uses?`<div class="uses-row"><span class="ulabel">use it for</span>${uses.map(u=>`<span class="chip">${u}</span>`).join('')}</div>`:''; }
+
+function renderTitle(s){
+  if (s.thanks){
+    return el(`<section class="slide s-thanks">
+      <div>
+        <div class="wm">THANK<span class="arts"> YOU</span></div>
+        <div class="by">PAUL BAKAUS · <b>impeccable.style</b> · github / pbakaus · paul@renaissance-geek.ai</div>
+      </div></section>`);
+  }
+  return el(`<section class="slide s-title">
+    <div class="by">PAUL BAKAUS · creator of <b>Impeccable</b></div>
+  </section>`);
+}
+
+/* image placeholder (for art-right + general use) */
+function imgPH(m, ar){
+  return `<div class="imgph"${ar?` style="aspect-ratio:${ar}"`:''}>`+
+    `<span class="tag">${(m&&m.tag)||'IMAGE'}</span>`+
+    `<span class="cap">${(m&&m.cap)||''}</span>`+
+    `<span class="hint">${(m&&m.hint)||'source + drop in'}</span></div>`;
+}
+
+/* harness-differences table (art-right alternative to a code panel) */
+function renderDiff(rows){
+  return `<div class="hdiff">`+rows.map(([k,v])=>`<div class="hd-row"><div class="hd-k">${k}</div><div class="hd-v">${v}</div></div>`).join('')+`</div>`;
+}
+
+/* full-bleed image statement (real bg or labelled placeholder) */
+function renderImgState(s){
+  const fill = s.bg
+    ? `<div class="ifill" style="background-image:url('${s.bg}')"></div>`
+    : `<div class="ifill ph"><span class="tag">${s.tag||'IMAGE'}</span><span class="cap">${s.ph}</span><span class="hint">${s.hint||'source + drop in'}</span></div>`;
+  const hasText = s.big || s.sub || s.kicker;
+  return el(`<section class="slide s-imgstate">
+    ${fill}${hasText?'<div class="igrad"></div>':''}
+    ${hasText?`<div class="imgstate-text">
+      ${s.kicker?`<div class="kicker">${s.kicker}</div>`:''}
+      ${s.big?`<div class="big">${s.big}</div>`:''}
+      ${s.sub?`<div class="sub">${s.sub}</div>`:''}
+      ${usesRow(s.uses)}
+    </div>`:''}
+  </section>`);
+}
+
+/* one-source → many-harness logo grid */
+const HARNESSES = [
+  ['claude-logo.png','Claude Code'],['cursor-logo.png','Cursor'],['openai-logo.png','Codex',true],
+  ['gemini-logo.png','Gemini CLI'],['copilot-logo.svg','Copilot'],['kiro-logo.png','Kiro'],
+  ['opencode-logo.png','OpenCode'],['pi-logo.svg','Pi'],['antigravity-logo.png','Antigravity'],
+  ['windsurf-logo.png','Windsurf'],
+];
+function renderLogos(s){
+  const cells = HARNESSES.map(([f,n,lite])=>`<div class="logo-cell"><img class="${lite?'lite':''}" src="assets/logos/${f}" alt=""><span>${n}</span></div>`).join('');
+  return el(`<section class="slide s-statement" style="align-content:center">
+    <div class="kicker">${s.kicker||'Dark art 08 · compile to every harness'}</div>
+    <div class="big" style="font-size:clamp(1.8rem,4vw,3.4rem);max-width:24ch;margin:.8rem 0 2rem">${s.big}</div>
+    <div class="logo-grid">${cells}</div>
+    <div class="filetag" style="margin-top:1.4rem">${s.file||''}</div>
+    ${s.uses?`<div style="margin-top:.4rem">${usesRow(s.uses)}</div>`:''}
+  </section>`);
+}
+
+function renderStatement(s){
+  return el(`<section class="slide s-statement ${s.center?'center':''}">
+    <div class="big">${s.big}</div>
+    ${s.sub?`<div class="sub">${s.sub}</div>`:''}
+  </section>`);
+}
+
+/* edutainment beats: one punchy idea per slide */
+function renderPunch(s){
+  return el(`<section class="slide s-punch${s.center?' center':''}">
+    <div class="punch-inner">
+      ${s.id?rail(s.id):''}
+      ${(s.level!=null)?`<div class="beat-eyebrow">Level ${s.level}${s.tag?` · ${s.tag}`:''}</div>`:''}
+      <div class="punch-big">${s.big}</div>
+      ${s.sub?`<div class="punch-sub">${s.sub}</div>`:''}
+      ${s.uses?`<div class="punch-uses"><span class="ulabel">use it for</span>${s.uses.map(u=>`<span class="chip">${u}</span>`).join('')}</div>`:''}
+    </div>
+  </section>`);
+}
+function renderCode(s){
+  return el(`<section class="slide s-code">
+    <div class="code-wrap">
+      ${(s.level!=null)?`<div class="beat-eyebrow">Level ${s.level}${s.tag?` · ${s.tag}`:''}</div>`:''}
+      <pre class="spell hero">${s.code}</pre>
+      ${s.file?`<div class="filetag">${s.file}</div>`:''}
+      ${s.cap?`<div class="code-cap">${s.cap}</div>`:''}
+    </div>
+  </section>`);
+}
+function renderPoster(s){
+  return el(`<section class="slide s-poster"><img src="${s.src}" alt="${s.alt||''}"></section>`);
+}
+function renderMeme(s){
+  return el(`<section class="slide s-meme">
+    ${s.id?rail(s.id):''}
+    ${(s.level!=null)?`<div class="beat-eyebrow">Level ${s.level}${s.tag?` · ${s.tag}`:''}</div>`:''}
+    <img src="${s.src}" alt="${s.alt||''}">
+    ${s.cap?`<div class="meme-cap">${s.cap}</div>`:''}
+  </section>`);
+}
+function renderHTable(s){
+  return el(`<section class="slide s-htable">
+    <div class="ht-wrap">
+      ${(s.level!=null)?`<div class="beat-eyebrow">Level ${s.level}${s.tag?` · ${s.tag}`:''}</div>`:''}
+      ${renderDiff(s.diff)}
+      ${s.cap?`<div class="code-cap">${s.cap}</div>`:''}
+    </div>
+  </section>`);
+}
+/* route: a mixture-of-experts diagram — one command lights one expert */
+function renderRoute(s){
+  return el(`<section class="slide s-route">
+    <div class="diag-eyebrow">Level 3 · route like a model</div>
+    <div class="route-flow">
+      <div class="route-col">
+        <div class="rcell on">/impeccable critique</div>
+        <div class="rcell">/impeccable polish</div>
+        <div class="rcell">/impeccable bolder</div>
+        <div class="rmore">+ 20 commands</div>
+      </div>
+      <div class="route-arrow">→</div>
+      <div class="router">SKILL.md<small>router, not a manual</small></div>
+      <div class="route-arrow">→</div>
+      <div class="route-col">
+        <div class="rcell on">reference/critique.md<span class="rload">loaded</span></div>
+        <div class="rcell off">reference/polish.md</div>
+        <div class="rcell off">reference/bolder.md</div>
+        <div class="rmore">one expert, on demand</div>
+      </div>
+    </div>
+    <div class="route-register"><span class="rk">register</span> <b>brand</b> <span class="swap">⇄</span> <b>product</b> <span class="rsub">· decides which rules even apply</span></div>
+    <div class="code-cap">One command loads <strong>one</strong> expert reference, not the whole manual. Register (brand vs product) picks which rules apply. Mixture-of-experts, for skills.</div>
+  </section>`);
+}
+/* memory: a real critique snapshot file beside a compounding-trend chart */
+function renderMemory(s){
+  return el(`<section class="slide s-memory">
+    <div class="diag-eyebrow">Level 4 · give them memory</div>
+    <div class="mem-wrap">
+      <div class="snapfile">
+        <div class="snap-name">.impeccable/critique/2026-06-28T14-30__src-hero-tsx.md</div>
+<pre class="snap-body"><span class="d">---</span>
+<span class="k">target</span>: <span class="v">"the hero section"</span>
+<span class="k">total_score</span>: <span class="v">32</span>
+<span class="k">p0_count</span>: <span class="v">1</span>
+<span class="k">p1_count</span>: <span class="v">3</span>
+<span class="d">---</span>
+<span class="h">## P0 · contrast</span>
+body text 3.1:1 on the tinted card
+<span class="h">## P1 · hover-zoom, eyebrow, rhythm</span></pre>
+      </div>
+      <div class="trend">
+        <div class="trend-title">every run compounds</div>
+        <svg viewBox="0 0 260 140" fill="none">
+          <line x1="22" y1="120" x2="244" y2="120" stroke="var(--gold-faint)" stroke-width="1"/>
+          <path d="M44 102 L132 66 L222 30" stroke="var(--kinpaku)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="44" cy="102" r="4" fill="var(--kinpaku)"/>
+          <circle cx="132" cy="66" r="4" fill="var(--kinpaku)"/>
+          <circle cx="222" cy="30" r="5" fill="var(--kinpaku)"/>
+          <text x="44" y="90" fill="var(--champagne)" font-size="13" text-anchor="middle">24</text>
+          <text x="132" y="54" fill="var(--champagne)" font-size="13" text-anchor="middle">28</text>
+          <text x="222" y="18" fill="var(--kinpaku)" font-size="16" font-weight="bold" text-anchor="middle">32</text>
+        </svg>
+        <div class="trend-runs"><span>run 1 <b>·</b> 24</span><span>run 2 <b>·</b> 28</span><span>run 3 <b>·</b> 32</span></div>
+      </div>
+    </div>
+    <div class="code-cap">/critique writes the snapshot; /polish reads it as a backlog. The slug is the <strong>resolved file path</strong>, so the trend survives across sessions and teammates.</div>
+  </section>`);
+}
+/* diverge: the monoculture cluster, and the escape from it */
+function renderDiverge(){
+  return el(`<section class="slide s-diverge">
+    <div class="diag-eyebrow">Level 2 · force divergence</div>
+    <svg viewBox="0 0 880 360" fill="none">
+      <!-- the median cluster -->
+      <circle cx="210" cy="205" r="125" stroke="var(--gold-faint)" stroke-width="1" stroke-dasharray="3 8"/>
+      <text x="210" y="356" fill="var(--faint)" text-anchor="middle" font-size="14">the median, every model's default</text>
+      <circle cx="255" cy="245" r="4" fill="var(--muted)"/><circle cx="165" cy="250" r="4" fill="var(--muted)"/>
+      <circle cx="150" cy="205" r="3" fill="var(--muted)"/><circle cx="240" cy="290" r="3" fill="var(--muted)"/>
+      <circle cx="285" cy="255" r="3" fill="var(--muted)"/>
+      <!-- the hop within the cluster -->
+      <text x="235" y="130" fill="var(--kinpaku-deep)" text-anchor="middle" font-size="13">ban one → the next in the cluster</text>
+      <text x="198" y="166" fill="var(--muted)" text-anchor="middle" font-size="13">Inter</text>
+      <circle cx="198" cy="188" r="6" fill="none" stroke="var(--vermilion)" stroke-width="1.5"/>
+      <line x1="191" y1="181" x2="205" y2="195" stroke="var(--vermilion)" stroke-width="1.5"/>
+      <line x1="205" y1="181" x2="191" y2="195" stroke="var(--vermilion)" stroke-width="1.5"/>
+      <path d="M209 185 Q255 173 291 174" stroke="var(--kinpaku-deep)" stroke-width="1.5" stroke-dasharray="2 4"/>
+      <circle cx="298" cy="174" r="5" fill="var(--muted)"/>
+      <text x="298" y="196" fill="var(--muted)" text-anchor="middle" font-size="13">Space Grotesk</text>
+      <!-- the escape -->
+      <path d="M320 172 L742 104" stroke="var(--kinpaku)" stroke-width="2.5"/>
+      <text x="531" y="128" fill="var(--kinpaku-pale)" text-anchor="middle" font-size="15" transform="rotate(-9.2 531 128)">anti-attractors + a seed</text>
+      <circle cx="756" cy="101" r="9" fill="var(--kinpaku)"/>
+      <text x="756" y="77" fill="var(--kinpaku)" text-anchor="middle" font-size="15" font-weight="bold">distinct, on purpose</text>
+    </svg>
+    <div class="code-cap">A denylist just hops the model to the next cluster. Make it <strong>eliminate its own top picks</strong>, then seed from the user, and the average isn't even reachable.</div>
+  </section>`);
+}
+/* system: a capability map — what each art lets Impeccable do that a prompt
+   can't, plus where it lives (the take-home; replaces the standalone spellbook) */
+function renderSystem(){
+  const caps = [
+    ['argue',   'Reviews itself',        'two blind opinions catch the blind spot one pass ships', 'reference/critique.md'],
+    ['diverge', 'Escapes the average',   'never the same three fonts twice',                        'reference/brand.md · palette.mjs'],
+    ['route',   'Routes per surface',    'brand and product load different rules',                  'SKILL.src.md'],
+    ['memory',  'Remembers',             'every run compounds on the last',                         'critique-storage.mjs'],
+    ['script',  'Adapts to your repo',   'reads the state, then steers itself',                     'live.mjs · context.mjs'],
+    ['hooks',   'Guards every edit',     'fires even when you never called it',                     'hook.mjs'],
+    ['live',    'Tunes in the browser',  'drag a knob, it iterates live',                           'live-poll.mjs'],
+    ['compile', 'Runs on any harness',   'one source, every IDE, per-model patches',               'transformers/* · build.js'],
+    ['weak',    'Holds on weak models',  'gates that can’t be skipped',                             'craft.md'],
+  ];
+  const cells = caps.map(([id,h,s,f],i)=>`<div class="cap-cell">
+    <div class="cap-top"><span class="cap-sig">${SIGILS[id]}</span><span class="cap-no">${String(i+1).padStart(2,'0')}</span><span class="cap-h">${h}</span></div>
+    <div class="cap-s">${s}</div>
+    <div class="cap-file">${f}</div>
+  </div>`).join('');
+  return el(`<section class="slide s-system">
+    <div class="sys-head"><div class="t">Nine things a prompt can't&nbsp;do.</div><div class="s">a prompt suggests a design, once. Impeccable now:</div></div>
+    <div class="cap-grid">${cells}</div>
+    <div class="cap-foot">Every one is <b>MIT</b>. Steal them: <b>impeccable.style</b></div>
+  </section>`);
+}
+
+function renderThesis(){
+  return el(`<section class="slide s-thesis">
+    <div class="ineq">Prompting <span class="lt">&lt;</span> <span class="h">harness</span> engineering</div>
+    <div class="whisper">Prompting is the spell. Harnessing is the magic.</div>
+    <div class="remember">If you remember one thing</div>
+  </section>`);
+}
+
+function renderDivider(s){
+  return el(`<section class="slide s-divider">
+    <div class="rom">${s.rom}</div>
+    <div class="mname">${s.name}</div>
+    <div class="mline">${s.line}</div>
+  </section>`);
+}
+
+function renderArt(s){
+  const a=s.art;
+  const v = ART_ORDER.indexOf(a.id)+1;
+  const extra = a.tag.replace(/^Dark art \d+\s*·?\s*/i,'').trim();
+  const spreadClass = a.spread ? ' s-art-spread' : '';
+  return el(`<section class="slide s-art${spreadClass}">
+    <div class="art-left">
+      ${rail(a.id)}
+      <div class="art-eyebrow"><span class="art-no">Level ${v}</span>${extra?`<span class="art-tag">· ${extra}</span>`:''}</div>
+      <div class="art-name">${a.name}</div>
+      <div class="art-problem">${a.problem}</div>
+      <div class="art-steal">${a.steal}</div>
+    </div>
+    <div class="art-right">
+      ${a.diff ? renderDiff(a.diff) : a.media ? imgPH(a.media,'16/10') : `<pre class="spell">${a.code}</pre>`}
+      <div class="filetag${a.media?' media-cap':''}">${a.file}</div>
+    </div>
+  </section>`);
+}
+
+/* v0 — the spell: the starting-point prompt-skill, with an all-locked rail */
+function renderSpell(s){
+  return el(`<section class="slide s-art">
+    <div class="art-left">
+      ${rail('')}
+      <div class="art-eyebrow"><span class="art-no">Level 0</span><span class="art-tag">· ${s.tag||'the spell'}</span></div>
+      <div class="art-name">${s.name}</div>
+      <div class="art-problem">${s.problem}</div>
+      <div class="art-steal">${s.steal}</div>
+    </div>
+    <div class="art-right">
+      <pre class="spell">${s.code}</pre>
+      <div class="filetag">${s.file}</div>
+    </div>
+  </section>`);
+}
+
+function renderSpellbook(s){
+  if (s.preview){
+    const cells = ARTS.map((a,i)=>`
+      <div class="sb-cell sb-lite">
+        <div class="sb-sig-lg">${SIGILS[a.id]}</div>
+        <div class="sb-name">${a.name}</div>
+        <div class="sb-no-lite">${String(i+1).padStart(2,'0')}</div>
+      </div>`).join('');
+    return el(`<section class="slide s-spellbook">
+      <div class="sb-head"><div class="t">${s.head.t}</div>${s.head.s?`<div class="s">${s.head.s}</div>`:''}</div>
+      <div class="sb-grid sb-grid-lite">${cells}</div>
+    </section>`);
+  }
+  const cells = ARTS.map((a,i)=>`
+    <div class="sb-cell">
+      <div class="sb-top"><span class="sb-no">${String(i+1).padStart(2,'0')}</span><span class="sb-sig">${SIGILS[a.id]}</span></div>
+      <div class="sb-name">${a.name}</div>
+      <div class="sb-mech">${a.mech}</div>
+      <div class="sb-file">${a.file}</div>
+    </div>`).join('');
+  return el(`<section class="slide s-spellbook">
+    <div class="sb-head"><div class="t">${s.head.t}</div><div class="s">${s.head.s}</div></div>
+    <div class="sb-grid">${cells}</div>
+  </section>`);
+}
+
+/* a faked agent-thread app window: the bad edit lands, then a system-reminder
+   appears on its own (hooks fire silently in real life, so we stage it). */
+function hookThread(){
+  return `<div class="appwin">
+    <div class="appbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="apptitle">claude code — acme-landing</span></div>
+    <div class="thread">
+      <div class="msg user m1"><span class="who">You</span>make the hero image pop on hover</div>
+      <div class="msg bot m2"><span class="who">Claude</span>Done, added a hover zoom to the hero.
+        <div class="diff">+ img:hover { transform: scale(1.1); }</div>
+      </div>
+      <div class="sysrem m3"><span class="sr-label">system-reminder</span><div class="sr-body"><span class="sr-env">[impeccable@1]</span> Design hook findings requiring review in <code>Hero.tsx</code> (1 issue):</div><div class="sr-find">- L42 <span class="sr-rule">[image-hover-transform]</span> Image hover transform. Scaling or rotating an image on hover is a recurring generated-UI signature. Let imagery sit still.</div></div>
+      <div class="msg bot m4"><span class="who">Claude</span>Good catch, that’s a generated-UI tell. Reverting the hover scale.</div>
+    </div>
+  </div>`;
+}
+function renderDemo(s){
+  const steps = s.steps.map(([n,t])=>`<div class="step"><span class="n">${n||'·'}</span><span>${t}</span></div>`).join('');
+  return el(`<section class="slide s-demo">
+    <div class="demo-left">
+      <span class="chip">${s.chip}</span>
+      <div class="big">${s.big}</div>
+      <div class="steps">${steps}</div>
+      ${s.note?`<div class="filetag" style="margin-top:1.4rem">${s.note}</div>`:''}
+    </div>
+    <div class="demo-right">${s.app==='hook' ? hookThread() : imgPH(s.media,'16/11')}</div>
+  </section>`);
+}
+
+function renderLoop(){
+  return el(`<section class="slide s-art center" style="grid-template-columns:1fr">
+    <div class="loop-wrap">
+      <div class="kicker">/impeccable live · the reactive loop</div>
+      ${liveLoopSVG()}
+      <div class="loop-cap">You act in the browser, your own agent picks it up and pushes the change back, live. Three boring web primitives, long-poll, SSE, POST. No MCP.</div>
+    </div>
+  </section>`);
+}
+
+function renderTable(){ return el(`<section class="slide s-table"></section>`); }
+
+function renderCTA(){
+  return el(`<section class="slide s-cta">
+    <div class="kicker">Try it Monday</div>
+    <div class="big" style="margin-top:1rem">Steal the spellbook.</div>
+    <ol>
+      <li><span class="n">1</span><span><code>npx impeccable skills install</code></span></li>
+      <li><span class="n">2</span><span>Clone the starter and follow along: <code>talks/dark-arts/starter</code>.</span></li>
+      <li><span class="n">3</span><span>Run <code>/impeccable critique</code> on the page you’re least proud of.</span></li>
+    </ol>
+    <div class="links">impeccable is <b>MIT</b> · every snippet tonight is in the repo · <b>impeccable.style</b></div>
+  </section>`);
+}
+
+/* spellbook source — short mechanism + file per art */
+const ARTS = [
+  { id:'argue',   name:'Make them argue',            mech:'Two blind sub-agents, then a forced synthesis. Ordering debiases.', file:'reference/critique.md' },
+  { id:'diverge', name:'Force divergence',           mech:'Anti-attractors + a user seed. A denylist just relocates the monoculture.', file:'reference/brand.md · palette.mjs' },
+  { id:'route',   name:'Route like a model',         mech:'Router + register (brand vs product). One rulebook can’t fit every surface.', file:'SKILL.src.md' },
+  { id:'memory',  name:'Give them memory',           mech:'Per-target snapshot keyed by resolved path. Runs compound.', file:'critique-storage.mjs' },
+  { id:'script',  name:'The script talks back',      mech:'stdout is the instruction. Computed in-thread, beats static prose.', file:'live.mjs · context.mjs' },
+  { id:'hooks',   name:'Hooks that fight back',      mech:'Detector on every edit; Cursor blocks bad writes. Works uninvoked.', file:'hook.mjs' },
+  { id:'live',    name:'Live-wire the browser',      mech:'The browser becomes a second input: drag a knob, the agent iterates. Long-poll + SSE + POST, no MCP.', file:'live-poll.mjs' },
+  { id:'compile', name:'Compile to every harness',   mech:'One source → 10+ provider builds with per-model patches.', file:'transformers/* · build.js' },
+  { id:'weak',    name:'Design for the weakest model', mech:'Non-compressible gates, hard stops. Write for Haiku, not Opus.', file:'craft.md' },
+];
+
+const RENDER = {
+  title: renderTitle, statement: renderStatement, thesis: renderThesis,
+  divider: renderDivider, art: renderArt, spellbook: renderSpellbook,
+  demo: renderDemo, loop: renderLoop, table: renderTable, cta: renderCTA,
+  imgstate: renderImgState, logos: renderLogos, spell: renderSpell,
+  punch: renderPunch, code: renderCode, poster: renderPoster, htable: renderHTable,
+  meme: renderMeme, route: renderRoute, memory: renderMemory,
+  diverge: renderDiverge, system: renderSystem,
+};
+
+/* ============================================================
+   BUILD + NAV
+   ============================================================ */
+const deck = document.getElementById('deck');
+/* accent backdrops: kinpaku-gold edge art that varies the flat-black slides
+   without the heavy grimoire repetition. Auto-assigned by type below; any slide
+   can override with its own `accent:` field (or `accent:null` to force flat).
+   Roles: problem punches rotate edge accents; payoffs get the quiet ghost seal;
+   code slides rotate framing accents incl. the left seam; thesis/reveal framed. */
+const ACCENT_DIR = 'assets/dark-art-accents/';
+const PROBLEM_ACCENTS = ['accent-06-right-patina-edge.png', 'accent-02-corner-sigil.png'];
+const CODE_ACCENTS    = ['accent-04-gold-dust-rules.png', 'accent-05-embossed-circuit.png', 'accent-01-left-kinpaku-seam.png'];
+let pIdx = 0, cIdx = 0;
+function accentFor(s){
+  if ('accent' in s) return s.accent;            // explicit override (incl. null)
+  if (s.type === 'code' || s.type === 'htable') return CODE_ACCENTS[cIdx++ % CODE_ACCENTS.length];
+  if (s.type === 'punch'){
+    const isPayoff = (s.id == null && s.level == null);   // payoff = beat conclusion
+    return isPayoff ? 'accent-08-ghost-seal.png' : PROBLEM_ACCENTS[pIdx++ % PROBLEM_ACCENTS.length];
+  }
+  if (s.type === 'thesis') return 'accent-11-ritual-brackets.png';
+  return null;
+}
+SLIDES.forEach((s)=>{
+  const node = (RENDER[s.type]||renderStatement)(s);
+  const accent = accentFor(s);
+  if (accent){
+    node.style.background = `url('${ACCENT_DIR}${accent}') center / cover no-repeat, var(--lacquer)`;
+    node.classList.add('has-accent');
+  }
+  // chrome — hide the logo on full-bleed image slides (it overlaps the art)
+  const fullBleed = s.type === 'poster' || (s.type === 'imgstate' && s.bg);
+  if (!fullBleed){
+    const top = el(`<div class="meta meta-top"><img class="mark" src="assets/impeccable-logo.svg" alt="Impeccable"></div>`);
+    node.appendChild(top);
+  }
+  const bot = el(`<div class="meta meta-bot"><span></span><span class="num"></span></div>`);
+  node.appendChild(bot);
+  deck.appendChild(node);
+});
+
+const slides = Array.from(document.querySelectorAll('.slide'));
+const progress = document.getElementById('progress');
+let idx = 0;
+const total = String(slides.length).padStart(2,'0');
+slides.forEach((s,i)=>{ const n=s.querySelector('.meta-bot .num'); if(n) n.textContent = String(i+1).padStart(2,'0')+' / '+total; });
+slides.forEach((_,i)=>{ const b=document.createElement('button'); b.setAttribute('aria-label','Slide '+(i+1)); b.addEventListener('click',()=>go(i)); progress.appendChild(b); });
+
+const flip = document.getElementById('flip');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let flipping = false;
+// Some static servers (e.g. python http.server) don't support HTTP Range
+// requests, which makes the <video> element stall forever. Preload the clip
+// as a blob and play from an object URL so it works on any server.
+let flipReady = false;
+(function preloadFlip(){
+  if (reduceMotion) return;
+  fetch(flip.getAttribute('src'))
+    .then(r => r.ok ? r.blob() : Promise.reject())
+    .then(b => { flip.src = URL.createObjectURL(b); flip.load(); flipReady = true; })
+    .catch(() => {});
+})();
+function playFlip(){
+  if (flipping || reduceMotion || !flipReady) return;
+  flipping = true;
+  flip.classList.add('playing');
+  flip.currentTime = 0;
+  const done = ()=>{ flip.classList.remove('playing'); flipping = false; flip.removeEventListener('ended', done); };
+  flip.addEventListener('ended', done);
+  const p = flip.play();
+  if (p && p.catch) p.catch(done); // autoplay blocked → just skip
+}
+
+function go(n){
+  const prev = idx;
+  idx = Math.max(0, Math.min(slides.length-1, n));
+  slides.forEach((s,i)=>s.classList.toggle('active', i===idx));
+  Array.from(progress.children).forEach((b,i)=>b.classList.toggle('active', i===idx));
+  // force a clean restart of the entrance animation every time
+  const cur = slides[idx];
+  if (cur){ cur.style.animation='none'; void cur.offsetWidth; cur.style.animation=''; }
+  // book flips open, transitioning title → cold open (forward only)
+  if (prev===0 && idx===1) playFlip();
+  history.replaceState(null,'','#'+(idx+1));
+}
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'||e.key==='l'||e.key==='j'){e.preventDefault();go(idx+1);}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'||e.key==='h'||e.key==='k'){e.preventDefault();go(idx-1);}
+  else if(e.key==='Home'){go(0);} else if(e.key==='End'){go(slides.length-1);}
+  else if(e.key==='f'||e.key==='F'){ if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+});
+document.addEventListener('click',(e)=>{
+  if(e.target.closest('.progress')||e.target.closest('a')) return;
+  const half=window.innerWidth/2; if(e.clientX>half) go(idx+1); else go(idx-1);
+});
+window.addEventListener('hashchange',()=>{const h=parseInt((location.hash||'#1').slice(1),10);if(!Number.isNaN(h))go(h-1);});
+const fromHash = parseInt((location.hash||'#1').slice(1),10);
+go(Number.isNaN(fromHash)?0:fromHash-1);
+</script>
+</body>
+</html>

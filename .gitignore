@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Impeccable design-hook local cache / state
+**/.impeccable/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Editor / OS cruft
+*.log
+Thumbs.db

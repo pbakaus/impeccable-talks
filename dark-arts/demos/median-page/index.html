@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nimbus — Ship faster</title>
+<style>
+  /* A deliberately MEDIAN SaaS landing page. It looks fine. That is the problem.
+     It hits the 2026 AI tells: warm-cream bg, Inter everywhere, a single accent
+     pill, three identical icon-tile feature cards, manifesto copy. Run
+     /impeccable critique on it in the talk. */
+  :root { --bg:#f5f1ea; --ink:#1a1a1a; --muted:#6b6b6b; --accent:#4f46e5; --card:#fffdf9; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:Inter, -apple-system, system-ui, sans-serif; background:var(--bg); color:var(--ink); line-height:1.6; }
+  .wrap { max-width:1080px; margin:0 auto; padding:0 24px; }
+  nav { display:flex; justify-content:space-between; align-items:center; padding:24px 0; }
+  nav .logo { font-weight:700; font-size:20px; }
+  nav a { margin-left:24px; color:var(--muted); text-decoration:none; font-size:15px; }
+  .pill { background:var(--accent); color:#fff; padding:10px 20px; border-radius:999px; font-size:15px; font-weight:600; }
+  .hero { text-align:center; padding:96px 0 72px; }
+  .hero .eyebrow { color:var(--accent); font-weight:600; font-size:14px; letter-spacing:.04em; text-transform:uppercase; }
+  .hero h1 { font-size:56px; font-weight:700; letter-spacing:-0.02em; margin:16px 0; }
+  .hero p { font-size:20px; color:var(--muted); max-width:600px; margin:0 auto 32px; }
+  .features { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; padding:48px 0; }
+  .card { background:var(--card); border:1px solid #ece7de; border-radius:16px; padding:32px; text-align:center; }
+  .card .icon { width:48px; height:48px; border-radius:12px; background:#eceaff; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:22px; }
+  .card h3 { font-size:18px; font-weight:600; margin-bottom:8px; }
+  .card p { color:var(--muted); font-size:15px; }
+  footer { text-align:center; padding:64px 0; color:var(--muted); font-size:14px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <div class="logo">Nimbus</div>
+      <div>
+        <a href="#">Product</a><a href="#">Pricing</a><a href="#">Docs</a>
+        <a href="#" class="pill">Start free trial</a>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="eyebrow">Now with AI</div>
+      <h1>Ship faster than ever before</h1>
+      <p>The all-in-one platform that empowers your team to build, launch, and scale
+         with confidence. Seamless, robust, and built for the modern workflow.</p>
+      <a href="#" class="pill">Get started free</a>
+    </header>
+
+    <section class="features">
+      <div class="card">
+        <div class="icon">⚡</div>
+        <h3>Lightning Fast</h3>
+        <p>Blazing performance that keeps your team moving at the speed of thought.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔒</div>
+        <h3>Secure by Default</h3>
+        <p>Enterprise-grade security so you can focus on what matters most.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🚀</div>
+        <h3>Scales With You</h3>
+        <p>From startup to enterprise, Nimbus grows alongside your ambitions.</p>
+      </div>
+    </section>
+
+    <footer>© 2026 Nimbus, Inc. All rights reserved.</footer>
+  </div>
+</body>
+</html>

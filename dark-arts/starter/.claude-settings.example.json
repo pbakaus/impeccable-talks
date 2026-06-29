@@ -1,0 +1,17 @@
+{
+  "//": "Copy the hooks block into your project's .claude/settings.json to wire the guardrail.",
+  "//path": "Adjust the command path if the starter lives elsewhere.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node talks/dark-arts/starter/scripts/hook.mjs"
+          }
+        ]
+      }
+    ]
+  }
+}
