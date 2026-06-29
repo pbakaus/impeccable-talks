@@ -142,7 +142,7 @@
   .s-title { align-content: end; justify-items: start;
     background:
       linear-gradient(180deg, transparent 54%, oklch(4% 0.004 95 / .62) 100%),
-      url("assets/title-grimoire-cover.png") center / cover no-repeat,
+      url("assets/grimoire/title-cover.png") center / cover no-repeat,
       var(--lacquer); }
   .s-title .title-inner { position:relative; z-index:2; max-width: 58ch; margin-bottom: 5.4vh; }
   .s-title .sub { max-width: 42ch; color: var(--text); font-size: clamp(.94rem,1.2vw,1.08rem); line-height:1.55; }
@@ -151,7 +151,7 @@
   /* thanks (reuses m-01 seam art) */
   .s-thanks { align-content:center; justify-items:center; text-align:center;
     background: linear-gradient(0deg, oklch(6% 0.006 95 / .62), oklch(6% 0.006 95 / .62)),
-      url("assets/neo-kinpaku/m-01-v2-01.png") center / cover no-repeat, var(--lacquer); }
+      url("assets/grimoire/thanks-seam.png") center / cover no-repeat, var(--lacquer); }
   .s-thanks .wm { font-family: var(--font-wordmark); font-weight:700; text-transform:uppercase; font-size:clamp(3rem,9vw,8rem); line-height:.86; color:var(--champagne); }
   .s-thanks .wm .arts { color:var(--kinpaku); display:block; }
   .s-thanks .by { font-family:var(--mono); font-size:.85rem; letter-spacing:.1em; color:var(--muted); margin-top:1.8rem; }
@@ -333,7 +333,7 @@
     background:
       linear-gradient(90deg, oklch(3% 0.004 95 / .16), transparent 18%, transparent 82%, oklch(3% 0.004 95 / .16)),
       linear-gradient(180deg, oklch(3% 0.004 95 / .34), transparent 22%, transparent 78%, oklch(3% 0.004 95 / .34)),
-      url("assets/dark-art-open-spread.png") center / cover no-repeat,
+      url("assets/_unused/dark-art-open-spread.png") center / cover no-repeat,
       var(--lacquer); }
   .art-left { display: flex; flex-direction: column; justify-content: flex-start; gap: 1.1rem; min-width: 0; position:relative; z-index:2; }
   .art-sigil { width: clamp(78px, 8vw, 120px); height: clamp(78px, 8vw, 120px); }
@@ -466,7 +466,7 @@
 </head>
 <body>
 <div class="deck" id="deck"></div>
-<video class="flip-transition" id="flip" src="assets/book_title_transition.web.mp4" muted playsinline preload="auto"></video>
+<video class="flip-transition" id="flip" src="assets/video/title-transition.mp4" muted playsinline preload="auto"></video>
 <div class="progress" id="progress"></div>
 
 <script>
@@ -576,7 +576,7 @@ const SLIDES = [
 
   /* 1 — cold open: median slop (IMAGE) */
   { type:'imgstate', mvt:'Cold open',
-    bg:'assets/frontend_design_slop.png',
+    bg:'assets/slides/slop.png',
     big:'“Yeah, AI made&nbsp;that.”',
     sub:'You can call it on sight. And it came out of the <strong>most popular design skill there is.</strong>' },
 
@@ -601,7 +601,7 @@ const SLIDES = [
   { type:'imgstate', mvt:'Cold open',
     tag:'IMAGE · render / stock',
     ph:'A literal gravity well: a marble spiralling down a funnel, or a black-hole accretion-disk render, everything pulled toward one point. Visual pun on “gravity.”',
-    bg:'assets/generated/placeholders/slide-05-gravity-well-v01.png',
+    bg:'assets/slides/gravity-well.png',
     big:'The median is the model’s <span class="gold">gravity</span>.',
     sub:'Even 250 lines of real taste can’t out-write it. A great prompt is necessary, <strong>and nowhere near enough.</strong>' },
 
@@ -623,7 +623,7 @@ const SLIDES = [
   { type:'imgstate',
     tag:'IMAGE · the gag',
     ph:'Gandalf vs Saruman — the staff-duel staredown from Fellowship. Two wizards, equal and opposed, locked in a fight.',
-    bg:'assets/generated/placeholders/slide-09-argue-wizards-v02.png',
+    bg:'assets/slides/argue-wizards.png',
     big:'So make them&nbsp;argue.',
     sub:'Two sub-agents. They never see each other’s work.' },
 
@@ -646,7 +646,7 @@ report = <span class="f">synthesize</span>(A, B)   <span class="c">// weave, nev
 
   /* Level 1 · the harness wrinkle (Codex) */
   { type:'meme', level:1, tag:'the wrinkle',
-    src:'assets/mem_codex_sub_agents.jpg', alt:'Codex: Y U NO let me spawn sub-agents?',
+    src:'assets/slides/codex-meme.jpg', alt:'Codex: Y U NO let me spawn sub-agents?',
     cap:'Sub-agents aren’t portable. Some harnesses won’t spawn one unless the <strong>user</strong> already asked for parallel work.' },
 
   { type:'code', level:1, tag:'detect &amp; degrade',
@@ -683,7 +683,7 @@ report = <span class="f">synthesize</span>(A, B)   <span class="c">// weave, nev
   { type:'imgstate', mvt:'The build',
     tag:'IMAGE · 3-up comparison',
     ph:'The SAME brief rendered three radically different ways, side by side: e.g. brutalist / editorial-magazine / cockpit-dashboard. Shows divergence at a glance. (Generate three with Impeccable, screenshot each.)',
-    bg:'assets/generated/placeholders/slide-17-divergence-3up-v01.png',
+    bg:'assets/slides/divergence-3up.png',
     big:'Divergence is the<br><span class="gold">hard</span> part.',
     sub:'Every model can hit the average. The real skill is steering one somewhere else.',
     uses:['naming & branding','content ideation','variant generation','breaking boilerplate'] },
@@ -744,7 +744,7 @@ $ node live.mjs
   { type:'imgstate',
     tag:'IMAGE · the gag',
     ph:'Lord of the Rings grappling hooks — the Uruk-hai siege of Helm’s Deep, iron hooks biting the wall as ladders go up. Hooks coming over the top, uninvited.',
-    bg:'assets/generated/placeholders/slide-28-hooks-v02.png',
+    bg:'assets/slides/hooks.png',
     big:'So the hooks come to&nbsp;you.',
     sub:'A guardrail that fires on every edit, invited or not.' },
 
@@ -806,7 +806,7 @@ $ node live-poll.mjs --reply <span class="f">&lt;id&gt;</span> done   <span clas
 
   /* ===== Level 8 · COMPILE ===== */
   { type:'meme', id:'compile', level:8, tag:'compile to every harness',
-    src:'assets/it_worked_on_my_machine_elon_cybertruck.jpg', alt:'It worked on my machine',
+    src:'assets/slides/cybertruck-meme.jpg', alt:'It worked on my machine',
     cap:'Great in your harness, on your model. The differences that break it for a teammate are <strong>behavioral</strong>: who can spawn an agent, who wakes the thread.' },
 
   /* DA-8 the symlink myth */
@@ -837,7 +837,7 @@ $ node live-poll.mjs --reply <span class="f">&lt;id&gt;</span> done   <span clas
 
   /* DA-8 the laugh: model tells (self-contained WANTED-poster meme) */
   { type:'imgstate', mvt:'The build',
-    bg:'assets/generated/placeholders/rap-sheet-text-tests/rap-sheet-prompt-c-most-wanted-code-v02.png' },
+    bg:'assets/slides/rap-sheet.png' },
 
   /* ===== Level 9 · WEAKEST MODEL ===== */
   { type:'punch', id:'weak', level:9, tag:'design for the weakest model',
@@ -864,7 +864,7 @@ Shape confirmation alone is <span class="v">NOT</span> a green light to code.
     uses:['cheap-model deploys','reliability-critical agents','long agentic flows','CI gates'] },
 
   /* the gag that sets up the reveal */
-  { type:'poster', src:'assets/one_skill_to_rule_them_all.webp', alt:'One skill to rule them all' },
+  { type:'poster', src:'assets/slides/one-skill-to-rule.webp', alt:'One skill to rule them all' },
 
   /* the reveal: v9 = a harness extension = Impeccable */
   { type:'statement', mvt:'Level 9', accent:'accent-11-ritual-brackets.png', big:'We just built a<br><span class="gold">harness extension.</span>',
@@ -1279,7 +1279,7 @@ const deck = document.getElementById('deck');
    can override with its own `accent:` field (or `accent:null` to force flat).
    Roles: problem punches rotate edge accents; payoffs get the quiet ghost seal;
    code slides rotate framing accents incl. the left seam; thesis/reveal framed. */
-const ACCENT_DIR = 'assets/dark-art-accents/';
+const ACCENT_DIR = 'assets/accents/';
 const PROBLEM_ACCENTS = ['accent-06-right-patina-edge.png', 'accent-02-corner-sigil.png'];
 const CODE_ACCENTS    = ['accent-04-gold-dust-rules.png', 'accent-05-embossed-circuit.png', 'accent-01-left-kinpaku-seam.png'];
 let pIdx = 0, cIdx = 0;
@@ -1303,7 +1303,7 @@ SLIDES.forEach((s)=>{
   // chrome — hide the logo on full-bleed image slides (it overlaps the art)
   const fullBleed = s.type === 'poster' || (s.type === 'imgstate' && s.bg);
   if (!fullBleed){
-    const top = el(`<div class="meta meta-top"><img class="mark" src="assets/impeccable-logo.svg" alt="Impeccable"></div>`);
+    const top = el(`<div class="meta meta-top"><img class="mark" src="assets/brand/impeccable-logo.svg" alt="Impeccable"></div>`);
     node.appendChild(top);
   }
   const bot = el(`<div class="meta meta-bot"><span></span><span class="num"></span></div>`);
