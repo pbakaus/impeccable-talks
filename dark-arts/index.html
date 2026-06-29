@@ -732,6 +732,21 @@ $ node palette.mjs --from <span class="v">8f2a</span>   <span class="c">// a see
 
   { type:'route' },
 
+  /* show, don't tell: the actual router table + register switch */
+  { type:'code', level:3, tag:'SKILL.md is the router',
+    code:
+`<span class="c">// one command loads one expert, not the whole manual:</span>
+/impeccable <span class="f">critique</span>   <span class="c">→ loads only</span> reference/critique.md
+/impeccable <span class="f">polish</span>     <span class="c">→ loads only</span> reference/polish.md
+                    <span class="c">… 20+ commands, one reference each</span>
+
+<span class="c">// then the register decides which rules even apply:</span>
+register = PRODUCT.md.register ?? <span class="f">infer</span>(task, surface)
+  <span class="s">brand</span>    → reference/brand.md     <span class="c">// distinctiveness</span>
+  <span class="s">product</span>  → reference/product.md   <span class="c">// familiarity</span>`,
+    file:'skill/SKILL.src.md · reference/brand.md · product.md',
+    cap:'Twenty-plus commands, but only the matched reference loads. The register picks the rulebook. <strong>Mixture-of-experts, for a skill.</strong>' },
+
   { type:'punch', center:true,
     big:'One skill,<br>two <span class="gold">registers</span>.',
     sub:'Brand wants distinctiveness, product wants the familiar. Route to the register and the right rules load.',
@@ -860,6 +875,20 @@ $ node live-poll.mjs --reply <span class="f">&lt;id&gt;</span> done   <span clas
       ['Edit hooks', 'Claude Post · Codex Post · Cursor Pre-gate · rest none'],
     ],
     cap:'The mechanical gaps the build absorbs. The behavioral ones your skill must <strong>detect and degrade around</strong> at runtime.' },
+
+  /* show, don't tell: the one-source -> per-harness transform */
+  { type:'code', level:8, tag:'one source, many builds',
+    code:
+`<span class="c">// SKILL.src.md — placeholders + per-model patches:</span>
+"You are <span class="v">{{model}}</span>. Edits go in <span class="v">{{config_file}}</span>."
+<span class="k">&lt;gemini&gt;</span> skip the img-hover-transform check <span class="k">&lt;/gemini&gt;</span>
+<span class="k">&lt;codex&gt;</span> ask before spawning sub-agents <span class="k">&lt;/codex&gt;</span>
+
+$ npm run build →
+  <span class="f">.claude/</span>  "You are Claude … <span class="s">CLAUDE.md</span>"   <span class="c">// model blocks stripped</span>
+  <span class="f">.codex/</span>  "You are Codex … <span class="s">AGENTS.md</span>"    <span class="c">// keeps codex, drops gemini</span>`,
+    file:'scripts/build.js · scripts/lib/transformers/*',
+    cap:'Write the rules once, with placeholders and per-model patches. The build emits a correct, <strong>harness-specific</strong> copy for each of 10+ targets.' },
 
   /* DA-8 the logos: one source, every harness */
   { type:'logos', kicker:'Dark art 08 · one source, every harness',
