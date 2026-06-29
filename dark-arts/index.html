@@ -902,18 +902,18 @@ $ node live-poll.mjs --reply <span class="f">&lt;id&gt;</span> done   <span clas
   /* show, don't tell: the one-source -> per-harness transform (the consequential substitutions) */
   { type:'code', level:8, tag:'one source, every harness',
     code:
-`<span class="c">// SKILL.src.md, one source. compiled into each harness's skill dir:</span>
+`<span class="c">// SKILL.src.md, one source. per-harness placeholders + per-model bans:</span>
 "When you can't infer it, <span class="v">{{ask_instruction}}</span>"
 "Hand off with <span class="v">{{command_prefix}}</span>impeccable polish"
-<span class="k">&lt;codex&gt;</span> ask before spawning sub-agents <span class="k">&lt;/codex&gt;</span>
-<span class="k">&lt;gemini&gt;</span> skip the img-hover-transform check <span class="k">&lt;/gemini&gt;</span>
+<span class="k">&lt;gemini&gt;</span> never animate &lt;img&gt; on :hover <span class="k">&lt;/gemini&gt;</span>
+<span class="k">&lt;codex&gt;</span> display letter-spacing floor: -0.04em <span class="k">&lt;/codex&gt;</span>
 
 $ npm run build →
   <span class="f">.claude/skills/</span>   <span class="s">AskUserQuestion tool</span>   /impeccable
-  <span class="f">.agents/skills/</span>   <span class="s">Codex input tool</span>       $impeccable   <span class="c">// keeps codex</span>
-  <span class="f">.cursor/skills/</span>   <span class="s">just ask in chat</span>       /impeccable`,
-    file:'scripts/lib/utils.js (PROVIDER_PLACEHOLDERS) · build.js',
-    cap:'One source, compiled into each harness’s own skill dir with every integration point resolved: “ask the user” becomes <strong>AskUserQuestion</strong>, Codex’s input tool, or plain chat; the prefix flips / to $; the per-model blocks stay or go. Hardcode one and it breaks on the rest.' },
+  <span class="f">.gemini/skills/</span>   <span class="s">just ask in chat</span>       <span class="c">+ the no-img-hover ban</span>
+  <span class="f">.agents/skills/</span>   <span class="s">Codex input tool</span>       <span class="c">+ the letter-spacing floor</span>`,
+    file:'skill/SKILL.src.md:71,45 · scripts/build.js',
+    cap:'One source, resolved per target: “ask the user” becomes <strong>AskUserQuestion</strong>, Codex’s input tool, or plain chat; and each model’s tell-ban, the rap sheet’s charges, compiles only into that model’s build. Hardcode any of it and the skill breaks on the rest.' },
 
   /* DA-8 the logos: one source, every harness */
   { type:'logos', level:8, tag:'every harness',

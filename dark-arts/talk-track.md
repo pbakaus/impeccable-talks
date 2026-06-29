@@ -193,8 +193,9 @@ background job exits; others don't** (why the live loop is built the way it is).
 "Forget the model name, that's trivial. 'Ask the user' becomes a different *tool*
 per harness, AskUserQuestion on Claude, Codex's input tool, plain chat on Cursor;
 the prefix flips / to $; it compiles into each harness's own skill dir. And the
-per-model patch blocks, `<gemini>` drops the img-hover check, `<codex>` fixes the
-touching letters, the exact tells from the rap sheet. One source, every harness
+per-model bans, the exact charges from the rap sheet: `<gemini>` never animate an
+`<img>` on hover, `<codex>` floor letter-spacing at -0.04em so the letters stop
+touching, each compiles only into that model's build. One source, every harness
 and every model handled. Your skill is a codebase; give it a build step."
 **43 · logos · write once, ship to all**: One source → 10+ provider builds, right
 paths and per-model patches.
