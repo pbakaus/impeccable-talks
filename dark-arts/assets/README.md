@@ -21,14 +21,14 @@ reference it as `assets/<folder>/<name>`.
 ## Not in use
 
 `_unused/` holds everything the deck doesn't reference:
-- `_unused/generated/` — the GPT-image exploration (slide candidates v01–v04, the
+- `_unused/generated/`: the GPT-image exploration (slide candidates v01–v04, the
   rap-sheet text tests, grimoire page templates). The finalists were pulled into
   `slides/`.
-- `_unused/accents/` — accent variants the deck didn't end up using (03, 09, 10, 12).
-- `_unused/logos/` — `aider`, `cline`, `github` (Copilot replaced the GitHub mark).
-- `_unused/video-takes/` — earlier transition renders, superseded by `video/title-transition.mp4`.
-- `_unused/neo-kinpaku/` — leftover brand textures.
-- `_unused/dark-art-open-spread.png` — the old grimoire two-page spread, from before
+- `_unused/accents/`: accent variants the deck didn't end up using (03, 09, 10, 12).
+- `_unused/logos/`: `aider`, `cline`, `github` (Copilot replaced the GitHub mark).
+- `_unused/video-takes/`: earlier transition renders, superseded by `video/title-transition.mp4`.
+- `_unused/neo-kinpaku/`: leftover brand textures.
+- `_unused/dark-art-open-spread.png`: the old grimoire two-page spread, from before
   the beats were rebuilt as clean layouts (still referenced by a now-dead CSS rule).
 
 Safe to delete `_unused/` entirely if you want a lean repo; nothing the deck
