@@ -879,18 +879,18 @@ $ node live-poll.mjs --reply <span class="f">&lt;id&gt;</span> done   <span clas
   /* show, don't tell: the one-source -> per-harness transform (the consequential substitutions) */
   { type:'code', level:8, tag:'one source, every harness',
     code:
-`<span class="c">// SKILL.src.md, one source. the same line, compiled per harness:</span>
+`<span class="c">// SKILL.src.md, one source. compiled into each harness's skill dir:</span>
 "When you can't infer it, <span class="v">{{ask_instruction}}</span>"
-"Project rules live in <span class="v">{{config_file}}</span>."
+"Hand off with <span class="v">{{command_prefix}}</span>impeccable polish"
 <span class="k">&lt;codex&gt;</span> ask before spawning sub-agents <span class="k">&lt;/codex&gt;</span>
 <span class="k">&lt;gemini&gt;</span> skip the img-hover-transform check <span class="k">&lt;/gemini&gt;</span>
 
 $ npm run build →
-  <span class="f">.claude</span>  <span class="s">"…call the AskUserQuestion tool"</span>   CLAUDE.md
-  <span class="f">.codex</span>   <span class="s">"…use Codex's input tool"</span>         AGENTS.md  <span class="c">// keeps codex</span>
-  <span class="f">cursor</span>   <span class="s">"…just ask in chat"</span>               .cursorrules`,
+  <span class="f">.claude/skills/</span>   <span class="s">AskUserQuestion tool</span>   /impeccable
+  <span class="f">.agents/skills/</span>   <span class="s">Codex input tool</span>       $impeccable   <span class="c">// keeps codex</span>
+  <span class="f">.cursor/skills/</span>   <span class="s">just ask in chat</span>       /impeccable`,
     file:'scripts/lib/utils.js (PROVIDER_PLACEHOLDERS) · build.js',
-    cap:'The same instruction becomes a different tool on every harness: <strong>AskUserQuestion</strong> on Claude, Codex’s structured input tool on Codex, plain chat elsewhere. Hardcode one and the skill breaks on the rest. That’s what the build resolves, per target.' },
+    cap:'One source, compiled into each harness’s own skill dir with every integration point resolved: “ask the user” becomes <strong>AskUserQuestion</strong>, Codex’s input tool, or plain chat; the prefix flips / to $; the per-model blocks stay or go. Hardcode one and it breaks on the rest.' },
 
   /* DA-8 the logos: one source, every harness */
   { type:'logos', kicker:'Dark art 08 · one source, every harness',

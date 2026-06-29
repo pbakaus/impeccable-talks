@@ -178,11 +178,11 @@ others don't** (why the live loop is built the way it is).
 **42 · code (one source, every harness)**: the show, and the answer to "why
 compile at all." "Forget the model name, that's trivial. The line 'ask the user'
 has to become a different *tool* on each harness: AskUserQuestion on Claude,
-Codex's structured input tool on Codex, plain chat on Cursor. Hardcode one and
-the skill is dead everywhere else. Same for where rules live, CLAUDE.md vs
-AGENTS.md vs .cursorrules, plus the `<codex>`/`<gemini>` patch blocks. The build
-resolves every integration point per target. Your skill is a codebase; give it a
-build step."
+Codex's structured input tool on Codex, plain chat on Cursor. The command prefix
+flips from / to $. And it compiles into each harness's own skill directory,
+.claude/skills, .agents/skills (where Codex reads them), .cursor/skills, plus the
+`<codex>`/`<gemini>` patch blocks staying or going. Hardcode any one and the skill
+is dead everywhere else. Your skill is a codebase; give it a build step."
 **43 · logos · write once, ship to all**: One source → 10+ provider builds, right
 paths and per-model patches.
 **44 · the receipt (the real installer)**: "Even `npx skills` copies one folder
