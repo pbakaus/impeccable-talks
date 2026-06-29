@@ -286,21 +286,21 @@
 
   /* system: a capability map — what Impeccable can do that a prompt can't */
   .s-system { align-content:center; justify-items:center; }
-  .s-system .sys-head { text-align:center; margin-bottom:3vh; }
+  .s-system .sys-head { text-align:center; margin-bottom:7vh; }
   .s-system .sys-head .t { font-family:var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.02em; font-size:clamp(1.8rem,4vw,3.4rem); color:var(--champagne); }
-  .s-system .sys-head .s { margin-top:.6rem; font-family:var(--font-display); font-size:clamp(1rem,1.7vw,1.4rem); color:var(--kinpaku); }
-  .cap-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2.2vh 3vw; width:min(94vw,1140px); }
-  .cap-cell { display:flex; flex-direction:column; gap:.35rem; }
-  .cap-top { display:flex; align-items:center; gap:.7rem; }
-  .cap-sig { width:30px; height:30px; flex:0 0 auto; }
-  .cap-no { font-family:var(--font-display); color:var(--kinpaku-deep); font-size:.85rem; }
-  .cap-h { font-family:var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.01em; font-size:clamp(.92rem,1.25vw,1.14rem); color:var(--champagne); line-height:1; }
-  .cap-s { font-family:var(--mono); font-size:clamp(.72rem,.92vw,.88rem); color:var(--muted); line-height:1.4; padding-left:calc(30px + .7rem); }
-  .cap-s b { color:var(--kinpaku-pale); font-weight:400; }
-  .cap-file { font-family:var(--mono); font-size:.66rem; color:var(--kinpaku-deep); letter-spacing:.02em; padding-left:calc(30px + .7rem); margin-top:.15rem; }
-  .s-system .cap-foot { margin-top:3vh; font-family:var(--mono); font-size:clamp(.82rem,1.1vw,1rem); color:var(--muted); letter-spacing:.03em; }
-  .s-system .cap-foot b { color:var(--kinpaku); font-weight:600; }
-  .s-system .code-cap strong { color:var(--champagne); }
+  .s-system .sys-head .s { margin-top:.8rem; font-family:var(--font-display); font-size:clamp(1rem,1.7vw,1.4rem); color:var(--kinpaku); }
+  .cap-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6vh 5vw; width:min(92vw,1320px); }
+  .cap-cell { display:flex; flex-direction:column; gap:.85rem; }
+  /* label row: small gold category + sigil, deliberately quiet so the eye skips past it */
+  .cap-top { display:flex; align-items:center; gap:.6rem; }
+  .cap-sig { width:22px; height:22px; flex:0 0 auto; opacity:.85; }
+  .cap-no { font-family:var(--font-display); color:var(--faint); font-size:.78rem; }
+  .cap-h { font-family:var(--mono); font-weight:600; text-transform:uppercase; letter-spacing:.16em; font-size:.7rem; color:var(--kinpaku-deep); line-height:1; }
+  /* the hero: the capability sentence is the largest, brightest thing in the cell */
+  .cap-s { font-family:var(--font); font-weight:500; font-size:clamp(1.1rem,1.55vw,1.5rem); color:var(--champagne); line-height:1.3; max-width:30ch; }
+  .cap-s b { color:var(--kinpaku-pale); font-weight:600; }
+  /* supporting evidence, demoted to faint gray so it stops pulling focus */
+  .cap-file { font-family:var(--mono); font-size:.7rem; color:var(--faint); letter-spacing:.02em; }
 
   /* ---------- STATEMENT ---------- */
   .s-statement { align-content: center; justify-items: start; }
@@ -1112,7 +1112,6 @@ function renderSystem(){
   return el(`<section class="slide s-system">
     <div class="sys-head"><div class="t">Nine things a prompt can't&nbsp;do.</div><div class="s">a prompt suggests a design, once. Impeccable now:</div></div>
     <div class="cap-grid">${cells}</div>
-    <div class="cap-foot">Every one is <b>Apache 2.0</b>. Steal them: <b>impeccable.style</b></div>
   </section>`);
 }
 
