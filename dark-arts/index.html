@@ -876,19 +876,21 @@ $ node live-poll.mjs --reply <span class="f">&lt;id&gt;</span> done   <span clas
     ],
     cap:'The mechanical gaps the build absorbs. The behavioral ones your skill must <strong>detect and degrade around</strong> at runtime.' },
 
-  /* show, don't tell: the one-source -> per-harness transform */
-  { type:'code', level:8, tag:'one source, many builds',
+  /* show, don't tell: the one-source -> per-harness transform (the consequential substitutions) */
+  { type:'code', level:8, tag:'one source, every harness',
     code:
-`<span class="c">// SKILL.src.md — placeholders + per-model patches:</span>
-"You are <span class="v">{{model}}</span>. Edits go in <span class="v">{{config_file}}</span>."
-<span class="k">&lt;gemini&gt;</span> skip the img-hover-transform check <span class="k">&lt;/gemini&gt;</span>
+`<span class="c">// SKILL.src.md, one source. the same line, compiled per harness:</span>
+"When you can't infer it, <span class="v">{{ask_instruction}}</span>"
+"Project rules live in <span class="v">{{config_file}}</span>."
 <span class="k">&lt;codex&gt;</span> ask before spawning sub-agents <span class="k">&lt;/codex&gt;</span>
+<span class="k">&lt;gemini&gt;</span> skip the img-hover-transform check <span class="k">&lt;/gemini&gt;</span>
 
 $ npm run build →
-  <span class="f">.claude/</span>  "You are Claude … <span class="s">CLAUDE.md</span>"   <span class="c">// model blocks stripped</span>
-  <span class="f">.codex/</span>  "You are Codex … <span class="s">AGENTS.md</span>"    <span class="c">// keeps codex, drops gemini</span>`,
-    file:'scripts/build.js · scripts/lib/transformers/*',
-    cap:'Write the rules once, with placeholders and per-model patches. The build emits a correct, <strong>harness-specific</strong> copy for each of 10+ targets.' },
+  <span class="f">.claude</span>  <span class="s">"…call the AskUserQuestion tool"</span>   CLAUDE.md
+  <span class="f">.codex</span>   <span class="s">"…use Codex's input tool"</span>         AGENTS.md  <span class="c">// keeps codex</span>
+  <span class="f">cursor</span>   <span class="s">"…just ask in chat"</span>               .cursorrules`,
+    file:'scripts/lib/utils.js (PROVIDER_PLACEHOLDERS) · build.js',
+    cap:'The same instruction becomes a different tool on every harness: <strong>AskUserQuestion</strong> on Claude, Codex’s structured input tool on Codex, plain chat elsewhere. Hardcode one and the skill breaks on the rest. That’s what the build resolves, per target.' },
 
   /* DA-8 the logos: one source, every harness */
   { type:'logos', kicker:'Dark art 08 · one source, every harness',
