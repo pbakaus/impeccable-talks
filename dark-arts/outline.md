@@ -144,14 +144,15 @@ Each level: *our skill still fails at X* → the dark art → *it levels up* (a 
 - **Level 4 memory** (M) · 23-25 (24 = real snapshot + trend artifact). **Level 5 script talks back** (D) · 26-28 (27 = stdout code).
 - **Level 6 hooks** (M) · 29 problem → 30 gag (grappling hooks) → 31 code → 32 payoff; **33 demo 2** (staged thread).
 - **Level 7 live-wire the browser** (D) · 34 problem (chat is a bad design tool) → 35 the trick (blocking poll) → 36 loop diagram → 37 live GIF.
-- **Level 8 compile to every harness** (M), framed as two axes of difference · 38 cybertruck meme (both axes) → 39 the symlink myth → 40 behavioral-diff table (axis 1: the harness) → **41 MODEL MOST WANTED laugh** (axis 2: the model overfits its own way) → **42 code (one source → per-harness builds; fixes both axes)** → 43 logos → 44 the receipt ("installers copy, they don't compile").
-- **Level 9 design for the weakest model** (M) · 45-47 (46 = non-compressible gates code).
+- **Level 8 compile to every harness** (M), framed as two axes of difference · 38 cybertruck meme (both axes) → 39 the symlink myth → 40 behavioral-diff table (axis 1: the harness) → **41 MODEL MOST WANTED laugh** (axis 2: the model overfits its own way) → **42 code (one source → per-harness builds; fixes both axes)** → 43 logos → 44 "One skill to rule them all" (Frodo poster, the compile gag) → 45 the receipt ("installers copy, they don't compile").
+- **Level 9 design for the weakest model** (M) · 46-48 (47 = non-compressible gates code).
 
-### ACT III · The harness extension (~5 min) · slides 48-53
-- **48 "One skill to rule them all"** (Frodo poster) sets up the reveal.
+### ACT III · The harness extension (~5 min) · slides 49-53
 - **49 The reveal:** "We just built a harness extension. We started from Anthropic's prompt, rewrote every line of it, then did the nine things a prompt *can't*. **This is Impeccable.**" Also voices the close (the standalone "prompts matter" slide is cut, it's implied): "You'll iterate the prose forever, and you should. But what breaks the median is everything around it: the nine things a prompt can't be." (Do **not** say "prompt + dark arts" or "only machinery".) → **50 the capability map** (nine things a prompt can't do, each with its file; merges the old Spellbook; the "Apache 2.0, steal them" line moved to the CTA) → **51 CTA** (carries the Apache 2.0 / repo / impeccable.style line) → **52 Q&A** → **53 thanks**.
 
-Pacing: deep levels (1, 2, 5, 7) carry more slides; medium ones run problem → show → payoff. The compile level (8) carries the laugh peak. The three show slides (10, 18, 42) are the workshop, cut them last. Cut order if long: quicken Level 9 (drop code slide 46) → fold Codex-wrinkle into Level 1 → trim Level 4/5 payoff slides (25/28) → fold the live-GIF (37) into the loop narration.
+The "One skill to rule them all" Frodo poster used to open ACT III as a reveal setup, but the segue from Level 9 was awkward; it's the compile payoff (one skill, every harness), so it now lives in Level 8 beside the logos, and ACT III opens straight on the reveal.
+
+Pacing: deep levels (1, 2, 5, 7) carry more slides; medium ones run problem → show → payoff. The compile level (8) carries the laugh peak. The three show slides (10, 18, 42) are the workshop, cut them last. Cut order if long: quicken Level 9 (drop code slide 47) → fold Codex-wrinkle into Level 1 → trim Level 4/5 payoff slides (25/28) → fold the live-GIF (37) into the loop narration.
 
 ---
 

@@ -61,7 +61,7 @@ slides are one breath each. Timing column is cumulative and approximate.
 
 ---
 
-## ACT II · The build (~36 min) · slides 8-47
+## ACT II · The build (~36 min) · slides 8-48
 
 Each level: *our skill still fails at X* → the dark art → *it levels up* (a sigil
 ignites). Call the level each time ("Level 3 now…").
@@ -199,7 +199,10 @@ touching, each compiles only into that model's build. One source, every harness
 and every model handled. Your skill is a codebase; give it a build step."
 **43 · logos · write once, ship to all**: One source → 10+ provider builds, right
 paths and per-model patches.
-**44 · installers copy, they don't compile**: lead with the gap. "Even `npx
+**44 · "One skill to rule them all"** *(the Frodo poster, the gag)*: the compile
+payoff, one skill across every harness. Let it breathe, then turn it: "Coming
+soon to a harness near you."
+**45 · installers copy, they don't compile**: lead with the gap. "Even `npx
 skills`, the most popular way to install a skill, just clones one folder to every
 harness, no per-harness build. And that's fair: multi-harness skills are a new
 idea, most makers keep it simple. But I needed it, so I built impeccable's own
@@ -208,18 +211,15 @@ harness-specific build into each harness's own place." (Optional aside: "I did
 send a PR upstream; still hanging.")
 
 ### Level 9 · Design for the weakest model · `34:00`
-**45 · problem**: "Last reality: it falls apart on a weaker model. It has opinions
+**46 · problem**: "Last reality: it falls apart on a weaker model. It has opinions
 just fine; what it loses is the discipline to follow yours."
-**46 · code**: "Build for the dumbest model you'll actually run, not frontier
+**47 · code**: "Build for the dumbest model you'll actually run, not frontier
 Opus. Non-compressible gates, hard stops, no inference."
-**47 · payoff**: "If the gate can be skipped, it will be. Make it un-skippable."
+**48 · payoff**: "If the gate can be skipped, it will be. Make it un-skippable."
 
 ---
 
-## ACT III · The harness extension (~5 min) · slides 48-53
-
-**48 · "One skill to rule them all"** · `36:00` *(the Frodo poster)*
-- Let the gag breathe, then turn it: "Coming soon to a harness near you."
+## ACT III · The harness extension (~5 min) · slides 49-53
 
 **49 · The reveal** · `36:30`
 - "We just built a harness extension. We started from Anthropic's prompt, rewrote
@@ -251,7 +251,7 @@ Opus. Non-compressible gates, hard stops, no inference."
 
 ## If you're running long (cut order)
 The three show slides (10, 18, 42) are the workshop; cut them last.
-1. Quicken Level 9: drop the code slide (46), keep the payoff.
+1. Quicken Level 9: drop the code slide (47), keep the payoff.
 2. Collapse the Codex wrinkle (13-14) into one sentence on Level 1.
 3. Drop the route/memory/script payoff slides (22, 25, 28); say the line over the
    show slide instead.
