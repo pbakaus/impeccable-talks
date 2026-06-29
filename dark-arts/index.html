@@ -196,6 +196,8 @@
   .s-punch .punch-inner { display:flex; flex-direction:column; align-items:flex-start; }
   .s-punch .rail { margin-bottom: 2.6rem; }
   .s-punch .beat-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.6vw,1.5rem); letter-spacing:.05em; margin-bottom:1.1rem; }
+  .s-punch .problem-tag { align-self:flex-start; margin-top:-.3rem; margin-bottom:1.4rem; font-family:var(--mono); font-size:clamp(.66rem,.85vw,.78rem); letter-spacing:.18em; text-transform:uppercase; color:var(--vermilion); border:1px solid oklch(60% 0.17 32 /.5); border-radius:999px; padding:.36em .9em; }
+  .s-punch .problem-tag .x { font-weight:700; margin-right:.15em; }
   .s-punch .punch-big { font-family:var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.004em; line-height:.94; font-size:clamp(2.8rem,7.2vw,6.2rem); color:var(--champagne); max-width:18ch; }
   .s-punch .punch-sub { margin-top:1.7rem; font-size:clamp(1.05rem,1.7vw,1.5rem); line-height:1.45; color:var(--muted); max-width:42ch; }
   .s-punch .punch-sub strong { color:var(--champagne); }
@@ -629,7 +631,7 @@ const SLIDES = [
   { type:'thesis' },
 
   /* 5 — spellbook preview = the locked climb */
-  { type:'spellbook', preview:true, accent:'accent-07-foil-fragment.png', head:{ t:'From a spell to a harness.', s:'' } },
+  { type:'spellbook', preview:true, accent:'accent-07-foil-fragment.png', head:{ t:'', s:'' } },
 
   /* ===== THE BUILD begins ===== */
 
@@ -721,14 +723,14 @@ $ node palette.mjs --from <span class="v">8f2a</span>   <span class="c">// a see
     tag:'IMAGE · 3-up comparison',
     ph:'The SAME brief rendered three radically different ways, side by side: e.g. brutalist / editorial-magazine / cockpit-dashboard. Shows divergence at a glance. (Generate three with Impeccable, screenshot each.)',
     bg:'assets/slides/divergence-3up.png',
-    big:'Divergence is the<br><span class="gold">hard</span> part.',
-    sub:'Every model can hit the average. The real skill is steering one somewhere else.',
+    big:'One brief.<br>Three <span class="gold">worlds.</span>',
+    sub:'The same prompt, run three times. No shared font, layout, or mood, and not an average in sight.',
     uses:['naming & branding','content ideation','variant generation','breaking boilerplate'] },
 
   /* ===== Level 3 · ROUTE ===== */
   { type:'punch', id:'route', level:3, tag:'route like a model',
-    big:'One rulebook can’t fit&nbsp;everything.',
-    sub:'Level 0 banned system fonts for everyone. But a product dashboard should feel <strong>native</strong>. Brand and product need different rules.' },
+    big:'Cram every skill in,<br>and it <span class="gold">blurs them.</span>',
+    sub:'Brand, product, mobile, native, editorial, each wants the opposite of the others. Write them all into one giant SKILL.md and the model can’t hold them apart: it averages them, or smears brand flair onto your settings page.' },
 
   { type:'route' },
 
@@ -748,8 +750,8 @@ register = PRODUCT.md.register ?? <span class="f">infer</span>(task, surface)
     cap:'Twenty-plus commands, but only the matched reference loads. The register picks the rulebook. <strong>Mixture-of-experts, for a skill.</strong>' },
 
   { type:'punch', center:true,
-    big:'One skill,<br>two <span class="gold">registers</span>.',
-    sub:'Brand wants distinctiveness, product wants the familiar. Route to the register and the right rules load.',
+    big:'Don’t load it all.<br><span class="gold">Route to one expert.</span>',
+    sub:'Many small skills work if you can load and unload them on demand. For one skill you ship to everyone, route inside it: pull only the expert the task needs, keep the rest out of the model’s way. Mixture-of-experts.',
     uses:['big multi-tool skills','context on demand','per-audience behavior','agent toolkits'] },
 
   /* ===== Level 4 · MEMORY ===== */
@@ -1032,6 +1034,7 @@ function renderPunch(s){
     <div class="punch-inner">
       ${s.id?rail(s.id):''}
       ${(s.level!=null)?`<div class="beat-eyebrow">Level ${s.level}${s.tag?` · ${s.tag}`:''}</div>`:''}
+      ${s.id?`<div class="problem-tag"><span class="x">✗</span> the problem</div>`:''}
       <div class="punch-big">${s.big}</div>
       ${s.sub?`<div class="punch-sub">${s.sub}</div>`:''}
       ${s.uses?`<div class="punch-uses"><span class="ulabel">use it for</span>${s.uses.map(u=>`<span class="chip">${u}</span>`).join('')}</div>`:''}
@@ -1132,29 +1135,30 @@ body text 3.1:1 on the tinted card
 function renderDiverge(){
   return el(`<section class="slide s-diverge">
     <div class="diag-eyebrow">Level 2 · force divergence</div>
-    <svg viewBox="0 0 880 360" fill="none">
-      <!-- the median cluster -->
-      <circle cx="210" cy="205" r="125" stroke="var(--gold-faint)" stroke-width="1" stroke-dasharray="3 8"/>
-      <text x="210" y="356" fill="var(--faint)" text-anchor="middle" font-size="14">the median, every model's default</text>
-      <circle cx="255" cy="245" r="4" fill="var(--muted)"/><circle cx="165" cy="250" r="4" fill="var(--muted)"/>
-      <circle cx="150" cy="205" r="3" fill="var(--muted)"/><circle cx="240" cy="290" r="3" fill="var(--muted)"/>
-      <circle cx="285" cy="255" r="3" fill="var(--muted)"/>
-      <!-- the hop within the cluster -->
-      <text x="235" y="130" fill="var(--kinpaku-deep)" text-anchor="middle" font-size="13">ban one → the next in the cluster</text>
-      <text x="198" y="166" fill="var(--muted)" text-anchor="middle" font-size="13">Inter</text>
-      <circle cx="198" cy="188" r="6" fill="none" stroke="var(--vermilion)" stroke-width="1.5"/>
-      <line x1="191" y1="181" x2="205" y2="195" stroke="var(--vermilion)" stroke-width="1.5"/>
-      <line x1="205" y1="181" x2="191" y2="195" stroke="var(--vermilion)" stroke-width="1.5"/>
-      <path d="M209 185 Q255 173 291 174" stroke="var(--kinpaku-deep)" stroke-width="1.5" stroke-dasharray="2 4"/>
-      <circle cx="298" cy="174" r="5" fill="var(--muted)"/>
-      <text x="298" y="196" fill="var(--muted)" text-anchor="middle" font-size="13">Space Grotesk</text>
-      <!-- the escape -->
-      <path d="M320 172 L742 104" stroke="var(--kinpaku)" stroke-width="2.5"/>
-      <text x="531" y="128" fill="var(--kinpaku-pale)" text-anchor="middle" font-size="15" transform="rotate(-9.2 531 128)">anti-attractors + a seed</text>
-      <circle cx="756" cy="101" r="9" fill="var(--kinpaku)"/>
-      <text x="756" y="77" fill="var(--kinpaku)" text-anchor="middle" font-size="15" font-weight="bold">distinct, on purpose</text>
+    <svg viewBox="0 0 900 392" fill="none">
+      <!-- the model's default cluster: a visible zone, not a faint outline -->
+      <circle cx="235" cy="205" r="140" fill="oklch(24% 0.014 90 / 0.28)" stroke="var(--gold-rule)" stroke-width="1.6" stroke-dasharray="5 7"/>
+      <text x="235" y="382" fill="var(--kinpaku-deep)" text-anchor="middle" font-size="14" letter-spacing="2.5">THE MODEL'S DEFAULT CLUSTER</text>
+      <!-- Inter, banned -->
+      <text x="178" y="150" fill="var(--muted)" text-anchor="middle" font-size="15">Inter</text>
+      <circle cx="178" cy="173" r="7" fill="none" stroke="var(--vermilion)" stroke-width="1.8"/>
+      <line x1="170" y1="165" x2="186" y2="181" stroke="var(--vermilion)" stroke-width="1.8"/>
+      <line x1="186" y1="165" x2="170" y2="181" stroke="var(--vermilion)" stroke-width="1.8"/>
+      <!-- the ban hops to the next default, still inside the cluster -->
+      <path d="M193 177 Q250 202 290 197" stroke="var(--kinpaku-deep)" stroke-width="1.6" stroke-dasharray="2 4"/>
+      <circle cx="297" cy="197" r="6" fill="var(--muted)"/>
+      <text x="300" y="221" fill="var(--muted)" text-anchor="middle" font-size="15">Space Grotesk</text>
+      <text x="243" y="263" fill="var(--faint)" text-anchor="middle" font-size="13">ban one, it grabs the next</text>
+      <circle cx="205" cy="247" r="3.5" fill="var(--muted)"/><circle cx="278" cy="156" r="3.5" fill="var(--muted)"/>
+      <!-- the escape: anti-attractors + a seed push it OUT of the cluster -->
+      <path d="M303 193 L744 95" stroke="var(--kinpaku)" stroke-width="3"/>
+      <polygon points="744,95 723,93 731,110" fill="var(--kinpaku)"/>
+      <text x="528" y="124" fill="var(--kinpaku-pale)" text-anchor="middle" font-size="16" transform="rotate(-12.5 528 124)">anti-attractors + a seed</text>
+      <circle cx="762" cy="92" r="10" fill="var(--kinpaku)"/>
+      <text x="764" y="64" fill="var(--kinpaku)" text-anchor="middle" font-size="18" font-weight="bold">Monument Extended</text>
+      <text x="764" y="121" fill="var(--kinpaku-deep)" text-anchor="middle" font-size="13">out of the cluster, on purpose</text>
     </svg>
-    <div class="code-cap">A denylist just hops the model to the next cluster. Make it <strong>eliminate its own top picks</strong>, then seed from the user, and the average isn't even reachable.</div>
+    <div class="code-cap">A ban only moves the model around <strong>inside</strong> its own cluster. The anti-attractor (drop its own top picks) plus a seed it didn’t choose push it <strong>out</strong>.</div>
   </section>`);
 }
 /* system: a capability map — what each art lets Impeccable do that a prompt
@@ -1243,7 +1247,7 @@ function renderSpellbook(s){
         <div class="sb-name">${a.name}</div>
       </div>`).join('');
     return el(`<section class="slide s-spellbook">
-      <div class="sb-head"><div class="t">${s.head.t}</div>${s.head.s?`<div class="s">${s.head.s}</div>`:''}</div>
+      ${s.head&&s.head.t?`<div class="sb-head"><div class="t">${s.head.t}</div>${s.head.s?`<div class="s">${s.head.s}</div>`:''}</div>`:''}
       <div class="sb-grid sb-grid-lite">${cells}</div>
     </section>`);
   }

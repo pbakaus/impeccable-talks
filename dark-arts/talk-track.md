@@ -103,18 +103,24 @@ from the median blob to the gold dot.
 make the model name its own instinct fonts, then eliminate all three, out-rank
 itself. Two: seed from entropy it didn't pick, `palette.mjs --from`, so the
 average isn't even on the table."
-**19 · "Divergence is the hard part."** *(image: 3 variants)*: "Anyone can summon
-the average. The art is conjuring the strange, on purpose."
+**19 · "One brief. Three worlds."** *(image: 3 variants)*: the payoff to the code
+you just showed. "Same brief, three runs, three results that share nothing: no
+font, no layout, no mood. That's divergence landing, not theory."
 
 ### Level 3 · Route like a frontier model · `14:30`
-**20 · problem**: "Level 0 banned system fonts for everyone. But a product
-dashboard should feel native. One rulebook can't serve brand and product."
+**20 · problem**: "A general design skill spans many competencies, brand, product,
+mobile, native, editorial, each wanting the opposite of the others. Cram them all
+into one SKILL.md and the model can't hold them apart: it averages them, or smears
+brand flair onto a settings page."
 **21 · diagram (routing)**: one command lights one expert reference, the rest stay
 dark. "Each command loads ONE expert reference, not the whole manual."
 **22 · code (the router)**: "And it's literal. SKILL.md is a router table:
 `/impeccable critique` loads only `critique.md`. Then the register, brand vs
 product, decides which rulebook even applies. Mixture-of-experts, for a skill."
-**23 · payoff**: "Route to the register, not just the command."
+**23 · payoff**: "Don't load it all. You could split into many small skills, if
+you have a way to load and unload them on demand. For one skill you ship to
+everyone, route inside it: pull the one expert the task needs, keep the rest out
+of context. Mixture-of-experts."
 
 ### Level 4 · Give them memory · `16:30`
 **24 · problem**: "Every run starts from zero, re-finding the same problems.
