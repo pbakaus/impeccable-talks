@@ -701,6 +701,21 @@ report = <span class="f">synthesize</span>(A, B)   <span class="c">// weave, nev
 
   { type:'diverge' },
 
+  /* show, don't tell: the actual anti-attractor technique + the seed */
+  { type:'code', level:2, tag:'anti-attractors + a seed',
+    code:
+`<span class="c">// ban Inter and the model just grabs the next cluster.</span>
+<span class="c">// so make it out-rank its OWN defaults:</span>
+
+director: <span class="s">"name your 3 instinct fonts for this brief"</span>
+          <span class="c">→ [Inter, Space Grotesk, Manrope]</span>
+director: <span class="s">"now eliminate all three. go further out."</span>
+
+$ node palette.mjs --from <span class="v">8f2a</span>   <span class="c">// a seed you didn't pick</span>
+  → <span class="f">oklch(0.62 0.19 28)</span>          <span class="c">// off-cluster on purpose</span>`,
+    file:'skill/reference/brand.md · skill/scripts/palette.mjs',
+    cap:'A ban relocates the monoculture. Anti-attractors make the model eliminate its <strong>own</strong> top picks, seeded from entropy it didn’t choose, so the average isn’t reachable.' },
+
   /* divergence punch line (IMAGE: three divergent variants) */
   { type:'imgstate', mvt:'The build',
     tag:'IMAGE · 3-up comparison',
