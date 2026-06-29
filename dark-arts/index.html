@@ -1172,7 +1172,6 @@ function renderSpellbook(s){
   if (s.preview){
     const cells = ARTS.map((a,i)=>`
       <div class="sb-cell sb-lite">
-        <div class="sb-no-lite">${i+1}</div>
         <div class="sb-sig-lg">${SIGILS[a.id]}</div>
         <div class="sb-name">${a.name}</div>
       </div>`).join('');
