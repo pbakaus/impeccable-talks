@@ -196,8 +196,7 @@
   .s-punch .punch-inner { display:flex; flex-direction:column; align-items:flex-start; }
   .s-punch .rail { margin-bottom: 2.6rem; }
   .s-punch .beat-eyebrow { font-family:var(--font-display); color:var(--kinpaku); font-size:clamp(1rem,1.6vw,1.5rem); letter-spacing:.05em; margin-bottom:1.1rem; }
-  .s-punch .problem-tag { align-self:flex-start; margin-top:-.3rem; margin-bottom:1.4rem; font-family:var(--mono); font-size:clamp(.66rem,.85vw,.78rem); letter-spacing:.18em; text-transform:uppercase; color:var(--vermilion); border:1px solid oklch(60% 0.17 32 /.5); border-radius:999px; padding:.36em .9em; }
-  .s-punch .problem-tag .x { font-weight:700; margin-right:.15em; }
+  .s-punch .problem-tag { align-self:flex-start; margin-bottom:1.1rem; font-family:var(--mono); font-size:clamp(.66rem,.85vw,.78rem); letter-spacing:.18em; text-transform:uppercase; color:var(--vermilion); border:1px solid oklch(60% 0.17 32 /.5); border-radius:999px; padding:.36em .9em; }
   .s-punch .punch-big { font-family:var(--font-wordmark); font-weight:700; text-transform:uppercase; letter-spacing:.004em; line-height:.94; font-size:clamp(2.8rem,7.2vw,6.2rem); color:var(--champagne); max-width:18ch; }
   .s-punch .punch-sub { margin-top:1.7rem; font-size:clamp(1.05rem,1.7vw,1.5rem); line-height:1.45; color:var(--muted); max-width:42ch; }
   .s-punch .punch-sub strong { color:var(--champagne); }
@@ -362,10 +361,15 @@
   /* level-up rail: the spellbook igniting from prompt → harness */
   .rail { display:flex; align-items:center; gap:.5rem; margin-bottom:1.3rem; position:relative; }
   .rail::before { content:''; position:absolute; left:16px; right:16px; top:50%; height:1px; background:var(--gold-faint); z-index:0; }
-  .rail .pip { width:32px; height:32px; flex:0 0 auto; position:relative; z-index:1; background:var(--lacquer); border-radius:50%; }
+  .rail .pip { width:32px; height:32px; flex:0 0 auto; position:relative; z-index:1; background:var(--lacquer); border-radius:50%; border:2px solid transparent; }
   .rail .pip.locked { opacity:.34; }
   .rail .pip.done { opacity:.72; }
-  .rail .pip.active { opacity:1; transform:scale(1.2); }
+  .rail .pip.active { opacity:1; transform:scale(1.2); border-color:var(--kinpaku); background:var(--lacquer-raised); }
+  /* problem-slide header: rail + connector + level label, one group */
+  .s-punch .phead { margin-bottom:2.7rem; }
+  .s-punch .phead .rail { margin-bottom:0; }
+  .s-punch .phead-line { display:block; width:360px; max-width:100%; height:30px; margin-top:4px; overflow:visible; }
+  .s-punch .phead .beat-eyebrow { margin-bottom:0; padding-left:12px; }
   .rail .rail-end { font-family:var(--mono); font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); margin-left:.3rem; }
   .rail .rail-end.lit { color:var(--kinpaku); }
   .art-eyebrow { display:flex; align-items:baseline; gap:.7rem; }
@@ -525,6 +529,25 @@ function rail(activeId){
     const st = i<ai?'done':i===ai?'active':'locked';
     return `<span class="pip ${st}">${SIGILS[id]}</span>`;
   }).join('')+`</div>`;
+}
+
+// problem-slide header: the rail (active icon ringed gold) + a connector line
+// down to the level label, grouped together above the problem statement.
+function problemHeader(activeId, level, tag){
+  const ai = ART_ORDER.indexOf(activeId);
+  const pips = ART_ORDER.map((id,i)=>{
+    const st = i<ai?'done':i===ai?'active':'locked';
+    return `<span class="pip ${st}">${SIGILS[id]}</span>`;
+  }).join('');
+  const cx = ai*40 + 16;   // center x of the active pip (32px pip, 8px gap)
+  return `<div class="phead">
+    <div class="rail">${pips}</div>
+    <svg class="phead-line" viewBox="0 0 360 30" width="360" height="30" fill="none" aria-hidden="true">
+      <path d="M${cx} 0 L${cx} 12 L12 26" stroke="var(--kinpaku)" stroke-width="1.4"/>
+      <circle cx="12" cy="26" r="2.6" fill="var(--kinpaku)"/>
+    </svg>
+    <div class="beat-eyebrow">Level ${level}${tag?` · ${tag}`:''}</div>
+  </div>`;
 }
 
 /* small inline SVG of the live loop, used full-size on the diagram slide */
@@ -1032,9 +1055,8 @@ function renderStatement(s){
 function renderPunch(s){
   return el(`<section class="slide s-punch${s.center?' center':''}">
     <div class="punch-inner">
-      ${s.id?rail(s.id):''}
-      ${(s.level!=null)?`<div class="beat-eyebrow">Level ${s.level}${s.tag?` · ${s.tag}`:''}</div>`:''}
-      ${s.id?`<div class="problem-tag"><span class="x">✗</span> the problem</div>`:''}
+      ${s.id?problemHeader(s.id, s.level, s.tag):((s.level!=null)?`<div class="beat-eyebrow">Level ${s.level}${s.tag?` · ${s.tag}`:''}</div>`:'')}
+      ${s.id?`<div class="problem-tag">the problem</div>`:''}
       <div class="punch-big">${s.big}</div>
       ${s.sub?`<div class="punch-sub">${s.sub}</div>`:''}
       ${s.uses?`<div class="punch-uses"><span class="ulabel">use it for</span>${s.uses.map(u=>`<span class="chip">${u}</span>`).join('')}</div>`:''}
