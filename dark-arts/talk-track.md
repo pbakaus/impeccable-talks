@@ -174,35 +174,37 @@ the agent rewrites the variant, the page updates. "No regeneration." Sells it.
 
 ### Level 8 · Compile to every harness · `29:30`
 **38 · problem (meme)**: the "IT WORKED ON MY MACHINE" Cybertruck meme. "Great in
-your harness, on your model. Hand it to a teammate on Codex or Cursor and it
-breaks, and the differences that bite are behavioral, not file paths."
+your harness, on your model. Hand it to a teammate and two things shift: how the
+*harness* behaves, and how the *model* overfits, in design, code patterns, even
+architecture. Two axes of difference, both break your skill."
 **39 · the symlink myth**: "The advice all over X is 'just symlink .claude to
 .agents.' I wish it worked, the way I wish french fries were healthy. But
 harnesses don't share a folder, or a behavior."
-**40 · the table**: Walk it: who can spawn a sub-agent, plan-mode-only questions,
-and the big one, **Claude auto-wakes the thread when a background job exits;
-others don't** (why the live loop is built the way it is).
-**41 · code (one source, every harness)**: the show, and the answer to "why
-compile at all." "Forget the model name, that's trivial. The line 'ask the user'
-has to become a different *tool* on each harness: AskUserQuestion on Claude,
-Codex's structured input tool on Codex, plain chat on Cursor. The command prefix
-flips from / to $. And it compiles into each harness's own skill directory,
-.claude/skills, .agents/skills (where Codex reads them), .cursor/skills, plus the
-`<codex>`/`<gemini>` patch blocks staying or going. Hardcode any one and the skill
-is dead everywhere else. Your skill is a codebase; give it a build step."
-**42 · logos · write once, ship to all**: One source → 10+ provider builds, right
+**40 · axis 1, the harness (table)**: Walk it: who can spawn a sub-agent,
+plan-mode-only questions, and the big one, **Claude auto-wakes the thread when a
+background job exits; others don't** (why the live loop is built the way it is).
+"That's the harness. Now the other axis."
+**41 · axis 2, the model · "MODEL MOST WANTED"** · `31:00` *(full-bleed meme poster, the laugh)*
+- The slide says it: GEMINI charged with `img:hover { scale(1.1) }`, CODEX with
+  `letter-spacing: -0.06em` (both real detector rules). Let it land. "Every model
+  overfits its own way, and not only in CSS: code patterns, architecture,
+  defaults. The fix is on the next slide."
+**42 · code (one source, every harness)**: the show, resolving both axes at once.
+"Forget the model name, that's trivial. 'Ask the user' becomes a different *tool*
+per harness, AskUserQuestion on Claude, Codex's input tool, plain chat on Cursor;
+the prefix flips / to $; it compiles into each harness's own skill dir. And the
+per-model patch blocks, `<gemini>` drops the img-hover check, `<codex>` fixes the
+touching letters, the exact tells from the rap sheet. One source, every harness
+and every model handled. Your skill is a codebase; give it a build step."
+**43 · logos · write once, ship to all**: One source → 10+ provider builds, right
 paths and per-model patches.
-**43 · installers copy, they don't compile**: lead with the gap. "Even `npx
+**44 · installers copy, they don't compile**: lead with the gap. "Even `npx
 skills`, the most popular way to install a skill, just clones one folder to every
 harness, no per-harness build. And that's fair: multi-harness skills are a new
 idea, most makers keep it simple. But I needed it, so I built impeccable's own
 compiler and installer: `npx impeccable skills install` drops a correct,
 harness-specific build into each harness's own place." (Optional aside: "I did
 send a PR upstream; still hanging.")
-**44 · "MODEL MOST WANTED"** · `32:30` *(self-contained meme poster, the laugh)*
-- The slide says it: GEMINI charged with `img:hover { scale(1.1) }`, CODEX with
-  `letter-spacing: -0.06em` (both real detector rules). Let it land, then the
-  point: "Because you compile, you can overfit per model, a patch per tell."
 
 ### Level 9 · Design for the weakest model · `34:00`
 **45 · problem**: "Last reality: it falls apart on a weaker model. It has opinions
@@ -247,7 +249,7 @@ Opus. Non-compressible gates, hard stops, no inference."
 ---
 
 ## If you're running long (cut order)
-The three show slides (10, 18, 41) are the workshop; cut them last.
+The three show slides (10, 18, 42) are the workshop; cut them last.
 1. Quicken Level 9: drop the code slide (46), keep the payoff.
 2. Collapse the Codex wrinkle (13-14) into one sentence on Level 1.
 3. Drop the route/memory/script payoff slides (22, 25, 28); say the line over the

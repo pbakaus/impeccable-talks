@@ -878,7 +878,7 @@ $ node live-poll.mjs --reply <span class="f">&lt;id&gt;</span> done   <span clas
   /* ===== Level 8 · COMPILE ===== */
   { type:'meme', id:'compile', level:8, tag:'compile to every harness',
     src:'assets/slides/cybertruck-meme.jpg', alt:'It worked on my machine',
-    cap:'Great in your harness, on your model. The differences that break it for a teammate are <strong>behavioral</strong>: who can spawn an agent, who wakes the thread.' },
+    cap:'Great in your harness, on your model. Hand it to a teammate and two things shift: how the <strong>harness</strong> behaves, and how the <strong>model</strong> overfits, in design, code patterns, even architecture.' },
 
   /* DA-8 the symlink myth */
   { type:'punch', accent:'accent-06-right-patina-edge.png',
@@ -893,7 +893,11 @@ $ node live-poll.mjs --reply <span class="f">&lt;id&gt;</span> done   <span clas
       ['Watchers', 'tail-and-watch exists, but throttled harder than a job-exit wakeup'],
       ['Edit hooks', 'Claude Post · Codex Post · Cursor Pre-gate · rest none'],
     ],
-    cap:'The mechanical gaps the build absorbs. The behavioral ones your skill must <strong>detect and degrade around</strong> at runtime.' },
+    cap:'That is the <strong>harness</strong> axis: mechanical gaps the build absorbs, behavioral ones your skill detects and degrades around. The other axis is the model itself →' },
+
+  /* DA-8 axis 2: the model overfits its own way (self-contained WANTED-poster meme, the laugh) */
+  { type:'imgstate', mvt:'The build',
+    bg:'assets/slides/rap-sheet.png' },
 
   /* show, don't tell: the one-source -> per-harness transform (the consequential substitutions) */
   { type:'code', level:8, tag:'one source, every harness',
@@ -921,10 +925,6 @@ $ npm run build →
   { type:'punch', center:true,
     big:'Installers copy.<br>They don’t <span class="gold">compile.</span>',
     sub:'Even <code>npx skills</code>, the standard way to install one, just clones a folder to every harness, no per-harness build. Multi-harness skills are a new idea, and most makers reasonably keep it simple. So impeccable ships its own: <code>npx impeccable skills install</code> compiles a correct build into each harness’s own place.' },
-
-  /* DA-8 the laugh: model tells (self-contained WANTED-poster meme) */
-  { type:'imgstate', mvt:'The build',
-    bg:'assets/slides/rap-sheet.png' },
 
   /* ===== Level 9 · WEAKEST MODEL ===== */
   { type:'punch', id:'weak', level:9, tag:'design for the weakest model',
