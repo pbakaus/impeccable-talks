@@ -176,7 +176,10 @@
   .ifill.ph .tag { font-family:var(--mono); font-size:.64rem; letter-spacing:.2em; text-transform:uppercase; color:var(--lacquer-deep); background:var(--kinpaku); padding:.22em .7em; border-radius:3px; font-weight:600; }
   .ifill.ph .cap { font-size:clamp(.9rem,1.25vw,1.15rem); color:var(--champagne); max-width:52ch; line-height:1.42; }
   .ifill.ph .hint { font-family:var(--mono); font-size:.7rem; color:var(--faint); }
-  .igrad { position:absolute; inset:0; z-index:1; background:linear-gradient(0deg, oklch(4% 0.006 95 / .96) 0%, oklch(4% 0.006 95 / .8) 32%, oklch(5% 0.006 95 / .42) 60%, oklch(5% 0.006 95 / .06) 88%); }
+  /* default: light, bottom-anchored, protects the text without dimming the image */
+  .igrad { position:absolute; inset:0; z-index:1; background:linear-gradient(0deg, oklch(4% 0.006 95 / .9) 0%, oklch(4% 0.006 95 / .54) 24%, oklch(5% 0.006 95 / .14) 44%, transparent 62%); }
+  /* heavy: for bright full-bleed images (e.g. the slop page) where text needs more cover */
+  .igrad.heavy { background:linear-gradient(0deg, oklch(4% 0.006 95 / .96) 0%, oklch(4% 0.006 95 / .82) 35%, oklch(5% 0.006 95 / .5) 60%, oklch(5% 0.006 95 / .1) 86%); }
   .imgstate-text { position:absolute; left:6.4vw; right:6.4vw; bottom:8vh; z-index:2; max-width:60ch;
     text-shadow: 0 1px 2px oklch(3% 0.005 95 / .85), 0 2px 22px oklch(3% 0.005 95 / .8); }
   .imgstate-text .big { font-family:var(--font); font-weight:700; letter-spacing:-.02em; font-size:clamp(2.4rem,6vw,5.4rem); line-height:1; color:var(--champagne); max-width:20ch; }
@@ -637,7 +640,7 @@ const SLIDES = [
   { type:'title' },
 
   /* 1 — cold open: median slop (IMAGE) */
-  { type:'imgstate', mvt:'Cold open',
+  { type:'imgstate', mvt:'Cold open', scrim:'heavy',
     bg:'assets/slides/slop.png',
     big:'“Yeah, AI made&nbsp;that.”',
     sub:'You can call it on sight. And it came out of the <strong>most popular design skill there is.</strong>' },
@@ -1021,7 +1024,7 @@ function renderImgState(s){
     : `<div class="ifill ph"><span class="tag">${s.tag||'IMAGE'}</span><span class="cap">${s.ph}</span><span class="hint">${s.hint||'source + drop in'}</span></div>`;
   const hasText = s.big || s.sub || s.kicker;
   return el(`<section class="slide s-imgstate">
-    ${fill}${hasText?'<div class="igrad"></div>':''}
+    ${fill}${hasText?`<div class="igrad${s.scrim==='heavy'?' heavy':''}"></div>`:''}
     ${hasText?`<div class="imgstate-text">
       ${s.kicker?`<div class="kicker">${s.kicker}</div>`:''}
       ${s.big?`<div class="big">${s.big}</div>`:''}
