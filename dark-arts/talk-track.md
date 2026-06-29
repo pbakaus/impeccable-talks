@@ -192,10 +192,13 @@ flips from / to $. And it compiles into each harness's own skill directory,
 is dead everywhere else. Your skill is a codebase; give it a build step."
 **42 · logos · write once, ship to all**: One source → 10+ provider builds, right
 paths and per-model patches.
-**43 · the receipt (the real installer)**: "Even `npx skills` copies one folder
-and clones it everywhere, not from each harness's own folder. I sent a PR to fix
-it; it's still hanging. So I built `npx impeccable skills install`: a
-harness-specific build, dropped in each harness's own place."
+**43 · installers copy, they don't compile**: lead with the gap. "Even `npx
+skills`, the most popular way to install a skill, just clones one folder to every
+harness, no per-harness build. And that's fair: multi-harness skills are a new
+idea, most makers keep it simple. But I needed it, so I built impeccable's own
+compiler and installer: `npx impeccable skills install` drops a correct,
+harness-specific build into each harness's own place." (Optional aside: "I did
+send a PR upstream; still hanging.")
 **44 · "MODEL MOST WANTED"** · `32:30` *(self-contained meme poster, the laugh)*
 - The slide says it: GEMINI charged with `img:hover { scale(1.1) }`, CODEX with
   `letter-spacing: -0.06em` (both real detector rules). Let it land, then the
