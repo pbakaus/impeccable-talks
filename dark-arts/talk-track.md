@@ -1,11 +1,13 @@
 # The Dark Arts of Skill Engineering · talk track
 
-Spoken-beat anchors for the **50-slide** deck (`index.html`). The slides are
-deliberately sparse now: one idea each. Your voice carries the substance; the
-slide is the punctuation. **Don't read the slides.**
+Spoken-beat anchors for the **54-slide** deck (`index.html`). The slides are
+deliberately sparse: one idea each, and every dark art now *shows* its mechanism
+(code, a real artifact, or a side-by-side) rather than describing it. Your voice
+carries the substance; the slide is the punctuation. **Don't read the slides.**
 
-Hard 60 incl. Q&A → aim for ~46 min content, ~10 Q&A, ~4 slack. Both demos are
-PRE-RUN (see `demos/README.md`); narrate real output, keep terminals warm.
+Hard 60 incl. Q&A → aim for ~48 min content, ~8 Q&A, ~4 slack. Both demos are
+PRE-RUN (see `demos/README.md`); narrate real output, keep terminals warm. It's
+tighter than the old cut; the cut-order list at the bottom is your release valve.
 
 **The spine:** we build one skill on stage, from a *spell* (a prompt) to a
 *harness extension*. We start at Level 0 (Anthropic's real frontend-design
@@ -13,11 +15,11 @@ skill) and climb to Level 9 (Impeccable). Each dark art is the fix to a concrete
 failure of the current level. The Spellbook rail ignites one more sigil per
 level, all nine lit by the end.
 
-Thesis (the one card): **Prompting < harness engineering.**
+Thesis (the one card): **prompting < harness engineering.**
 
-Each beat now runs across a few quick slides, usually **problem → gag → code →
-payoff**. Lean on the gag and the code; the problem/payoff slides are one breath
-each. Timing column is cumulative and approximate.
+Each level runs across a few quick slides: *problem → show it → payoff*. Lean on
+the show slide (the code, the artifact, the comparison); the problem and payoff
+slides are one breath each. Timing column is cumulative and approximate.
 
 ---
 
@@ -59,7 +61,7 @@ each. Timing column is cumulative and approximate.
 
 ---
 
-## ACT II · The build (~34 min) · slides 8-44
+## ACT II · The build (~36 min) · slides 8-48
 
 Each level: *our skill still fails at X* → the dark art → *it levels up* (a sigil
 ignites). Call the level each time ("Level 3 now…").
@@ -69,158 +71,177 @@ ignites). Call the level each time ("Level 3 now…").
 anchors on its first guess and ships it."
 **09 · the gag (Gandalf vs Saruman)**: "You don't fix this with a better prompt.
 You fix it with a second, blind opinion. So make them argue." Let the image land.
-**10 · code**: "Two sub-agents that never see each other. The non-obvious bit:
-the deterministic detector is *withheld* until the human-style review commits, so
-the cheap signal can't anchor the expensive one."
-**11 · payoff**: "Two blind opinions beat one confident guess. Every time."
+**10 · the two-way bias (three verdicts)**: the heart of *why*. Same skill, three
+runs, side by side. "Hand the LLM the detector and it skews both ways. Detector
+noisy: it condemns a strong page over fixable nits, a false alarm. Detector
+silent: it rubber-stamps a generic page, a clean bill of health that means
+nothing. Only the third run, two blind agents then a synthesis, separates
+'technically flawed' from 'actually bad.'" This slide is the argument; spend on it.
+**11 · code**: "Here's how. Two sub-agents that never see each other. The
+deterministic detector is *withheld* until the design review commits, so the cheap
+signal can't anchor the expensive one, in either direction."
+**12 · payoff**: "Two blind opinions beat one confident guess. Every time."
 
-### Level 1 · the harness wrinkle · `8:30`
-**12 · "…but Codex won't" (meme)**: the "Y U NO let me spawn sub-agents" meme.
+### Level 1 · the harness wrinkle · `9:00`
+**13 · "…but Codex won't" (meme)**: the "Y U NO let me spawn sub-agents" meme.
 "Sub-agents aren't free. On Codex a skill can't spawn one unless the user already
 allowed it." Let the meme get the laugh, then turn to the fix.
-**13 · code**: Read the `<codex>` gate. "Detect the capability, ask once, then
+**14 · code**: Read the `<codex>` gate. "Detect the capability, ask once, then
 STOP, degrade loudly. Never assume the runtime you wrote for."
 
-**14 · DEMO 1 · watch them argue** · `9:30` *(pre-recorded GIF)*
+**15 · DEMO 1 · watch them argue** · `10:00` *(pre-recorded GIF)*
 - `/impeccable critique` on the median page. "Two assessments independently, then
   a synthesis that flags what the eye missed but the detector caught."
 
-### Level 2 · Force divergence · `11:00` *(deep)*
-**15 · problem**: "Level 0 banned Inter, so the model picks Space Grotesk. Ban
+### Level 2 · Force divergence · `11:30` *(deep)*
+**16 · problem**: "Level 0 banned Inter, so the model picks Space Grotesk. Ban
 that, it picks the next cluster. A named ban relocates the monoculture."
-**16 · code**: "Real divergence is two levers: make the model eliminate its OWN
-top picks, then seed from the user so the average isn't even on the table."
-**17 · "Real magic isn't generation. It's divergence."** *(image: 3 variants)*:
-"Anyone can summon the average. The art is conjuring the strange, on purpose."
+**17 · diagram (the cluster escape)**: "Bans just chase the model around its own
+cluster. The escape is sideways: out of the cluster entirely." Trace the arrow
+from the median blob to the gold dot.
+**18 · code (the technique)**: show it, don't just point at it. "Two levers. One:
+make the model name its own instinct fonts, then eliminate all three, out-rank
+itself. Two: seed from entropy it didn't pick, `palette.mjs --from`, so the
+average isn't even on the table."
+**19 · "Divergence is the hard part."** *(image: 3 variants)*: "Anyone can summon
+the average. The art is conjuring the strange, on purpose."
 
-### Level 3 · Route like a frontier model · `13:30`
-**18 · problem**: "Level 0 banned system fonts for everyone. But a product
+### Level 3 · Route like a frontier model · `14:30`
+**20 · problem**: "Level 0 banned system fonts for everyone. But a product
 dashboard should feel native. One rulebook can't serve brand and product."
-**19 · diagram (routing)**: one command lights one expert reference, the rest stay
-dark. "Register (brand vs product) decides which rules even apply. Each command
-loads ONE expert reference, not the whole manual. Mixture-of-experts, for skills."
-**20 · payoff**: "Route to the register, not just the command."
+**21 · diagram (routing)**: one command lights one expert reference, the rest stay
+dark. "Each command loads ONE expert reference, not the whole manual."
+**22 · code (the router)**: "And it's literal. SKILL.md is a router table:
+`/impeccable critique` loads only `critique.md`. Then the register, brand vs
+product, decides which rulebook even applies. Mixture-of-experts, for a skill."
+**23 · payoff**: "Route to the register, not just the command."
 
-### Level 4 · Give them memory · `15:30`
-**21 · problem**: "Every run starts from zero, re-finding the same problems.
+### Level 4 · Give them memory · `16:30`
+**24 · problem**: "Every run starts from zero, re-finding the same problems.
 Stateless is a choice, not a law."
-**22 · diagram (snapshot + trend)**: a real `.impeccable/critique/…md` snapshot
+**25 · artifact (snapshot + trend)**: a real `.impeccable/critique/…md` snapshot
 (score, P0/P1) beside a 24 → 28 → 32 trend line. "Critique writes the snapshot,
 polish reads it as a backlog. The slug is the resolved file path, not the prompt
 wording, so a teammate on the same file gets the same memory. The runs compound."
-**23 · payoff**: "Make the runs compound."
+**26 · payoff**: "Make the runs compound."
 
-### Level 5 · The script talks back · `17:30` *(deep)*
-**24 · problem**: "Our prompts are sharp, but buried rules still get skimmed,
+### Level 5 · The script talks back · `18:30` *(deep)*
+**27 · problem**: "Our prompts are sharp, but buried rules still get skimmed,
 weak models worst."
-**25 · code**: "The skill body literally says 'follow whatever the script
+**28 · code**: "The skill body literally says 'follow whatever the script
 prints.' It reads the environment and writes the next instruction. Steers harder
 than anything static. The cost: it breaks prompt caching." (Still prose, just
 computed and just-in-time.)
-**26 · payoff**: "The exit value is the prompt."
+**29 · payoff**: "The exit value is the prompt."
 
-### Level 6 · Hooks that fight back · `20:00`
-**27 · problem**: "It only helps when you invoke it. But the agent makes its
+### Level 6 · Hooks that fight back · `21:00`
+**30 · problem**: "It only helps when you invoke it. But the agent makes its
 worst edits when nobody called the skill at all."
-**28 · the gag (grappling hooks)**: "So the hooks come to you." Lean into it.
-**29 · code**: "PostToolUse runs the detector on every edit; Cursor's pre-gate
+**31 · the gag (grappling hooks)**: "So the hooks come to you." Lean into it.
+**32 · code**: "PostToolUse runs the detector on every edit; Cursor's pre-gate
 blocks the bad write before it lands. (Honest aside: a static hook scans the file
 on disk; runtime-generated UI is a blind spot, so dogfood the rendered page.)"
-**30 · payoff**: "Passive guardrails beat a command no one remembers to run."
+**33 · payoff**: "Passive guardrails beat a command no one remembers to run."
 
-**31 · DEMO 2 · the hook fires unprompted** · `22:00` *(staged thread animation, built into the slide)*
+**34 · DEMO 2 · the hook fires unprompted** · `23:00` *(staged thread animation, built into the slide)*
 - The slide animates a faked Claude Code thread: the bad edit lands, then the
   system-reminder appears on its own. Real hooks fire silently, so we dramatize it.
 - "I never call the skill. One bad edit, and a system-reminder pops into the
-  thread on its own, the moment it hits disk." (If you want a real capture too,
-  record the actual hook firing as a fallback; the slide stands on its own.)
+  thread on its own, the moment it hits disk."
 
-### Level 7 · Live-wire the browser · `23:30` *(deep)*
-**32 · problem**: "Tuning a visual thing by typing is miserable, 'a little more
+### Level 7 · Live-wire the browser · `24:30` *(deep)*
+**35 · problem**: "Tuning a visual thing by typing is miserable, 'a little more
 padding, no, warmer, less.' The move: make the browser a second input alongside
 chat. You grab the real element and adjust it live; the agent iterates with you.
 (This isn't a screenshot/validation loop, it's the browser as an input device.)"
-**33 · code (the trick)**: walk the four moves. "A tiny server injects a picker
+**36 · code (the trick)**: walk the four moves. "A tiny server injects a picker
 into your dev page. Your agent runs ONE blocking command, `live-poll.mjs`, and
 just waits. You drag a knob in the running app; that becomes the event the poll
 returns. The agent, same chat thread, edits the file and replies, and the page
 updates. No MCP, no plugin, the agent's own thread is the loop."
-**34 · the loop diagram**: "You act in the browser, your own agent picks it up and
+**37 · the loop diagram**: "You act in the browser, your own agent picks it up and
 pushes the change back, live. Three boring web primitives: long-poll (agent↔
 server), SSE (server→browser), POST (browser→agent). No MCP."
-**35 · "…and it's live."** *(GIF, money shot)*: Drag a knob in the running app,
+**38 · "…and it's live."** *(GIF, money shot)*: Drag a knob in the running app,
 the agent rewrites the variant, the page updates. "No regeneration." Sells it.
 
-### Level 8 · Compile to every harness · `28:30`
-**36 · problem (meme)**: the "IT WORKED ON MY MACHINE" Cybertruck meme. "Great in
+### Level 8 · Compile to every harness · `29:30`
+**39 · problem (meme)**: the "IT WORKED ON MY MACHINE" Cybertruck meme. "Great in
 your harness, on your model. Hand it to a teammate on Codex or Cursor and it
 breaks, and the differences that bite are behavioral, not file paths."
-**37 · the symlink myth**: "The advice all over X is 'just symlink .claude to
+**40 · the symlink myth**: "The advice all over X is 'just symlink .claude to
 .agents.' I wish it worked, the way I wish french fries were healthy. But
 harnesses don't share a folder, or a behavior."
-**38 · the table**: Walk it: who can spawn a sub-agent, plan-mode-only questions,
+**41 · the table**: Walk it: who can spawn a sub-agent, plan-mode-only questions,
 and the big one, **Claude auto-wakes the thread when a background job exits;
 others don't** (why the live loop is built the way it is).
-**39 · logos · write once, ship to all**: One source → 10+ provider builds, right
-paths and per-model patches. "Your skill is a codebase. Give it a build step."
-**40 · the receipt (the real installer)**: "Even `npx skills` copies one folder
+**42 · code (one source, many builds)**: the show. "One source with placeholders,
+`{{model}}`, `{{config_file}}`, and per-model patch blocks, `<gemini>`, `<codex>`.
+The build compiles a correct copy per harness: `.claude` gets CLAUDE.md and the
+model blocks stripped; `.codex` gets AGENTS.md and keeps its own block. Your skill
+is a codebase; give it a build step."
+**43 · logos · write once, ship to all**: One source → 10+ provider builds, right
+paths and per-model patches.
+**44 · the receipt (the real installer)**: "Even `npx skills` copies one folder
 and clones it everywhere, not from each harness's own folder. I sent a PR to fix
 it; it's still hanging. So I built `npx impeccable skills install`: a
 harness-specific build, dropped in each harness's own place."
-
-**41 · "MODEL MOST WANTED"** · `31:30` *(self-contained meme poster, the laugh)*
+**45 · "MODEL MOST WANTED"** · `32:30` *(self-contained meme poster, the laugh)*
 - The slide says it: GEMINI charged with `img:hover { scale(1.1) }`, CODEX with
   `letter-spacing: -0.06em` (both real detector rules). Let it land, then the
   point: "Because you compile, you can overfit per model, a patch per tell."
 
-### Level 9 · Design for the weakest model · `33:00`
-**42 · problem**: "Last reality: it falls apart on a weaker model. It has opinions
+### Level 9 · Design for the weakest model · `34:00`
+**46 · problem**: "Last reality: it falls apart on a weaker model. It has opinions
 just fine; what it loses is the discipline to follow yours."
-**43 · code**: "Build for the dumbest model you'll actually run, not frontier
+**47 · code**: "Build for the dumbest model you'll actually run, not frontier
 Opus. Non-compressible gates, hard stops, no inference."
-**44 · payoff**: "If the gate can be skipped, it will be. Make it un-skippable."
+**48 · payoff**: "If the gate can be skipped, it will be. Make it un-skippable."
 
 ---
 
-## ACT III · The harness extension (~5 min) · slides 45-50
+## ACT III · The harness extension (~5 min) · slides 49-54
 
-**45 · "One skill to rule them all"** · `35:00` *(the Frodo poster)*
+**49 · "One skill to rule them all"** · `36:00` *(the Frodo poster)*
 - Let the gag breathe, then turn it: "Coming soon to a harness near you."
 
-**46 · The reveal** · `35:30`
+**50 · The reveal** · `36:30`
 - "We just built a harness extension. We started from Anthropic's prompt, rewrote
   every line of it, then did the nine things a prompt can't. **This is
   Impeccable.**" (Don't say 'only machinery' or 'prompt + arts': none of the
   original survives, and Impeccable still has heavily-iterated prose; the arts
   are what a prompt can't do.)
-- Voice the close here too (the standalone slide is cut, it's implied): "You'll
-  iterate the prose forever, and you should, I did, heavily. But what breaks the
-  median is everything around it. The nine things a prompt can't be."
+- Voice the close here too: "You'll iterate the prose forever, and you should, I
+  did, heavily. But what breaks the median is everything around it. The nine
+  things a prompt can't be."
 
-**47 · The capability map** · `36:30` *(what a prompt can't do + the take-home)*
+**51 · The capability map** · `37:30` *(what a prompt can't do)*
 - The payoff of the build-up: nine concrete powers Impeccable gained, each with the
   file it lives in. "A prompt suggests a design, once. Now it reviews itself,
   escapes the average, routes per surface, remembers, adapts, guards every edit,
-  tunes in the browser, runs on any harness, holds on weak models. Every one is
-  Apache 2.0, steal them." Let them photograph. (This merges the old Spellbook slide.)
+  tunes in the browser, runs on any harness, holds on weak models." Let them
+  photograph.
 
-**48 · CTA · try it Monday** · `38:00`
-- `npx impeccable skills install`; clone `talks/dark-arts/starter`; run
+**52 · CTA · try it Monday** · `39:00`
+- "It's Apache 2.0, every snippet tonight is in the repo, steal it."
+  `npx impeccable skills install`; clone `dark-arts/starter`; run
   `/impeccable critique` on the page you're least proud of.
 
-**49 · Questions** · `39:00` · "Where does this break? What did I get wrong?"
+**53 · Questions** · `40:00` · "Where does this break? What did I get wrong?"
 
-**50 · Thank you** · `~58:00` · impeccable.style · github/pbakaus.
+**54 · Thank you** · `~58:00` · impeccable.style · github/pbakaus.
 
 ---
 
 ## If you're running long (cut order)
-1. Quicken Level 9: drop the code slide (43), keep the payoff.
-2. Collapse the Codex wrinkle (12-13) into one sentence on Level 1.
-3. Trim Level 3: drop the payoff slide (20); the system-fonts line carries it.
-4. Fold the live money-shot (35) into the loop-diagram (34) narration.
-5. Drop the route/memory/script payoff slides (20, 23, 26); say the line over the
-   code instead.
+The four show slides (10, 18, 22, 42) are the workshop; cut them last.
+1. Quicken Level 9: drop the code slide (47), keep the payoff.
+2. Collapse the Codex wrinkle (13-14) into one sentence on Level 1.
+3. Drop the route/memory/script payoff slides (23, 26, 29); say the line over the
+   show slide instead.
+4. Fold the live money-shot (38) into the loop-diagram (37) narration.
+5. Trim Level 3: if truly desperate, drop the route diagram (21) and keep the
+   router code (22); the code carries the idea.
 
 ## Q&A prep
 - **"Isn't this over-engineering?"** For a one-off prompt, yes. The arts earn

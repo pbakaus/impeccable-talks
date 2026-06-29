@@ -7,7 +7,17 @@
 
 ## Revision log (what changed from your notes)
 
-**v7 (latest) · full edutainment rebuild:**
+**v8 (latest) · show, don't tell:**
+- A workshop should lead with prompts, code, and examples, not descriptions. Audited every dark-art section for telling-where-it-could-show and added a concrete "show" slide to the four that were leaning on prose:
+  - **L1 argue:** a three-verdict comparison (`crit3`) that *demonstrates* the two-way detector bias instead of explaining it. Detector noisy → condemns a strong page (false alarm); detector silent → rubber-stamps a generic one; two blind agents → a balanced verdict separating "technically flawed" from "actually bad."
+  - **L2 diverge:** a code slide showing the actual anti-attractor technique (name your instinct fonts, eliminate them) plus the `palette.mjs --from` seed.
+  - **L3 route:** a code slide showing SKILL.md as a literal router table (one command → one reference) and the brand/product register switch.
+  - **L8 compile:** a code slide showing one source (`{{model}}`/`{{config_file}}` placeholders, `<gemini>`/`<codex>` blocks) compiling into distinct `.claude`/`.codex` builds.
+- L4 memory, L5 script, L6 hooks, L7 live, L9 weak already showed real artifacts/code/demos; left as-is.
+- Also: slide 47 (capability map) lost its "Apache 2.0, steal them" footer (low value; the CTA carries the URL/license). The thesis inequality is lowercase (`prompting < harness engineering`). Slide 7 rail is borderless icon+title, no numbers. Title video is keyboard-skippable. Contrast lifted for projector legibility.
+- **50 → 54 slides.** `talk-track.md` re-synced.
+
+**v7 · full edutainment rebuild:**
 - **Slides complement the talk, they don't duplicate it.** Each dark-art beat decomposed from one dense grimoire spread into a short run of snappy slides (**problem → gag → code → payoff**); one idea per slide, the voice carries the rest. Level 8 also got the real harness story: the "just symlink .claude to .agents" myth (debunked, french-fries aside) and the receipt that `npx skills` gets install wrong so Paul built a harness-specific installer. **28 → 50 slides.**
 - **Grimoire is now a motif, not wallpaper:** kept for the title cover, the book-opening transition video, and the Spellbook. Technical beats moved to clean, varied, fully-responsive dark layouts (fixes the `vw`-against-`cover` anchoring bug on non-16:9 ratios). New slide types: `punch`, `code` (code as hero), `poster`, `htable`.
 - **Humor wired in** (organizer's "entertain"): Gandalf vs Saruman (argue), LOTR grappling hooks (hooks), the Frodo "One skill to rule them all" poster before the reveal. Image gags carry placeholders + a shot-list of generation prompts.
@@ -78,7 +88,7 @@ Everything hangs off that. Each dark art is "another way to move the work from p
 
 **LOCKED — the "remember one thing" card:**
 
-> # Prompting < harness engineering
+> # prompting < harness engineering
 
 The Pocock-style inequality. Dry, pointy, screenshottable, and it *is* the talk's argument in three words. Deliberate contrast: the **thesis line is engineer-dry, the deck's visual world is sorcery** (see §6 — dark kinpaku). The magic lives in the design and the section dividers, not in the headline. That tension ("plain claim, dark theatre") is a feature.
 
@@ -119,29 +129,29 @@ Build order (Level 1→Level 9): argue · diverge · route · memory · script-t
 
 ## 4. Talk structure (60 min workshop) — the build narrative
 
-**50 slides, three acts** (edutainment cadence: one idea per slide). We build one skill on stage, from a spell (Level 0) to a harness extension (Level 9). Each level is a short run of slides, usually **problem → gag → code → payoff**; the Spellbook rail ignites a sigil per level. Slides are sparse on purpose; the voice carries the substance. Full per-slide spoken track lives in `talk-track.md`; this is the shape.
+**54 slides, three acts** (edutainment cadence: one idea per slide). We build one skill on stage, from a spell (Level 0) to a harness extension (Level 9). Each level is a short run of slides, usually **problem → show → payoff** (the "show" being code, a real artifact, or a side-by-side); the Spellbook rail ignites a sigil per level. Slides are sparse on purpose; the voice carries the substance. Full per-slide spoken track lives in `talk-track.md`; this is the shape.
 
 ### ACT I · The spell (~6 min) · slides 1-7
 - **01 Title** → **02 "Yeah, AI made that"** (slop image; came from the most popular design skill there is).
 - **03-04 Level 0 · Anthropic's frontend-design** (the spell): "a system prompt and a prayer" punch, then the *named bans* code. Plant the two flaws (over-applies; a ban relocates the monoculture). **Optional wink aside:** the skill was rewritten days after I showed Anthropic Impeccable; we start from the original.
 - **05 median gravity** → **06 THESIS CARD** ("Prompting < harness engineering") → **07 the locked Spellbook**.
 
-### ACT II · The build (~34 min) · slides 8-44
-Each level: *our skill still fails at X* → the dark art → *it levels up* (a sigil ignites; call the level). Decomposed into snappy slides:
-- **Level 1 argue** (D) · 08 problem → 09 gag (Gandalf vs Saruman) → 10 code → 11 payoff; then 12 Codex meme + 13 the `<codex>` gate; **14 demo 1**.
-- **Level 2 force divergence** (D), pays off Level 0's *relocation* flaw · 15 problem → 16 code → 17 "real magic is divergence" (3-up image).
-- **Level 3 route** (M), pays off the *over-apply* flaw (register: brand vs product) · 18-20.
-- **Level 4 memory** (M) · 21-23. **Level 5 script talks back** (D) · 24-26.
-- **Level 6 hooks** (M) · 27 problem → 28 gag (grappling hooks) → 29 code → 30 payoff; **31 demo 2** (staged thread).
-- **Level 7 live-wire the browser** (D) · 32 problem (chat is a bad design tool) → 33 the trick (blocking poll) → 34 loop diagram → 35 live GIF.
-- **Level 8 compile to every harness** (M) · 36 cybertruck meme → 37 the symlink myth → 38 behavioral-diff table → 39 logos → 40 the receipt (real installer) → **41 MODEL MOST WANTED laugh**.
-- **Level 9 design for the weakest model** (M) · 42-44.
+### ACT II · The build (~36 min) · slides 8-48
+Each level: *our skill still fails at X* → the dark art → *it levels up* (a sigil ignites; call the level). Each level now leads with a *show* slide (code / artifact / comparison), not a description:
+- **Level 1 argue** (D) · 08 problem → 09 gag (Gandalf vs Saruman) → **10 the two-way bias (three verdicts)** → 11 code → 12 payoff; then 13 Codex meme + 14 the `<codex>` gate; **15 demo 1**.
+- **Level 2 force divergence** (D), pays off Level 0's *relocation* flaw · 16 problem → 17 diagram (cluster escape) → **18 code (anti-attractors + `palette.mjs` seed)** → 19 "divergence is the hard part" (3-up image).
+- **Level 3 route** (M), pays off the *over-apply* flaw (register: brand vs product) · 20 problem → 21 diagram (routing) → **22 code (SKILL.md router table + register switch)** → 23 payoff.
+- **Level 4 memory** (M) · 24-26 (25 = real snapshot + trend artifact). **Level 5 script talks back** (D) · 27-29 (28 = stdout code).
+- **Level 6 hooks** (M) · 30 problem → 31 gag (grappling hooks) → 32 code → 33 payoff; **34 demo 2** (staged thread).
+- **Level 7 live-wire the browser** (D) · 35 problem (chat is a bad design tool) → 36 the trick (blocking poll) → 37 loop diagram → 38 live GIF.
+- **Level 8 compile to every harness** (M) · 39 cybertruck meme → 40 the symlink myth → 41 behavioral-diff table → **42 code (one source → per-harness builds)** → 43 logos → 44 the receipt (real installer) → **45 MODEL MOST WANTED laugh**.
+- **Level 9 design for the weakest model** (M) · 46-48 (47 = non-compressible gates code).
 
-### ACT III · The harness extension (~5 min) · slides 45-50
-- **45 "One skill to rule them all"** (Frodo poster) sets up the reveal.
-- **46 The reveal:** "We just built a harness extension. We started from Anthropic's prompt, rewrote every line of it, then did the nine things a prompt *can't*. **This is Impeccable.**" Also voices the close (the standalone "prompts matter" slide is cut, it's implied): "You'll iterate the prose forever, and you should. But what breaks the median is everything around it: the nine things a prompt can't be." (Do **not** say "prompt + dark arts" or "only machinery".) → **47 the capability map** (nine things a prompt can't do, each with its file + "Apache 2.0, steal them"; merges the old Spellbook) → **48 CTA** → **49 Q&A** → **50 thanks**.
+### ACT III · The harness extension (~5 min) · slides 49-54
+- **49 "One skill to rule them all"** (Frodo poster) sets up the reveal.
+- **50 The reveal:** "We just built a harness extension. We started from Anthropic's prompt, rewrote every line of it, then did the nine things a prompt *can't*. **This is Impeccable.**" Also voices the close (the standalone "prompts matter" slide is cut, it's implied): "You'll iterate the prose forever, and you should. But what breaks the median is everything around it: the nine things a prompt can't be." (Do **not** say "prompt + dark arts" or "only machinery".) → **51 the capability map** (nine things a prompt can't do, each with its file; merges the old Spellbook; the "Apache 2.0, steal them" line moved to the CTA) → **52 CTA** (carries the Apache 2.0 / repo / impeccable.style line) → **53 Q&A** → **54 thanks**.
 
-Pacing: deep levels (1, 2, 5, 7) carry more slides; medium ones run problem → code → payoff. The compile level (8) carries the laugh peak. Cut order if long: quicken Level 9 (drop code slide) → fold Codex-wrinkle into Level 1 → trim Level 3/4/5 payoff slides → fold the live-GIF into the loop narration.
+Pacing: deep levels (1, 2, 5, 7) carry more slides; medium ones run problem → show → payoff. The compile level (8) carries the laugh peak. The four show slides (10, 18, 22, 42) are the workshop, cut them last. Cut order if long: quicken Level 9 (drop code slide 47) → fold Codex-wrinkle into Level 1 → trim Level 3/4/5 payoff slides (23/26/29) → fold the live-GIF (38) into the loop narration.
 
 ---
 
