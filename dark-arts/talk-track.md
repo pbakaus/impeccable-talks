@@ -58,6 +58,9 @@ slides are one breath each. Timing column is cumulative and approximate.
 **07 · The climb (locked spellbook)** · `5:30`
 - "From a spell to a harness. Nine dark arts. By the end, every sigil is lit."
   Point at the nine locked sigils.
+- **Workshop cue:** "If you want to build along, clone the starter right now,
+  `github.com/pbakaus/impeccable-talks`, it's in `dark-arts/starter`. We'll build
+  a pocket version of this together, three hands-on moments. Watching is fine too."
 
 ---
 
@@ -92,6 +95,8 @@ STOP, degrade loudly. Never assume the runtime you wrote for."
 **15 · DEMO 1 · watch them argue** · `10:00` *(pre-recorded GIF)*
 - `/impeccable critique` on the median page. "Two assessments independently, then
   a synthesis that flags what the eye missed but the detector caught."
+- **Your turn (build-along):** "Run `/spellbook argue sample/landing.html` on your
+  clone, your pocket version does the same two-agent move."
 
 ### Level 2 · Force divergence · `11:30` *(deep)*
 **16 · problem**: "Level 0 banned Inter, so the model picks Space Grotesk. Ban
@@ -155,6 +160,8 @@ on disk; runtime-generated UI is a blind spot, so dogfood the rendered page.)"
   system-reminder appears on its own. Real hooks fire silently, so we dramatize it.
 - "I never call the skill. One bad edit, and a system-reminder pops into the
   thread on its own, the moment it hits disk."
+- **Your turn (build-along):** "Wire your starter hook (one copy), add
+  `TODO: fix later` to any file, and watch your own guardrail fire."
 
 ### Level 7 · Live-wire the browser · `24:30` *(deep)*
 **34 · problem**: "Tuning a visual thing by typing is miserable, 'a little more
@@ -238,10 +245,13 @@ Opus. Non-compressible gates, hard stops, no inference."
   tunes in the browser, runs on any harness, holds on weak models." Let them
   photograph.
 
-**51 · CTA · try it Monday** · `39:00`
-- "It's Apache 2.0, every snippet tonight is in the repo, steal it."
-  `npx impeccable skills install`; clone `dark-arts/starter`; run
-  `/impeccable critique` on the page you're least proud of.
+**51 · CTA · finish the spellbook** · `39:00`
+- For the builders: "You just built a pocket harness extension. Finish it: every
+  art has a `YOUR TURN`, add a critic lens, a banned tell, a mood. Point it at the
+  page you're least proud of. Then graduate to all nine arts with
+  `npx impeccable skills install`." Starter + every snippet: the repo (Apache 2.0),
+  `impeccable.style`.
+- For everyone else: "Same three steps, the starter's waiting whenever you are."
 
 **52 · Questions** · `40:00` · "Where does this break? What did I get wrong?"
 

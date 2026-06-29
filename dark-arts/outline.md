@@ -7,7 +7,12 @@
 
 ## Revision log (what changed from your notes)
 
-**v8 (latest) · show, don't tell:**
+**v9 (latest) · the workshop is buildable:**
+- The starter went from "read this" to "build this." It is now a runnable pocket Impeccable: clone `dark-arts/starter`, point it at the included `sample/landing.html` (a deliberately-median page), and assemble five dark arts as the talk climbs.
+- Three hands-on checkpoints, in the order you hit them: setup (`context.mjs`, the script-talks-back art), Level 1 (`/spellbook argue sample/landing.html`), Level 6 (wire the hook, watch it fire). Ships complete and runnable so nobody is stuck, with `YOUR TURN` extension points in every art.
+- Slides: slide 7 (the climb) now cues "clone to follow along"; the two demo slides carry a gold `YOUR TURN` line tied to the starter; the CTA (51) is reframed from "steal it" to "finish what you built." Stale `talks/dark-arts/` paths corrected to `dark-arts/` (repo root is impeccable-talks).
+
+**v8 · show, don't tell:**
 - A workshop should lead with prompts, code, and examples, not descriptions. Audited every dark-art section for telling-where-it-could-show and added a concrete "show" slide to the four that were leaning on prose:
   - **L1 argue:** a three-verdict comparison (`crit3`) that *demonstrates* the two-way detector bias instead of explaining it. Detector noisy → condemns a strong page (false alarm); detector silent → rubber-stamps a generic one; two blind agents → a balanced verdict separating "technically flawed" from "actually bad."
   - **L2 diverge:** a code slide showing the actual anti-attractor technique (name your instinct fonts, eliminate them) plus the `palette.mjs --from` seed.

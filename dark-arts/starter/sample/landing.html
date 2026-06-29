@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Flowbase: Ship Faster</title>
+<!--
+  This page is DELIBERATELY median. It looks fine. That's the point.
+  It hits the 2026 tells on purpose so the skill has something to bite:
+    - Inter + a warm-cream background
+    - a tiny uppercase tracked eyebrow on every section
+    - three identical icon-tile feature cards
+    - one gradient "accent" pill button
+    - "seamless / robust / empowers" copy
+    - an image that scales on hover (motion that adds no information)
+  Run /spellbook argue and /spellbook diverge against it.
+-->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --cream:#faf7f2; --ink:#1f2430; --muted:#6b7280; --accent:#6d5efc; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:Inter, system-ui, sans-serif; background:var(--cream); color:var(--ink); line-height:1.5; }
+  .wrap { max-width:1080px; margin:0 auto; padding:0 24px; }
+  .eyebrow { font-size:12px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
+  header { padding:80px 0 48px; text-align:center; }
+  header h1 { font-size:48px; font-weight:700; letter-spacing:-.02em; margin:12px 0; }
+  header p { font-size:18px; color:var(--muted); max-width:46ch; margin:0 auto 28px; }
+  .pill { display:inline-block; padding:12px 28px; border-radius:999px; color:#fff; font-weight:600;
+          background:linear-gradient(135deg, #6d5efc, #a78bfa); text-decoration:none; }
+  section { padding:56px 0; }
+  .features { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .card { background:#fff; border:1px solid #eee; border-radius:16px; padding:28px; text-align:center; box-shadow:0 8px 24px rgba(0,0,0,.04); }
+  .card .icon { width:48px; height:48px; margin:0 auto 16px; border-radius:12px;
+                background:linear-gradient(135deg,#6d5efc,#a78bfa); }
+  .card h3 { font-size:18px; font-weight:600; margin-bottom:8px; }
+  .card p { font-size:15px; color:var(--muted); }
+  .hero-img { display:block; width:100%; max-width:720px; margin:32px auto 0; border-radius:16px;
+              transition:transform .3s ease; }
+  .hero-img:hover { transform:scale(1.05); }   /* the motion tell */
+  footer { text-align:center; padding:48px 0; color:var(--muted); font-size:14px; }
+</style>
+</head>
+<body>
+  <header class="wrap">
+    <div class="eyebrow">Now in public beta</div>
+    <h1>Ship faster with Flowbase</h1>
+    <p>The seamless platform that empowers your team to build robust workflows, effortlessly.</p>
+    <a class="pill" href="#">Get started free</a>
+    <img class="hero-img" src="https://placehold.co/720x360/eee/999?text=Dashboard" alt="Product dashboard">
+  </header>
+
+  <section class="wrap">
+    <div class="eyebrow" style="text-align:center;display:block;margin-bottom:28px">Why Flowbase</div>
+    <div class="features">
+      <div class="card">
+        <div class="icon"></div>
+        <h3>Lightning Fast</h3>
+        <p>A seamless experience that just works, so you can focus on what matters.</p>
+      </div>
+      <div class="card">
+        <div class="icon"></div>
+        <h3>Robust &amp; Secure</h3>
+        <p>Enterprise-grade reliability that empowers teams to move with confidence.</p>
+      </div>
+      <div class="card">
+        <div class="icon"></div>
+        <h3>Built to Scale</h3>
+        <p>Powerful tooling that grows with you, from your first user to your millionth.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="wrap">© 2026 Flowbase. All rights reserved.</footer>
+</body>
+</html>

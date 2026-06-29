@@ -3,6 +3,8 @@
 DARK ART · *make them argue.* One agent grades its own homework and anchors on
 its first guess. Two blind agents plus a forced synthesis beat it.
 
+**Target:** the page passed to the command, else `sample/landing.html`.
+
 ## Flow
 
 1. **Spawn two sub-agents that never see each other's output.**
@@ -30,3 +32,9 @@ Sub-agents are not portable. On **Codex**, a skill may only spawn one if the
   say so: `independence: degraded (sub-agents unavailable)`.
 
 Detect the capability, ask once, degrade loudly. Never assume the runtime.
+
+## YOUR TURN
+
+Two lenses (critic + deterministic) is the minimum. Add a third blind sub-agent
+with its own angle, accessibility, performance, or copy, and weave it into the
+synthesis. More independent eyes, less anchoring.

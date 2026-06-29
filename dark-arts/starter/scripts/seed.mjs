@@ -18,6 +18,7 @@ const SEEDS = [
   { mood: 'playbill',    note: 'condensed display type, vermilion, paper grain' },
   { mood: 'tidepool',    note: 'wet teals and oxidized copper, soft caustics' },
   { mood: 'foundry',     note: 'cooling-steel oranges on slate, cast edges' },
+  // YOUR TURN: add a mood of your own. The further from "warm-cream SaaS", the better.
 ];
 
 // Tiny string hash → unit interval, so --from is reproducible.

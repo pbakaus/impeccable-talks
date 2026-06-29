@@ -16,8 +16,10 @@ license: Apache-2.0
 
 # Spellbook (starter)
 
-This is the smallest skill that still shows the moves from the talk. Read it
-top to bottom; it is meant to be studied, not just run.
+The workshop build: a **pocket Impeccable** you assemble as the talk climbs. It
+critiques and re-imagines `sample/landing.html` (a deliberately-median page)
+using five dark arts in miniature. It runs as-is; every art has a `YOUR TURN`
+marker where you extend it. Read it top to bottom, then make it yours.
 
 ## Setup (always do this first)
 
@@ -39,13 +41,13 @@ DARK ART · *route like a frontier model.* This file is a thin router. Do not
 inline the technique here; load the one expert reference the command needs, and
 nothing else, so context stays cheap.
 
-| Command            | Load this, then follow it      |
-|--------------------|--------------------------------|
-| `/spellbook argue`   | `reference/argue.md`         |
-| `/spellbook diverge` | `reference/diverge.md`       |
+| Command                     | Load this, then follow it |
+|-----------------------------|---------------------------|
+| `/spellbook argue [page]`   | `reference/argue.md`      |
+| `/spellbook diverge [page]` | `reference/diverge.md`    |
 
-If no command is given, ask which one the user wants. Never run both references
-at once.
+`[page]` defaults to `sample/landing.html`. If no command is given, ask which one
+the user wants. Never run both references at once.
 
 ## The hook (already working, even when this skill is not invoked)
 

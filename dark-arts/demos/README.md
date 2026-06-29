@@ -23,7 +23,7 @@ empowers" copy.
 **Steps**
 1. Serve it (so the agent can open it in a browser):
    ```bash
-   cd talks/dark-arts/demos/median-page && python3 -m http.server 8920
+   cd dark-arts/demos/median-page && python3 -m http.server 8920
    ```
 2. In the harness:
    ```
@@ -39,7 +39,7 @@ empowers" copy.
 
 **Quick non-agent fallback** (proves the deterministic half on its own, no API):
 ```bash
-npx impeccable detect talks/dark-arts/demos/median-page/index.html
+npx impeccable detect dark-arts/demos/median-page/index.html
 ```
 This prints the rule hits (icon-tile-stack ×3, overused-font, tight-leading, …).
 Good as a backup if the live agent run is flaky.
@@ -55,12 +55,12 @@ Good as a backup if the live agent run is flaky.
 called it.
 
 You can use the **real Impeccable hook** (if installed) or the tiny **starter
-hook** (`talks/dark-arts/starter/scripts/hook.mjs`), which is easier to show
+hook** (`dark-arts/starter/scripts/hook.mjs`), which is easier to show
 because the trigger is obvious.
 
 ### Option A, starter hook (most legible on stage)
 1. Wire it: copy the `hooks` block from
-   `talks/dark-arts/starter/.claude-settings.example.json` into your project's
+   `dark-arts/starter/.claude-settings.example.json` into your project's
    `.claude/settings.json`.
 2. In the harness, with **no skill invoked**, ask the agent to edit any file and
    leave a `TODO: fix later` in it.
@@ -79,7 +79,7 @@ because the trigger is obvious.
 **Dry-run the hook outside an agent** (sanity check during pre-run):
 ```bash
 printf 'x\nTODO: fix later\n' > /tmp/t.js
-echo '{"tool_input":{"file_path":"/tmp/t.js"}}' | node talks/dark-arts/starter/scripts/hook.mjs
+echo '{"tool_input":{"file_path":"/tmp/t.js"}}' | node dark-arts/starter/scripts/hook.mjs
 # → prints the guardrail JSON
 ```
 
@@ -91,4 +91,4 @@ echo '{"tool_input":{"file_path":"/tmp/t.js"}}' | node talks/dark-arts/starter/s
 - [ ] Run `npx impeccable detect` on the median page; confirm it flags (backup).
 - [ ] Wire and fire the hook (Demo 2); screenshot the system-reminder → `demos/fallbacks/hook.png`.
 - [ ] Park both terminals on a second desktop for the encore.
-- [ ] Confirm the deck serves: `cd talks/dark-arts && python3 -m http.server 8910` → open `http://localhost:8910/`.
+- [ ] Confirm the deck serves: `cd dark-arts && python3 -m http.server 8910` → open `http://localhost:8910/`.

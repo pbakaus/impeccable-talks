@@ -18,7 +18,7 @@ Speaker: Paul Bakaus. Thesis: **Prompting < harness engineering.**
 It's one HTML file with no build step. Serve it (file:// is blocked by font/CORS):
 
 ```bash
-cd talks/dark-arts
+cd dark-arts
 python3 -m http.server 8910
 # open http://localhost:8910/
 ```

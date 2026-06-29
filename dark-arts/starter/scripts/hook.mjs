@@ -23,6 +23,10 @@ if (process.env.SPELLBOOK_HOOK_DEPTH) process.exit(0);
 const BANNED = [
   { re: /TODO:\s*fix later/i, msg: 'Found "TODO: fix later". Name a real follow-up or fix it now.' },
   { re: /console\.log\(/,      msg: 'Left a console.log. Remove debug logging before shipping.' },
+  // a design tell: scaling an image (or anything) on :hover adds no information.
+  // this is why sample/landing.html trips the hook out of the box.
+  { re: /:hover\s*\{[^}]*transform\s*:\s*scale/i, msg: 'Scales on :hover. Motion that adds no information; animate background or shadow instead.' },
+  // YOUR TURN: add a banned pattern of your own, a word you hate, a CSS tell, a leaked secret.
 ];
 
 let raw = '';

@@ -434,6 +434,8 @@
   .sb-cell.sb-lite .sb-name { font-size:clamp(1.25rem,1.95vw,1.75rem); }
   .sb-no-lite { font-family:var(--mono); color:var(--kinpaku-deep); font-size:.92rem; letter-spacing:.18em; }
   .sb-cell.locked .sb-sig-lg, .sb-cell.locked .sb-name { opacity:.4; }
+  .s-spellbook .sb-follow { margin-top:6vh; font-family:var(--mono); font-size:clamp(.78rem,1vw,.98rem); color:var(--muted); letter-spacing:.02em; text-align:center; }
+  .s-spellbook .sb-follow b { color:var(--kinpaku); font-weight:600; }
 
   /* ---------- HARNESS TABLE ---------- */
   .s-table { align-content:center; }
@@ -459,6 +461,8 @@
   .s-demo .step { display:flex; gap:.9rem; align-items:baseline; font-size: clamp(.95rem,1.4vw,1.25rem); color: var(--text); }
   .s-demo .step .n { font-family: var(--font-display); color: var(--kinpaku); font-size:1.3rem; min-width:1.4rem; }
   .s-demo code { font-family: var(--mono); background: var(--graphite-2); color: var(--kinpaku-pale); padding:.12em .4em; border-radius:3px; font-size:.92em; }
+  .s-demo .you-do { margin-top:1.7rem; font-family:var(--mono); font-size:clamp(.82rem,1.05vw,1rem); color:var(--kinpaku-pale); display:flex; align-items:baseline; gap:.7rem; flex-wrap:wrap; }
+  .s-demo .you-do .lbl { color:var(--lacquer); background:var(--kinpaku); text-transform:uppercase; letter-spacing:.14em; font-size:.7em; font-weight:700; padding:.4em .8em; border-radius:3px; }
 
   /* ---------- faked agent-thread app window (Demo 2: the hook fires) ---------- */
   .appwin { width:100%; border:1px solid var(--gold-rule); border-radius:10px; overflow:hidden;
@@ -733,6 +737,7 @@ report = <span class="f">synthesize</span>(A, B)   <span class="c">// weave, nev
 
   /* Demo 1 */
   { type:'demo', chip:'Live demo', big:'Watch them argue.',
+    youDo:'<code>/spellbook argue sample/landing.html</code>',
     steps:[
       ['$', '<code>/impeccable critique</code> on a deliberately median page'],
       ['→', 'Two blind assessments, then one forced synthesis'],
@@ -838,6 +843,7 @@ hook(<span class="f">event</span>) → detect(file) → <span class="k">addition
 
   /* Demo 2 — faked agent thread (the hook fires on its own) */
   { type:'demo', app:'hook', chip:'Live demo', big:'The hook fires<br>unprompted.',
+    youDo:'add <code>TODO: fix later</code> to any file',
     steps:[
       ['', 'I never invoke the skill. I just make one bad edit:'],
       ['+', '<code>img:hover { transform: scale(1.1) }</code>'],
@@ -1292,6 +1298,7 @@ function renderSpellbook(s){
     return el(`<section class="slide s-spellbook">
       ${s.head&&s.head.t?`<div class="sb-head"><div class="t">${s.head.t}</div>${s.head.s?`<div class="s">${s.head.s}</div>`:''}</div>`:''}
       <div class="sb-grid sb-grid-lite">${cells}</div>
+      <div class="sb-follow">Building along? <b>github.com/pbakaus/impeccable-talks</b> &nbsp;·&nbsp; the starter is in <b>dark-arts/starter</b></div>
     </section>`);
   }
   const cells = ARTS.map((a,i)=>`
@@ -1356,6 +1363,7 @@ function renderDemo(s){
       <span class="chip">${s.chip}</span>
       <div class="big">${s.big}</div>
       <div class="steps">${steps}</div>
+      ${s.youDo?`<div class="you-do"><span class="lbl">your turn</span><span>${s.youDo}</span></div>`:''}
       ${s.note?`<div class="filetag" style="margin-top:1.4rem">${s.note}</div>`:''}
     </div>
     <div class="demo-right">${s.app==='hook' ? hookThread() : imgPH(s.media,'16/11')}</div>
@@ -1376,14 +1384,14 @@ function renderTable(){ return el(`<section class="slide s-table"></section>`); 
 
 function renderCTA(){
   return el(`<section class="slide s-cta">
-    <div class="kicker">Try it Monday</div>
-    <div class="big" style="margin-top:1rem">Steal the spellbook.</div>
+    <div class="kicker">Take it home</div>
+    <div class="big" style="margin-top:1rem">Finish the spellbook.</div>
     <ol>
-      <li><span class="n">1</span><span><code>npx impeccable skills install</code></span></li>
-      <li><span class="n">2</span><span>Clone the starter and follow along: <code>talks/dark-arts/starter</code>.</span></li>
-      <li><span class="n">3</span><span>Run <code>/impeccable critique</code> on the page you’re least proud of.</span></li>
+      <li><span class="n">1</span><span>Extend what you built: every art has a <code>YOUR TURN</code>. Add a critic lens, a banned tell, a mood.</span></li>
+      <li><span class="n">2</span><span>Point it at real work: <code>/spellbook argue</code> the page you’re least proud of.</span></li>
+      <li><span class="n">3</span><span>Graduate to all nine arts: <code>npx impeccable skills install</code>.</span></li>
     </ol>
-    <div class="links">impeccable is <b>Apache 2.0</b> · every snippet tonight is in the repo · <b>impeccable.style</b></div>
+    <div class="links">starter · <b>github.com/pbakaus/impeccable-talks</b> &nbsp;·&nbsp; impeccable is <b>Apache 2.0</b> &nbsp;·&nbsp; <b>impeccable.style</b></div>
   </section>`);
 }
 

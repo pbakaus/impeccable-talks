@@ -8,7 +8,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node talks/dark-arts/starter/scripts/hook.mjs"
+            "command": "node dark-arts/starter/scripts/hook.mjs"
           }
         ]
       }

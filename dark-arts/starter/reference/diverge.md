@@ -3,6 +3,9 @@
 DARK ART · *force divergence.* Ask a model for "three options" and you get one
 idea in three outfits. Make the average literally unreachable.
 
+**Target:** the page passed to the command, else `sample/landing.html`. Produce
+three genuinely different redesigns of it, none of them the warm-cream original.
+
 ## Flow
 
 1. **Ban the monoculture by name.** Keep an explicit denylist of the clichés the
@@ -30,3 +33,9 @@ idea in three outfits. Make the average literally unreachable.
 
 Divergence is the hard part. Every model can hit the average; the skill is
 steering one somewhere else.
+
+## YOUR TURN
+
+The denylist in step 1 is the cheap lever. Add the clichés *you* are sick of
+seeing, a font, a layout, a phrase, and a new mood to `scripts/seed.mjs`. Every
+entry you add is one more exit off the highway to the average.
