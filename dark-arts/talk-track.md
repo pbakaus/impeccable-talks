@@ -1,6 +1,6 @@
 # The Dark Arts of Skill Engineering · talk track
 
-Spoken-beat anchors for the **54-slide** deck (`index.html`). The slides are
+Spoken-beat anchors for the **53-slide** deck (`index.html`). The slides are
 deliberately sparse: one idea each, and every dark art now *shows* its mechanism
 (code, a real artifact, or a side-by-side) rather than describing it. Your voice
 carries the substance; the slide is the punctuation. **Don't read the slides.**
@@ -61,7 +61,7 @@ slides are one breath each. Timing column is cumulative and approximate.
 
 ---
 
-## ACT II · The build (~36 min) · slides 8-48
+## ACT II · The build (~36 min) · slides 8-47
 
 Each level: *our skill still fails at X* → the dark art → *it levels up* (a sigil
 ignites). Call the level each time ("Level 3 now…").
@@ -115,75 +115,74 @@ mobile, native, editorial, each wanting the opposite of the others. Cram them al
 into one SKILL.md and the model can't hold them apart: it averages them, or smears
 brand flair onto a settings page."
 **21 · diagram (routing)**: one command lights one expert reference, the rest stay
-dark. "Each command loads ONE expert reference, not the whole manual."
-**22 · code (the router)**: "And it's literal. SKILL.md is a router table:
-`/impeccable critique` loads only `critique.md`. Then the register, brand vs
-product, decides which rulebook even applies. Mixture-of-experts, for a skill."
-**23 · payoff**: "Don't load it all. You could split into many small skills, if
+dark. "SKILL.md is a router table, not a manual: each command loads ONE expert.
+Then the register, brand vs product, decides which rulebook even applies.
+Mixture-of-experts, for a skill."
+**22 · payoff**: "Don't load it all. You could split into many small skills, if
 you have a way to load and unload them on demand. For one skill you ship to
 everyone, route inside it: pull the one expert the task needs, keep the rest out
 of context. Mixture-of-experts."
 
 ### Level 4 · Give them memory · `16:30`
-**24 · problem**: "Every run starts from zero, re-finding the same problems.
+**23 · problem**: "Every run starts from zero, re-finding the same problems.
 Stateless is a choice, not a law."
-**25 · artifact (snapshot + trend)**: a real `.impeccable/critique/…md` snapshot
+**24 · artifact (snapshot + trend)**: a real `.impeccable/critique/…md` snapshot
 (score, P0/P1) beside a 24 → 28 → 32 trend line. "Critique writes the snapshot,
 polish reads it as a backlog. The slug is the resolved file path, not the prompt
 wording, so a teammate on the same file gets the same memory. The runs compound."
-**26 · payoff**: "Make the runs compound."
+**25 · payoff**: "Make the runs compound."
 
 ### Level 5 · The script talks back · `18:30` *(deep)*
-**27 · problem**: "Our prompts are sharp, but buried rules still get skimmed,
+**26 · problem**: "Our prompts are sharp, but buried rules still get skimmed,
 weak models worst."
-**28 · code**: "The skill body literally says 'follow whatever the script
+**27 · code**: "The skill body literally says 'follow whatever the script
 prints.' It reads the environment and writes the next instruction. Steers harder
 than anything static. The cost: it breaks prompt caching." (Still prose, just
 computed and just-in-time.)
-**29 · payoff**: "The exit value is the prompt."
+**28 · payoff**: "The exit value is the prompt."
 
 ### Level 6 · Hooks that fight back · `21:00`
-**30 · problem**: "It only helps when you invoke it. But the agent makes its
+**29 · problem**: "It only helps when you invoke it. But the agent makes its
 worst edits when nobody called the skill at all."
-**31 · the gag (grappling hooks)**: "So the hooks come to you." Lean into it.
-**32 · code**: "PostToolUse runs the detector on every edit; Cursor's pre-gate
+**30 · the gag (grappling hooks)**: "So the hooks come to you." Lean into it.
+**31 · code**: "PostToolUse runs the detector on every edit; Cursor's pre-gate
 blocks the bad write before it lands. (Honest aside: a static hook scans the file
 on disk; runtime-generated UI is a blind spot, so dogfood the rendered page.)"
-**33 · payoff**: "Passive guardrails beat a command no one remembers to run."
+**32 · payoff**: "Passive guardrails beat a command no one remembers to run."
 
-**34 · DEMO 2 · the hook fires unprompted** · `23:00` *(staged thread animation, built into the slide)*
+**33 · DEMO 2 · the hook fires unprompted** · `23:00` *(staged thread animation, built into the slide)*
 - The slide animates a faked Claude Code thread: the bad edit lands, then the
   system-reminder appears on its own. Real hooks fire silently, so we dramatize it.
 - "I never call the skill. One bad edit, and a system-reminder pops into the
   thread on its own, the moment it hits disk."
 
 ### Level 7 · Live-wire the browser · `24:30` *(deep)*
-**35 · problem**: "Tuning a visual thing by typing is miserable, 'a little more
+**34 · problem**: "Tuning a visual thing by typing is miserable, 'a little more
 padding, no, warmer, less.' The move: make the browser a second input alongside
 chat. You grab the real element and adjust it live; the agent iterates with you.
 (This isn't a screenshot/validation loop, it's the browser as an input device.)"
-**36 · code (the trick)**: walk the four moves. "A tiny server injects a picker
+**35 · code (the trick)**: walk the four moves. "A tiny server injects a picker
 into your dev page. Your agent runs ONE blocking command, `live-poll.mjs`, and
 just waits. You drag a knob in the running app; that becomes the event the poll
 returns. The agent, same chat thread, edits the file and replies, and the page
 updates. No MCP, no plugin, the agent's own thread is the loop."
-**37 · the loop diagram**: "You act in the browser, your own agent picks it up and
+**36 · the loop diagram**: "You act in the browser, your own agent picks it up and
 pushes the change back, live. Three boring web primitives: long-poll (agent↔
 server), SSE (server→browser), POST (browser→agent). No MCP."
-**38 · "…and it's live."** *(GIF, money shot)*: Drag a knob in the running app,
+**37 · "…and it's live."** *(GIF, money shot)*: Drag a knob in the running app,
 the agent rewrites the variant, the page updates. "No regeneration." Sells it.
 
 ### Level 8 · Compile to every harness · `29:30`
-**39 · problem (meme)**: the "IT WORKED ON MY MACHINE" Cybertruck meme. "Great in
+**38 · problem (meme)**: the "IT WORKED ON MY MACHINE" Cybertruck meme. "Great in
 your harness, on your model. Hand it to a teammate on Codex or Cursor and it
 breaks, and the differences that bite are behavioral, not file paths."
-**40 · the symlink myth**: "The advice all over X is 'just symlink .claude to
+**39 · the symlink myth**: "The advice all over X is 'just symlink .claude to
 .agents.' I wish it worked, the way I wish french fries were healthy. But
 harnesses don't share a folder, or a behavior."
-**41 · the table**: Walk it: who can spawn a sub-agent, plan-mode-only questions,
+**40 · the table**: Walk it: who can spawn a sub-agent, plan-mode-only questions,
 and the big one, **Claude auto-wakes the thread when a background job exits;
 others don't** (why the live loop is built the way it is).
-**42 · code (one source, every harness)**: the show, and the answer to "why
+**41 · code (one source, every harness)**: the show, and the answer to "why
 compile at all." "Forget the model name, that's trivial. The line 'ask the user'
 has to become a different *tool* on each harness: AskUserQuestion on Claude,
 Codex's structured input tool on Codex, plain chat on Cursor. The command prefix
@@ -191,32 +190,32 @@ flips from / to $. And it compiles into each harness's own skill directory,
 .claude/skills, .agents/skills (where Codex reads them), .cursor/skills, plus the
 `<codex>`/`<gemini>` patch blocks staying or going. Hardcode any one and the skill
 is dead everywhere else. Your skill is a codebase; give it a build step."
-**43 · logos · write once, ship to all**: One source → 10+ provider builds, right
+**42 · logos · write once, ship to all**: One source → 10+ provider builds, right
 paths and per-model patches.
-**44 · the receipt (the real installer)**: "Even `npx skills` copies one folder
+**43 · the receipt (the real installer)**: "Even `npx skills` copies one folder
 and clones it everywhere, not from each harness's own folder. I sent a PR to fix
 it; it's still hanging. So I built `npx impeccable skills install`: a
 harness-specific build, dropped in each harness's own place."
-**45 · "MODEL MOST WANTED"** · `32:30` *(self-contained meme poster, the laugh)*
+**44 · "MODEL MOST WANTED"** · `32:30` *(self-contained meme poster, the laugh)*
 - The slide says it: GEMINI charged with `img:hover { scale(1.1) }`, CODEX with
   `letter-spacing: -0.06em` (both real detector rules). Let it land, then the
   point: "Because you compile, you can overfit per model, a patch per tell."
 
 ### Level 9 · Design for the weakest model · `34:00`
-**46 · problem**: "Last reality: it falls apart on a weaker model. It has opinions
+**45 · problem**: "Last reality: it falls apart on a weaker model. It has opinions
 just fine; what it loses is the discipline to follow yours."
-**47 · code**: "Build for the dumbest model you'll actually run, not frontier
+**46 · code**: "Build for the dumbest model you'll actually run, not frontier
 Opus. Non-compressible gates, hard stops, no inference."
-**48 · payoff**: "If the gate can be skipped, it will be. Make it un-skippable."
+**47 · payoff**: "If the gate can be skipped, it will be. Make it un-skippable."
 
 ---
 
-## ACT III · The harness extension (~5 min) · slides 49-54
+## ACT III · The harness extension (~5 min) · slides 48-53
 
-**49 · "One skill to rule them all"** · `36:00` *(the Frodo poster)*
+**48 · "One skill to rule them all"** · `36:00` *(the Frodo poster)*
 - Let the gag breathe, then turn it: "Coming soon to a harness near you."
 
-**50 · The reveal** · `36:30`
+**49 · The reveal** · `36:30`
 - "We just built a harness extension. We started from Anthropic's prompt, rewrote
   every line of it, then did the nine things a prompt can't. **This is
   Impeccable.**" (Don't say 'only machinery' or 'prompt + arts': none of the
@@ -226,33 +225,33 @@ Opus. Non-compressible gates, hard stops, no inference."
   did, heavily. But what breaks the median is everything around it. The nine
   things a prompt can't be."
 
-**51 · The capability map** · `37:30` *(what a prompt can't do)*
+**50 · The capability map** · `37:30` *(what a prompt can't do)*
 - The payoff of the build-up: nine concrete powers Impeccable gained, each with the
   file it lives in. "A prompt suggests a design, once. Now it reviews itself,
   escapes the average, routes per surface, remembers, adapts, guards every edit,
   tunes in the browser, runs on any harness, holds on weak models." Let them
   photograph.
 
-**52 · CTA · try it Monday** · `39:00`
+**51 · CTA · try it Monday** · `39:00`
 - "It's Apache 2.0, every snippet tonight is in the repo, steal it."
   `npx impeccable skills install`; clone `dark-arts/starter`; run
   `/impeccable critique` on the page you're least proud of.
 
-**53 · Questions** · `40:00` · "Where does this break? What did I get wrong?"
+**52 · Questions** · `40:00` · "Where does this break? What did I get wrong?"
 
-**54 · Thank you** · `~58:00` · impeccable.style · github/pbakaus.
+**53 · Thank you** · `~58:00` · impeccable.style · github/pbakaus.
 
 ---
 
 ## If you're running long (cut order)
-The four show slides (10, 18, 22, 42) are the workshop; cut them last.
-1. Quicken Level 9: drop the code slide (47), keep the payoff.
+The three show slides (10, 18, 41) are the workshop; cut them last.
+1. Quicken Level 9: drop the code slide (46), keep the payoff.
 2. Collapse the Codex wrinkle (13-14) into one sentence on Level 1.
-3. Drop the route/memory/script payoff slides (23, 26, 29); say the line over the
+3. Drop the route/memory/script payoff slides (22, 25, 28); say the line over the
    show slide instead.
-4. Fold the live money-shot (38) into the loop-diagram (37) narration.
-5. Trim Level 3: if truly desperate, drop the route diagram (21) and keep the
-   router code (22); the code carries the idea.
+4. Fold the live money-shot (37) into the loop-diagram (36) narration.
+5. Trim Level 3: if truly desperate, fold the route diagram (21) into the payoff
+   (22) narration.
 
 ## Q&A prep
 - **"Isn't this over-engineering?"** For a one-off prompt, yes. The arts earn

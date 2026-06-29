@@ -765,21 +765,6 @@ report = <span class="f">synthesize</span>(A, B)   <span class="c">// weave, nev
 
   { type:'route' },
 
-  /* show, don't tell: the actual router table + register switch */
-  { type:'code', level:3, tag:'SKILL.md is the router',
-    code:
-`<span class="c">// one command loads one expert, not the whole manual:</span>
-/impeccable <span class="f">critique</span>   <span class="c">→ loads only</span> reference/critique.md
-/impeccable <span class="f">polish</span>     <span class="c">→ loads only</span> reference/polish.md
-                    <span class="c">… 20+ commands, one reference each</span>
-
-<span class="c">// then the register decides which rules even apply:</span>
-register = PRODUCT.md.register ?? <span class="f">infer</span>(task, surface)
-  <span class="s">brand</span>    → reference/brand.md     <span class="c">// distinctiveness</span>
-  <span class="s">product</span>  → reference/product.md   <span class="c">// familiarity</span>`,
-    file:'skill/SKILL.src.md · reference/brand.md · product.md',
-    cap:'Twenty-plus commands, but only the matched reference loads. The register picks the rulebook. <strong>Mixture-of-experts, for a skill.</strong>' },
-
   { type:'punch', center:true,
     big:'Don’t load it all.<br><span class="gold">Route to one expert.</span>',
     sub:'Many small skills work if you can load and unload them on demand. For one skill you ship to everyone, route inside it: pull only the expert the task needs, keep the rest out of the model’s way. Mixture-of-experts.',
