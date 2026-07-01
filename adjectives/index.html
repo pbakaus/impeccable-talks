@@ -6,7 +6,7 @@
 <title>Design at the Speed of Adjectives / Impeccable</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700&family=Alumni+Sans:wght@400;500;600;700&family=Alumni+Sans+Pinstripe&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700&family=Alumni+Sans:wght@100;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   /* ============================================================
      Design at the Speed of Adjectives: v4, Impeccable LIGHT brand.
@@ -44,7 +44,7 @@
 
     --font:      "Albert Sans", "Avenir Next", "Helvetica Neue", Arial, system-ui, sans-serif;
     --font-head: "Alumni Sans", "Albert Sans", Arial, sans-serif;       /* solid, weightable: headlines */
-    --font-disp: "Alumni Sans Pinstripe", "Alumni Sans", Arial, sans-serif; /* pinstripe: hero display */
+    --font-disp: "Alumni Sans", Arial, sans-serif; /* Alumni Sans Thin (100): hero display */
     --mono:      "SFMono-Regular", ui-monospace, "SF Mono", "JetBrains Mono", Consolas, monospace;
   }
 
@@ -134,12 +134,12 @@
   .deck:has(.s-cover.active) .deck-brand, .deck:has(.s-cover.active) .deck-foot { display: none; }
 
   /* ============ Type scale ============ */
-  .display { font-family: var(--font-disp); font-weight: 300;
+  .display { font-family: var(--font-disp); font-weight: 100;
     font-size: clamp(66px, 8.6vw, 184px); line-height: 1.0; letter-spacing: -0.008em; color: var(--ink); }
   .display .gold  { color: var(--gold-lg); }
   .display .ghost { color: var(--muted); }  /* de-emphasis for thin display = muted, never faded (contrast) */
 
-  .headline { font-family: var(--font-disp); font-weight: 300;
+  .headline { font-family: var(--font-disp); font-weight: 100;
     font-size: clamp(40px, 4.8vw, 88px); line-height: 1.1; letter-spacing: -0.008em; color: var(--ink); }
   .headline .gold  { color: var(--gold-lg); }
   .headline .faint { color: var(--faint); }
@@ -229,7 +229,7 @@
   .wf-svg .lead { stroke: var(--ghost); stroke-width: 1; }
   .wf-svg .dot { fill: var(--gold-lg); }
   .wf-svg .clab { font-family: var(--mono); font-size: 13px; fill: var(--gold-ink); text-anchor: middle; }
-  .wf-svg .pname { font-family: var(--font-disp); font-weight: 300; font-size: 44px; fill: var(--ink); text-anchor: middle; }
+  .wf-svg .pname { font-family: var(--font-disp); font-weight: 100; font-size: 44px; fill: var(--ink); text-anchor: middle; }
   .wf-svg .pdesc { font-family: var(--font); font-size: 14px; fill: var(--muted); text-anchor: middle; }
   .wf-svg .anno, .wf-svg .pgroup { opacity: 0; }
   .wf-svg .wfa-1 { animation: wffade .5s ease forwards .55s; }
@@ -250,7 +250,7 @@
   .wf-col:nth-child(2) { animation-delay: .85s; }
   .wf-col:nth-child(3) { animation-delay: 1.3s; }
   .wf-col:nth-child(4) { animation-delay: 1.7s; }
-  .wf-name { font-family: var(--font-disp); font-weight: 300; font-size: clamp(26px,3vw,54px); line-height: 1; color: var(--ink); }
+  .wf-name { font-family: var(--font-disp); font-weight: 100; font-size: clamp(26px,3vw,54px); line-height: 1; color: var(--ink); }
   .wf-desc { font-family: var(--font); font-size: clamp(11px,1vw,14px); color: var(--muted); margin-top: 7px; }
   .wf-cmds { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; margin-top: clamp(9px,1.3vh,15px); }
   .wf-cmds span { font-family: var(--mono); font-size: clamp(10px,0.85vw,12.5px); color: var(--gold-ink); border: 1px solid oklch(49% 0.08 188 / 0.32); border-radius: 999px; padding: 3px 8px; white-space: nowrap; }
@@ -392,7 +392,7 @@
   .defcard .aff em { color: var(--gold-ink); font-style: normal; }
 
   /* no /auto */
-  .noauto { font-family: var(--font-disp); font-weight: 300;
+  .noauto { font-family: var(--font-disp); font-weight: 100;
     font-size: clamp(54px,8vw,150px); line-height: 0.96; color: var(--ink); letter-spacing: -0.01em; }
   .noauto s { color: var(--vermilion); text-decoration-thickness: 4px; }
 
@@ -556,7 +556,7 @@
   <section class="slide">
     <div class="stage center">
       <div style="display:flex;flex-direction:column;align-items:center;gap:clamp(2px,1vh,16px);">
-        <div style="display:flex;gap:clamp(28px,6vw,96px);font-family:var(--font-disp);font-weight:300;font-size:clamp(34px,4.8vw,92px);color:var(--ghost);filter:blur(2.4px);opacity:0.85;">
+        <div style="display:flex;gap:clamp(28px,6vw,96px);font-family:var(--font-disp);font-weight:100;font-size:clamp(34px,4.8vw,92px);color:var(--ghost);filter:blur(2.4px);opacity:0.85;">
           <span>designer</span><span>engineer</span>
         </div>
         <h2 class="display" style="font-size:clamp(58px,7.6vw,168px);">design <span class="gold">engineer</span></h2>
@@ -646,7 +646,7 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 10 · THREE QUESTIONS (Pinstripe stanza: one voice with the phrase slides) -->
+  <!-- 10 · THREE QUESTIONS (Alumni Thin stanza: one voice with the phrase slides) -->
   <section class="slide">
     <div class="stage center">
       <h2 class="display" style="font-size:clamp(34px,3.9vw,74px);line-height:1.34;">
@@ -730,7 +730,7 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 16 · THE DEFINITION (one voice: mono label + Pinstripe statement, ghost→gold) -->
+  <!-- 16 · THE DEFINITION (one voice: mono label + Alumni Thin statement, ghost→gold) -->
   <section class="slide">
     <div class="stage center">
       <div style="max-width:min(1120px,94%);">
@@ -877,7 +877,7 @@
   <section class="slide s-cover s-hero">
     <div class="stage">
       <h2 class="display" style="font-size:clamp(42px,5vw,104px);">Design at the speed<br>of <span class="gold">adjectives.</span></h2>
-      <div style="font-family:var(--font-disp);font-weight:300;font-size:clamp(26px,2.9vw,54px);color:var(--muted);margin-top:clamp(30px,4vh,52px);">Questions?</div>
+      <div style="font-family:var(--font-disp);font-weight:100;font-size:clamp(26px,2.9vw,54px);color:var(--muted);margin-top:clamp(30px,4vh,52px);">Questions?</div>
       <div style="display:flex;align-items:baseline;gap:clamp(28px,4vw,68px);flex-wrap:wrap;margin-top:clamp(20px,2.6vh,36px);font-family:var(--font);font-weight:600;font-size:clamp(30px,3.3vw,62px);letter-spacing:-0.01em;">
         <a href="https://impeccable.style" style="color:var(--gold-lg);text-decoration:none;">impeccable.style</a>
         <span style="color:var(--ink);">@pbakaus</span>
