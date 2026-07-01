@@ -9,20 +9,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700&family=Alumni+Sans:wght@400;500;600;700&family=Alumni+Sans+Pinstripe&display=swap" rel="stylesheet">
 <style>
   /* ============================================================
-     Design at the Speed of Adjectives — v4, Impeccable LIGHT brand.
+     Design at the Speed of Adjectives: v4, Impeccable LIGHT brand.
      Keynote sparse: one idea per slide. Gold for large display
      accents, verdigris for state/small, ink for the rest.
      Tokens mirror ~/code/impeccable/site/styles/kinpaku-tokens.css.
      ============================================================ */
   :root {
-    /* Surfaces — bright washi paper (matches the real light hero art) */
+    /* Surfaces: bright washi paper (matches the real light hero art) */
     --paper:        oklch(98.2% 0.004 96);
     --paper-raised: oklch(99.4% 0.003 96);
     --paper-deep:   oklch(96.2% 0.006 96);
     --graphite:     oklch(92% 0.006 96);
     --graphite-2:   oklch(88% 0.008 96);
 
-    /* Ink ramp — text (real site light tokens) */
+    /* Ink ramp: text (real site light tokens) */
     --ink:    oklch(18% 0.02 95);   /* headlines */
     --text:   oklch(25% 0.018 95);  /* body */
     --muted:  oklch(45% 0.015 95);  /* captions */
@@ -30,12 +30,12 @@
     --ghost:  oklch(66% 0.01 95);   /* de-emphasized */
 
     /* Accent TEXT on paper: verdigris for small/state, gold for large display. */
-    --gold:      oklch(70% 0.12 188);        /* verdigris — small accent text, labels, links, state */
+    --gold:      oklch(70% 0.12 188);        /* verdigris: small accent text, labels, links, state */
     --patina:    oklch(70% 0.12 188);
-    --gold-lg:   oklch(84% 0.19 80.46);      /* real kinpaku GOLD — large DISPLAY accents */
+    --gold-lg:   oklch(84% 0.19 80.46);      /* real kinpaku GOLD: large DISPLAY accents */
     --gold-ink:  oklch(48% 0.1 190);         /* deeper verdigris if a tiny label needs more contrast */
-    --gold-mark: oklch(77% 0.13 82);         /* kinpaku-rich — reads as a mark on paper */
-    --gold-leaf: oklch(84% 0.19 80.46);      /* full kinpaku — the logo / hero mark */
+    --gold-mark: oklch(77% 0.13 82);         /* kinpaku-rich: reads as a mark on paper */
+    --gold-leaf: oklch(84% 0.19 80.46);      /* full kinpaku: the logo / hero mark */
     --gold-wash: oklch(70% 0.12 188 / 0.10);
     --rule:        oklch(25% 0.02 95 / 0.12); /* hairline (site value) */
     --rule-strong: oklch(25% 0.02 95 / 0.26);
@@ -43,12 +43,12 @@
     --vermilion: oklch(52% 0.16 35);   /* the wrong thing / reject */
 
     --font:      "Albert Sans", "Avenir Next", "Helvetica Neue", Arial, system-ui, sans-serif;
-    --font-head: "Alumni Sans", "Albert Sans", Arial, sans-serif;       /* solid, weightable — headlines */
-    --font-disp: "Alumni Sans Pinstripe", "Alumni Sans", Arial, sans-serif; /* pinstripe — hero display */
+    --font-head: "Alumni Sans", "Albert Sans", Arial, sans-serif;       /* solid, weightable: headlines */
+    --font-disp: "Alumni Sans Pinstripe", "Alumni Sans", Arial, sans-serif; /* pinstripe: hero display */
     --mono:      "SFMono-Regular", ui-monospace, "SF Mono", "JetBrains Mono", Consolas, monospace;
   }
 
-  /* Dark-room fallback (press D) — real lacquer tokens. Dark mode DOES use gold
+  /* Dark-room fallback (press D): real lacquer tokens. Dark mode DOES use gold
      text on lacquer (the site's dark default); patina returns to secondary. */
   body.dark {
     --paper:        oklch(7% 0.006 95);
@@ -84,7 +84,7 @@
     background: var(--paper);
     transition: background .3s ease, color .3s ease;
   }
-  /* washi paper grain — sits on the background, behind all slide content */
+  /* washi paper grain: sits on the background, behind all slide content */
   body::after {
     content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1;
     opacity: 0.3; mix-blend-mode: multiply;
@@ -109,7 +109,7 @@
   .stage { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
   .stage.center { align-items: center; text-align: center; }
 
-  /* ============ Chrome — minimal: logo, foot, page number ============ */
+  /* ============ Chrome: minimal: logo, foot, page number ============ */
   .meta-bot {
     position: absolute; left: clamp(48px, 6.5vw, 128px); right: clamp(48px, 6.5vw, 128px);
     bottom: clamp(26px, 3vw, 40px);
@@ -197,7 +197,7 @@
   .ba figure { display: flex; flex-direction: column; gap: clamp(8px,1.2vh,14px); margin: 0; min-width: 0; }
   .ba .tag { font-family: var(--mono); font-size: clamp(11px,1vw,14px); letter-spacing: 0.16em; text-transform: uppercase; }
   .ba img { width: 100%; height: auto; display: block; border-radius: 13px; border: 1px solid var(--graphite-2); }
-  /* opening logo hero — the "what is Impeccable" holding slide */
+  /* opening logo hero: the "what is Impeccable" holding slide */
   .s-logo .stage { max-width: 100%; align-items: center; }
   .logo-hero { width: min(960px, 86%); height: auto; display: block; }
   .logo-hero-dark { display: none; }
@@ -255,7 +255,7 @@
   .wf-cmds { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; margin-top: clamp(9px,1.3vh,15px); }
   .wf-cmds span { font-family: var(--mono); font-size: clamp(10px,0.85vw,12.5px); color: var(--gold-ink); border: 1px solid oklch(49% 0.08 188 / 0.32); border-radius: 999px; padding: 3px 8px; white-space: nowrap; }
 
-  /* raw/slop render — the model's reflexes */
+  /* raw/slop render: the model's reflexes */
   .slopbox { background: #fbf7f1; color: #4a4640; display: flex; flex-direction: column; height: 100%; }
   .slopbox .hero { flex: 1.1; background: linear-gradient(135deg, #7b5cff 0%, #23c9d8 100%);
     display: flex; align-items: center; justify-content: center; padding: 20px; }
@@ -270,7 +270,7 @@
     padding: 7px 16px; border-radius: 999px; font-weight: 600; }
   .slopbox .mut { font-size: 10px; color: #a49; opacity: .7; }
 
-  /* impeccable/bolder render — committed hierarchy */
+  /* impeccable/bolder render: committed hierarchy */
   .impbox { background: var(--paper-raised); color: var(--ink); display: flex; flex-direction: column;
     height: 100%; padding: clamp(18px,1.8vw,30px); }
   .impbox .eb { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase;
@@ -294,7 +294,7 @@
   .station.dim { opacity: 0.42; }
   .station.gold .name { color: var(--gold-ink); }
   .station.gold .sub  { color: var(--gold-ink); }
-  /* Solid markers — the thin line passes behind and is covered by each fill.
+  /* Solid markers: the thin line passes behind and is covered by each fill.
      pixels = a tiny square (too fine) · adjectives = the gold node (just right) ·
      prompts = one broad soft blob (too coarse). */
   .g-px   { width: 15px; height: 15px; border-radius: 3px; background: var(--muted); }
@@ -416,7 +416,7 @@
     color: var(--faint); background: var(--paper); border: 1px solid var(--rule); border-radius: 999px; padding: 4px 10px; cursor: pointer; opacity: 0.7; }
   .topbtn:hover { opacity: 1; }
 
-  /* /auto request flurry — tweets stamp in, then the reaction gif slams over */
+  /* /auto request flurry: tweets stamp in, then the reaction gif slams over */
   @keyframes stamp {
     0%   { opacity: 0; transform: translate(-50%,-50%) rotate(var(--r,0deg)) scale(1.5); }
     70%  { opacity: 1; }
@@ -450,7 +450,7 @@
   .tweet-solo .tw-media { border-radius: 14px; overflow: hidden; border: 1px solid var(--graphite-2); background: #000; display: flex; justify-content: center; }
   .tweet-solo .tw-media video { display: block; width: auto; max-width: 100%; height: auto; max-height: 56vh; }
 
-  /* "make it pop" meme pile — stamp in one after another */
+  /* "make it pop" meme pile: stamp in one after another */
   .memepile { position: absolute; inset: 0; z-index: 3; }
   .memepile .meme { position: absolute; width: min(430px, 40%); border-radius: 12px; border: 4px solid #fff;
     box-shadow: 0 28px 66px -26px oklch(0% 0 0 / 0.55); opacity: 0;
@@ -479,7 +479,7 @@
   </div>
   <div class="deck-foot">Design at the speed of adjectives</div>
 
-  <!-- 00 · BRAND — logo hero (say in one sentence what Impeccable is) -->
+  <!-- 00 · BRAND: logo hero (say in one sentence what Impeccable is) -->
   <section class="slide active s-cover s-logo">
     <div class="stage center">
       <img class="logo-hero logo-hero-light" src="assets/impeccable-logo-light.svg" alt="Impeccable">
@@ -490,7 +490,7 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 00b · MEET LUMINA — the full sample page scrolls by (context for the bolder work) -->
+  <!-- 00b · MEET LUMINA: the full sample page scrolls by (context for the bolder work) -->
   <section class="slide s-cover">
     <div class="stage center" style="max-width:100%;">
       <div style="font-family:var(--mono);font-size:clamp(11px,1vw,14px);letter-spacing:0.18em;text-transform:uppercase;color:var(--faint);margin-bottom:clamp(14px,2vh,24px);">Lumina · a sample product page</div>
@@ -499,7 +499,7 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 01 · COLD OPEN A — lead with the Impeccable result (the good one) -->
+  <!-- 01 · COLD OPEN A: lead with the Impeccable result (the good one) -->
   <section class="slide s-cover">
     <div class="stage" style="max-width:100%;justify-content:center;">
       <div class="demo" style="max-width:min(1080px,88%);margin:0 auto;">
@@ -511,7 +511,7 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 02 · COLD OPEN B — same prompt, no skill (the awful reveal) -->
+  <!-- 02 · COLD OPEN B: same prompt, no skill (the awful reveal) -->
   <section class="slide s-cover">
     <div class="stage" style="max-width:100%;justify-content:center;">
       <div class="demo" style="max-width:min(1080px,88%);margin:0 auto;">
@@ -522,17 +522,17 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 03 · BEFORE / AFTER — same prompt, same model, side by side -->
+  <!-- 03 · BEFORE / AFTER: same prompt, same model, side by side -->
   <section class="slide s-cover">
     <div class="stage" style="max-width:100%;justify-content:center;">
       <div class="ba" style="max-width:1280px;margin:0 auto;">
         <figure>
           <figcaption class="tag" style="color:var(--vermilion);">No skill · just the model</figcaption>
-          <img src="assets/result-off.jpg" alt="Vanilla result — garish, over-bright">
+          <img src="assets/result-off.jpg" alt="Vanilla result: garish, over-bright">
         </figure>
         <figure>
           <figcaption class="tag" style="color:var(--gold-ink);">With Impeccable</figcaption>
-          <img src="assets/result-on.jpg" alt="Impeccable result — refined hierarchy">
+          <img src="assets/result-on.jpg" alt="Impeccable result: refined hierarchy">
         </figure>
       </div>
     </div>
@@ -578,7 +578,7 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 05 · WRONG ALTITUDE, LIVE — Opus 4.7 to center a div (ItakGol) -->
+  <!-- 05 · WRONG ALTITUDE, LIVE: Opus 4.7 to center a div (ItakGol) -->
   <section class="slide">
     <div class="stage center">
       <div class="tweet-solo">
@@ -636,7 +636,7 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- · "MAKE IT POP" — the vague-direction rage (memes stamp in, one after another) -->
+  <!-- · "MAKE IT POP": the vague-direction rage (memes stamp in, one after another) -->
   <section class="slide">
     <div class="memepile">
       <img class="meme" src="assets/pop1.jpeg" style="top:41%;left:32%;--r:-7deg;" alt="If you guys could just make it pop, that'd be great">
@@ -646,7 +646,7 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 10 · THREE QUESTIONS (Pinstripe stanza — one voice with the phrase slides) -->
+  <!-- 10 · THREE QUESTIONS (Pinstripe stanza: one voice with the phrase slides) -->
   <section class="slide">
     <div class="stage center">
       <h2 class="display" style="font-size:clamp(34px,3.9vw,74px);line-height:1.34;">
@@ -666,7 +666,7 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 12 · SPECTRUM FILLS — ADJECTIVES -->
+  <!-- 12 · SPECTRUM FILLS: ADJECTIVES -->
   <section class="slide">
     <div class="stage center">
       <div class="spectrum">
@@ -710,11 +710,11 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 15 · BOLDER — HOW? (the reflex) -->
+  <!-- 15 · BOLDER: HOW? (the reflex) -->
   <section class="slide">
     <div class="stage">
       <div style="display:flex;gap:clamp(36px,6vw,96px);align-items:center;justify-content:center;flex-wrap:wrap;">
-        <h2 class="display" style="font-size:clamp(50px,5.8vw,112px);">Bolder — <span class="gold">how?</span></h2>
+        <h2 class="display" style="font-size:clamp(50px,5.8vw,112px);">Bolder, <span class="gold">how?</span></h2>
         <div style="width:min(300px,80%);">
           <div class="ab-cmd" style="margin-bottom:12px;"><span class="pc" style="color:var(--vermilion)">›</span><span class="pt">make it bolder</span></div>
           <div class="render" style="height:320px;">
@@ -757,7 +757,7 @@
   <section class="slide">
     <div class="stage">
       <h2 class="display">An adjective is a <span class="gold">leitwort.</span></h2>
-      <p class="caption" style="margin-top:30px;color:var(--faint);font-size:clamp(12px,0.95vw,14.5px);">A leading word, from literary theory (Buber &amp; Rosenzweig) — brought to AI skills by Matt Pocock&nbsp;<span style="color:var(--gold-ink)">@mattpocockuk</span>.</p>
+      <p class="caption" style="margin-top:30px;color:var(--faint);font-size:clamp(12px,0.95vw,14.5px);">A leading word, from literary theory (Buber &amp; Rosenzweig), brought to AI skills by Matt Pocock&nbsp;<span style="color:var(--gold-ink)">@mattpocockuk</span>.</p>
     </div>
     <div class="meta-bot"><span class="num"></span></div>
   </section>
@@ -776,7 +776,7 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 20 · MAP THE WORKFLOW FIRST — the messy design loop, commands mapped on -->
+  <!-- 20 · MAP THE WORKFLOW FIRST: the messy design loop, commands mapped on -->
   <section class="slide">
     <div class="stage center" style="max-width:100%;">
       <h2 class="headline" style="margin-bottom:clamp(28px,4.2vh,60px);">Map the workflow <span class="gold">first.</span></h2>
@@ -820,9 +820,9 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 21 · /OVERDRIVE — the real event horizon shader (shipped on radiant) -->
+  <!-- 21 · /OVERDRIVE: the real event horizon shader (shipped on radiant) -->
   <section class="slide s-bleed">
-    <iframe data-src="assets/event-horizon.html" src="about:blank" title="/overdrive — event horizon shader" style="position:absolute;inset:0;width:100%;height:100%;border:0;background:#0a0a0a;"></iframe>
+    <iframe data-src="assets/event-horizon.html" src="about:blank" title="/overdrive: event horizon shader" style="position:absolute;inset:0;width:100%;height:100%;border:0;background:#0a0a0a;"></iframe>
     <div class="overlay-stage" style="max-width:none;">
       <div style="font-family:var(--mono);font-size:clamp(13px,1.1vw,17px);letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-lg);margin-bottom:12px;">/overdrive · on radiant</div>
       <div style="font-family:var(--font);font-weight:500;font-size:clamp(20px,1.9vw,30px);color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.75);max-width:32ch;">The one I thought went too far. It has a rabid fan base.</div>
@@ -838,7 +838,7 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 23 · /AUTO — requests stamp in (slow → flurry), then the gif slams over -->
+  <!-- 23 · /AUTO: requests stamp in (slow → flurry), then the gif slams over -->
   <section class="slide s-bleed">
     <div class="flurry">
       <div class="tw" style="top:25%;left:19%;--r:-6deg;animation-delay:.3s;"><div class="tw-h"><div class="tw-av"></div><div><b>vibecoder</b><span>@vibecoder</span></div></div><p>when is <b>/auto</b> 😭 i just want it to be good</p></div>
@@ -902,7 +902,7 @@
   // restart CSS animations (the /auto flurry + meme) every time a slide is shown
   function replayAnims(slide) {
     // clone-and-replace restarts CSS animations from scratch while preserving each
-    // element's inline animation-delay (the stagger) — the reliable restart.
+    // element's inline animation-delay (the stagger): the reliable restart.
     slide.querySelectorAll('.flurry, .godno, .scrollframe, .wf').forEach(el => {
       el.replaceWith(el.cloneNode(true));
     });
