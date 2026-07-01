@@ -367,10 +367,10 @@
 
   .hint { position: absolute; bottom: clamp(26px,3vw,40px); left: 50%; transform: translateX(-50%);
     font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ghost); z-index: 5; }
-  .themebtn { position: fixed; z-index: 8; top: 10px; right: 14px;
-    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  .topbar { position: fixed; z-index: 8; top: 10px; right: 14px; display: flex; gap: 6px; }
+  .topbtn { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
     color: var(--faint); background: var(--paper); border: 1px solid var(--rule); border-radius: 999px; padding: 4px 10px; cursor: pointer; opacity: 0.7; }
-  .themebtn:hover { opacity: 1; }
+  .topbtn:hover { opacity: 1; }
 
   /* /auto request flurry — tweets stamp in, then the reaction gif slams over */
   @keyframes stamp {
@@ -393,7 +393,7 @@
   .tw p { font-family: var(--font); font-size: clamp(14px,1.15vw,19px); line-height: 1.4; color: var(--text); }
   .tw p b { color: var(--gold-ink); font-weight: 700; }
   .godno { position: absolute; top: 50%; left: 50%; z-index: 10; opacity: 0;
-    height: 72vh; max-width: 90vw; border-radius: 8px; box-shadow: 0 40px 110px -20px oklch(0% 0 0 / 0.55);
+    height: 64vh; max-width: 90vw; border-radius: 8px; box-shadow: 0 40px 110px -20px oklch(0% 0 0 / 0.55);
     animation: slam .32s cubic-bezier(.2,1.25,.5,1) forwards; animation-delay: 3.1s; }
 
   /* single embedded viral tweet with video */
@@ -423,7 +423,10 @@
 <body>
 
 <div id="prog"></div>
-<button class="themebtn" id="themebtn" aria-label="Toggle dark mode">Dark · D</button>
+<div class="topbar">
+  <button class="topbtn" id="fsbtn" aria-label="Toggle fullscreen">Full · F</button>
+  <button class="topbtn" id="themebtn" aria-label="Toggle dark mode">Dark · D</button>
+</div>
 <div class="deck" id="deck">
 
   <div class="deck-brand" aria-hidden="true">
@@ -871,18 +874,28 @@
       document.body.classList.contains('dark') ? 'Light · D' : 'Dark · D';
   }
 
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  }
+
   addEventListener('keydown', e => {
     if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); go(1); }
     else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); go(-1); }
     else if (e.key === 'Home') show(0);
     else if (e.key === 'End') show(total - 1);
     else if (e.key === 'd' || e.key === 'D') toggleTheme();
+    else if (e.key === 'f' || e.key === 'F') toggleFullscreen();
   });
   addEventListener('click', e => {
-    if (e.target.closest('a') || e.target.closest('#themebtn')) return;
+    if (e.target.closest('a') || e.target.closest('.topbtn')) return;
     go((e.clientX / innerWidth) < 0.28 ? -1 : 1);
   });
   document.getElementById('themebtn').addEventListener('click', toggleTheme);
+  document.getElementById('fsbtn').addEventListener('click', toggleFullscreen);
+  document.addEventListener('fullscreenchange', () => {
+    document.getElementById('fsbtn').textContent = document.fullscreenElement ? 'Exit · F' : 'Full · F';
+  });
 
   addEventListener('hashchange', () => {
     const n = parseInt(location.hash.slice(1), 10);
