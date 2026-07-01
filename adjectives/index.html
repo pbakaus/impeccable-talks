@@ -197,6 +197,19 @@
   .ba figure { display: flex; flex-direction: column; gap: clamp(8px,1.2vh,14px); margin: 0; min-width: 0; }
   .ba .tag { font-family: var(--mono); font-size: clamp(11px,1vw,14px); letter-spacing: 0.16em; text-transform: uppercase; }
   .ba img { width: 100%; height: auto; display: block; border-radius: 13px; border: 1px solid var(--graphite-2); }
+  /* opening logo hero — the "what is Impeccable" holding slide */
+  .s-logo .stage { max-width: 100%; align-items: center; }
+  .logo-hero { width: min(960px, 86%); height: auto; display: block; }
+  .logo-hero-dark { display: none; }
+  body.dark .logo-hero-light { display: none; }
+  body.dark .logo-hero-dark { display: block; }
+  .logo-hero-divider { width: clamp(44px,4.4vw,68px); height: 2px; border-radius: 2px; background: var(--gold-mark); margin: clamp(30px,4.2vh,54px) auto clamp(20px,2.6vh,30px); }
+  .logo-hero-sub { font-family: var(--font); font-weight: 500; font-size: clamp(20px,2.2vw,36px); letter-spacing: 0.01em; color: var(--gold-lg); }
+  body:has(.slide.active.s-logo) .deck-brand { opacity: 0; }
+  /* full sample-page auto-scroll (meet Lumina) */
+  .scrollframe { --fh: 68vh; position: relative; width: min(1040px, 86%); height: var(--fh); margin: 0 auto; overflow: hidden; border-radius: 13px; border: 1px solid var(--graphite-2); background: #fff; box-shadow: 0 30px 72px -34px oklch(20% 0 0 / 0.45); }
+  .scrollframe img { position: absolute; top: 0; left: 0; width: 100%; height: auto; display: block; animation: pagescroll 12s cubic-bezier(.4,0,.5,1) forwards; }
+  @keyframes pagescroll { from { transform: translateY(0); } to { transform: translateY(calc(-100% + var(--fh))); } }
 
   /* raw/slop render — the model's reflexes */
   .slopbox { background: #fbf7f1; color: #4a4640; display: flex; flex-direction: column; height: 100%; }
@@ -419,8 +432,28 @@
   </div>
   <div class="deck-foot">Design at the speed of adjectives</div>
 
+  <!-- 00 · BRAND — logo hero (say in one sentence what Impeccable is) -->
+  <section class="slide active s-cover s-logo">
+    <div class="stage center">
+      <img class="logo-hero logo-hero-light" src="assets/impeccable-logo-light.svg" alt="Impeccable">
+      <img class="logo-hero logo-hero-dark" src="assets/impeccable-logo-dark.svg" alt="Impeccable">
+      <div class="logo-hero-divider"></div>
+      <div class="logo-hero-sub">impeccable.style</div>
+    </div>
+    <div class="meta-bot"><span class="num"></span></div>
+  </section>
+
+  <!-- 00b · MEET LUMINA — the full sample page scrolls by (context for the bolder work) -->
+  <section class="slide s-cover">
+    <div class="stage center" style="max-width:100%;">
+      <div style="font-family:var(--mono);font-size:clamp(11px,1vw,14px);letter-spacing:0.18em;text-transform:uppercase;color:var(--faint);margin-bottom:clamp(14px,2vh,24px);">Lumina · a sample product page</div>
+      <div class="scrollframe"><img src="assets/lumina_full.png" alt="Lumina sample product page"></div>
+    </div>
+    <div class="meta-bot"><span class="num"></span></div>
+  </section>
+
   <!-- 01 · COLD OPEN A — lead with the Impeccable result (the good one) -->
-  <section class="slide active s-cover">
+  <section class="slide s-cover">
     <div class="stage" style="max-width:100%;justify-content:center;">
       <div class="demo" style="max-width:min(1080px,88%);margin:0 auto;">
         <div class="demo-tag" style="color:var(--gold-ink);">With Impeccable</div>
@@ -787,7 +820,7 @@
   function replayAnims(slide) {
     // clone-and-replace restarts CSS animations from scratch while preserving each
     // element's inline animation-delay (the stagger) — the reliable restart.
-    slide.querySelectorAll('.flurry, .godno').forEach(el => {
+    slide.querySelectorAll('.flurry, .godno, .scrollframe').forEach(el => {
       el.replaceWith(el.cloneNode(true));
     });
   }
