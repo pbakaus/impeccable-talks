@@ -373,6 +373,23 @@
     height: 72vh; max-width: 90vw; border-radius: 8px; box-shadow: 0 40px 110px -20px oklch(0% 0 0 / 0.55);
     animation: slam .32s cubic-bezier(.2,1.25,.5,1) forwards; animation-delay: 3.1s; }
 
+  /* single embedded viral tweet with video */
+  .tweet-solo { width: min(420px, 84%); border: 1px solid var(--rule-strong); border-radius: 18px; background: var(--paper-raised); padding: clamp(18px,1.8vw,28px); text-align: left; box-shadow: 0 26px 64px -32px oklch(20% 0 0 / 0.45); }
+  .tweet-solo .tw-h { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .tweet-solo .tw-av { width: 48px; height: 48px; border-radius: 50%; background: var(--graphite-2); object-fit: cover; flex: none; }
+  .tweet-solo .tw-h b { display: block; font-family: var(--font); font-weight: 700; font-size: clamp(16px,1.4vw,21px); color: var(--ink); }
+  .tweet-solo .tw-h span { font-family: var(--font); font-size: clamp(13px,1.1vw,16px); color: var(--faint); }
+  .tweet-solo .tw-txt { font-family: var(--font); font-size: clamp(19px,1.9vw,29px); line-height: 1.4; color: var(--ink); margin-bottom: 16px; }
+  .tweet-solo .tw-media { border-radius: 14px; overflow: hidden; border: 1px solid var(--graphite-2); background: #000; display: flex; justify-content: center; }
+  .tweet-solo .tw-media video { display: block; width: auto; max-width: 100%; height: auto; max-height: 56vh; }
+
+  /* "make it pop" meme pile — stamp in one after another */
+  .memepile { position: absolute; inset: 0; z-index: 3; }
+  .memepile .meme { position: absolute; width: min(430px, 40%); border-radius: 12px; border: 4px solid #fff;
+    box-shadow: 0 28px 66px -26px oklch(0% 0 0 / 0.55); opacity: 0;
+    transform: translate(-50%,-50%) rotate(var(--r,0deg)) scale(1.4); }
+  .memepile .meme.shown { animation: stamp .3s cubic-bezier(.18,1.4,.5,1) forwards; }
+
   @media (max-width: 820px) {
     .passes { grid-template-columns: 1fr 1fr; }
     .ab, .tweets { grid-template-columns: 1fr; }
@@ -461,7 +478,19 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 05 · TOO LOW (pixels) -->
+  <!-- 05 · WRONG ALTITUDE, LIVE — Opus 4.7 to center a div (ItakGol) -->
+  <section class="slide">
+    <div class="stage center">
+      <div class="tweet-solo">
+        <div class="tw-h"><img class="tw-av" src="assets/itar_profile.jpg" alt=""><div><b>Itamar Golan</b><span>@ItakGol</span></div></div>
+        <p class="tw-txt">Me using Claude Opus 4.7 to center a div.</p>
+        <div class="tw-media"><video src="assets/center-a-div.mp4" autoplay loop muted playsinline></video></div>
+      </div>
+    </div>
+    <div class="meta-bot"><span class="num"></span></div>
+  </section>
+
+  <!-- 06 · TOO LOW (pixels) -->
   <section class="slide">
     <div class="stage">
       <div style="display:flex;gap:clamp(40px,7vw,110px);align-items:center;justify-content:center;flex-wrap:wrap;">
@@ -503,6 +532,16 @@
   <section class="slide">
     <div class="stage center">
       <h2 class="display" style="font-size:clamp(54px,6.4vw,140px);"><s style="color:var(--muted);text-decoration-thickness:2px;">One-shot.</s><br>Context-rich, <span class="gold">multi-shot.</span></h2>
+    </div>
+    <div class="meta-bot"><span class="num"></span></div>
+  </section>
+
+  <!-- · "MAKE IT POP" — the vague-direction rage (memes stamp in, one after another) -->
+  <section class="slide">
+    <div class="memepile">
+      <img class="meme" src="assets/pop1.jpeg" style="top:41%;left:32%;--r:-7deg;" alt="If you guys could just make it pop, that'd be great">
+      <img class="meme" src="assets/pop2.png" style="top:60%;left:50%;--r:5deg;" alt="Tell me to make it pop again, I dare you">
+      <img class="meme" src="assets/pop3.webp" style="top:40%;left:69%;--r:8deg;" alt="One does not simply make the design pop">
     </div>
     <div class="meta-bot"><span class="num"></span></div>
   </section>
@@ -733,24 +772,45 @@
     });
   }
   // only run heavy iframes (the WebGL shader) while their slide is active
-  function manageFrames(active) {
+  function manageMedia(active) {
+    // heavy iframes (WebGL shader) only run while their slide is active
     document.querySelectorAll('iframe[data-src]').forEach(f => {
       const inActive = active.contains(f);
       const loaded = f.getAttribute('src') && f.getAttribute('src') !== 'about:blank';
       if (inActive && !loaded) f.src = f.dataset.src;
       else if (!inActive && loaded) f.src = 'about:blank';
     });
+    // videos play (from the top) only on their slide
+    document.querySelectorAll('video').forEach(v => {
+      if (active.contains(v)) { try { v.currentTime = 0; v.play(); } catch (e) {} }
+      else { v.pause(); }
+    });
   }
   function show(n) {
     i = Math.max(0, Math.min(total - 1, n));
     slides.forEach((s, k) => s.classList.toggle('active', k === i));
     const active = slides[i];
-    manageFrames(active);
+    manageMedia(active);
     replayAnims(active);
+    // click-built slides (meme pile): reset to all-hidden; each advance reveals one
+    active.querySelectorAll('.memepile').forEach(pile => {
+      const fresh = pile.cloneNode(true);
+      fresh.querySelectorAll('.meme').forEach(m => m.classList.remove('shown'));
+      pile.replaceWith(fresh);
+    });
     prog.style.width = ((i + 1) / total * 100) + '%';
     history.replaceState(null, '', '#' + (i + 1));
   }
-  const go = d => show(i + d);
+  function go(d) {
+    const active = slides[i];
+    const memes = [...active.querySelectorAll('.memepile .meme')];
+    if (memes.length) {
+      const shown = memes.filter(m => m.classList.contains('shown')).length;
+      if (d > 0 && shown < memes.length) { memes[shown].classList.add('shown'); return; }  // reveal next
+      if (d < 0 && shown > 0) { memes[shown - 1].classList.remove('shown'); return; }        // hide last
+    }
+    show(i + d);
+  }
 
   function toggleTheme() {
     document.body.classList.toggle('dark');
