@@ -187,6 +187,16 @@
   .render { flex: 1; border-radius: 13px; overflow: hidden; border: 1px solid var(--graphite-2);
     min-height: 300px; display: flex; flex-direction: column; }
   .ab .render { min-height: min(54vh, 500px); }
+  /* single large demo video (cold-open sequence) */
+  .demo { display: flex; flex-direction: column; gap: clamp(10px,1.4vh,18px); width: 100%; }
+  .demo-tag { font-family: var(--mono); font-size: clamp(11px,1vw,14px); letter-spacing: 0.18em; text-transform: uppercase; }
+  .demo .render { min-height: 0; flex: none; aspect-ratio: 3714 / 2350; background: #000; }
+  .demo .render video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* before/after stills (cold-open payoff) */
+  .ba { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(18px,2.6vw,44px); width: 100%; align-items: start; }
+  .ba figure { display: flex; flex-direction: column; gap: clamp(8px,1.2vh,14px); margin: 0; min-width: 0; }
+  .ba .tag { font-family: var(--mono); font-size: clamp(11px,1vw,14px); letter-spacing: 0.16em; text-transform: uppercase; }
+  .ba img { width: 100%; height: auto; display: block; border-radius: 13px; border: 1px solid var(--graphite-2); }
 
   /* raw/slop render — the model's reflexes */
   .slopbox { background: #fbf7f1; color: #4a4640; display: flex; flex-direction: column; height: 100%; }
@@ -409,37 +419,47 @@
   </div>
   <div class="deck-foot">Design at the speed of adjectives</div>
 
-  <!-- 01 · COLD OPEN — A/B (show, no words) -->
+  <!-- 01 · COLD OPEN A — lead with the Impeccable result (the good one) -->
   <section class="slide active s-cover">
     <div class="stage" style="max-width:100%;justify-content:center;">
-      <div class="ab" style="max-width:1180px;margin:0 auto;">
-        <div class="ab-col ab-raw">
-          <div class="ab-cmd"><span class="pc">›</span><span class="pt">make it bolder</span><span class="lab">Raw agent</span></div>
-          <div class="render">
-            <div class="slopbox">
-              <div class="hero"><b>Bolder, now.</b></div>
-              <div class="glass"><div class="g1"></div><div class="g2"></div></div>
-              <div class="foot"><span class="pill">Get started</span><span class="mut">✨ AI-powered</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="ab-col ab-imp">
-          <div class="ab-cmd"><span class="pc">/</span><span class="pt">impeccable bolder</span><span class="lab">Impeccable</span></div>
-          <div class="render">
-            <div class="impbox">
-              <div class="eb">N°01 · The turn</div>
-              <div><div class="bar"></div><div class="bh">The hour<br>everything<br><span>turns.</span></div></div>
-              <div class="brow"><span>Eau de Parfum</span><span class="cta">Discover</span></div>
-            </div>
-          </div>
-        </div>
+      <div class="demo" style="max-width:min(1080px,88%);margin:0 auto;">
+        <div class="demo-tag" style="color:var(--gold-ink);">With Impeccable</div>
+        <div class="render"><video src="assets/ab-on.mp4" autoplay muted playsinline></video></div>
       </div>
     </div>
     <div class="hint">→ / space · D for dark</div>
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 02 · TITLE -->
+  <!-- 02 · COLD OPEN B — same prompt, no skill (the awful reveal) -->
+  <section class="slide s-cover">
+    <div class="stage" style="max-width:100%;justify-content:center;">
+      <div class="demo" style="max-width:min(1080px,88%);margin:0 auto;">
+        <div class="demo-tag" style="color:var(--vermilion);">Same prompt · no skill · just the model</div>
+        <div class="render"><video src="assets/ab-off.mp4" autoplay muted playsinline></video></div>
+      </div>
+    </div>
+    <div class="meta-bot"><span class="num"></span></div>
+  </section>
+
+  <!-- 03 · BEFORE / AFTER — same prompt, same model, side by side -->
+  <section class="slide s-cover">
+    <div class="stage" style="max-width:100%;justify-content:center;">
+      <div class="ba" style="max-width:1280px;margin:0 auto;">
+        <figure>
+          <figcaption class="tag" style="color:var(--vermilion);">No skill · just the model</figcaption>
+          <img src="assets/result-off.jpg" alt="Vanilla result — garish, over-bright">
+        </figure>
+        <figure>
+          <figcaption class="tag" style="color:var(--gold-ink);">With Impeccable</figcaption>
+          <img src="assets/result-on.jpg" alt="Impeccable result — refined hierarchy">
+        </figure>
+      </div>
+    </div>
+    <div class="meta-bot"><span class="num"></span></div>
+  </section>
+
+  <!-- 04 · TITLE -->
   <section class="slide s-cover s-hero">
     <div class="stage">
       <h1 class="display">Design at the speed<br>of <span class="gold">adjectives.</span></h1>
