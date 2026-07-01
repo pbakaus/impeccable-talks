@@ -5,6 +5,9 @@
 # Impeccable design-hook local cache / state
 **/.impeccable/
 
+# Generated exploration assets (not referenced by any deck)
+**/assets/generated/
+
 # Node
 node_modules/
 npm-debug.log*

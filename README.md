@@ -7,7 +7,7 @@ track, and any runnable demos or starter code.
 | Talk | Folder | What it is |
 |---|---|---|
 | **The Dark Arts of Skill Engineering** | [`dark-arts/`](dark-arts/) | AI Engineer World's Fair, workshop track. Building one skill from a prompt to a harness extension, live. |
-| **Design at the Speed of Adjectives** | [`adjectives/`](adjectives/) | AI Engineer World's Fair (WIP). |
+| **Design at the Speed of Adjectives** | [`adjectives/`](adjectives/) | AI Engineer World's Fair. Why design tools aim at the wrong altitude — pixels vs. prompts — and why the fix is the vocabulary a director already thinks in: adjectives. |
 | Killing the handoff | [`handoff/`](handoff/) | Earlier keynote on the design-to-code handoff. |
 
 ## Running a deck
@@ -31,6 +31,12 @@ hash tracks the slide (`#7`).
 - `dark-arts/demos/`: the live-demo runbook plus a deliberately-median page to critique.
 
 The starter and demos reference the `impeccable` CLI (`npx impeccable …`), published on npm.
+
+## Adjectives specifics
+
+- `adjectives/index.html`: the deck — 32 sparse beats, several with live embeds (an
+  auto-scrolling sample site, play-once recordings, a real WebGL shader).
+- `adjectives/talk-track.md`: the spoken half, one section per slide.
 
 ## License
 

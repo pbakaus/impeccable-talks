@@ -211,6 +211,50 @@
   .scrollframe img { position: absolute; top: 0; left: 0; width: 100%; height: auto; display: block; animation: pagescroll 12s cubic-bezier(.4,0,.5,1) forwards; }
   @keyframes pagescroll { from { transform: translateY(0); } to { transform: translateY(calc(-100% + var(--fh))); } }
 
+  /* ============ workflow map (map the workflow first) ============ */
+  .wf { width: min(1200px, 96%); margin: 0 auto; }
+  .wf-svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .wf-svg .track { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: wfdraw 1.7s cubic-bezier(.45,0,.15,1) forwards; }
+  @keyframes wfdraw { to { stroke-dashoffset: 0; } }
+  @keyframes wffade { to { opacity: 1; } }
+  @keyframes wfrise { to { opacity: 1; transform: none; } }
+  .wf-svg .loop, .wf-svg .arrow, .wf-svg .node, .wf-svg .ring, .wf-svg .pole, .wf-svg .flag, .wf-svg .fl-label, .wf-svg .loop-label { opacity: 0; }
+  .wf-svg .wm1 { animation: wffade .45s ease forwards .25s; }
+  .wf-svg .wm2 { animation: wffade .45s ease forwards 1s; }
+  .wf-svg .wm3 { animation: wffade .45s ease forwards 1.35s; }
+  .wf-svg .wm4 { animation: wffade .45s ease forwards 1.65s; }
+  .wf-svg .wm5 { animation: wffade .6s ease forwards 1.9s; }
+  .wf-svg .wm6 { animation: wffade .5s ease forwards 2.3s; }
+  .wf-svg .lead { stroke: var(--ghost); stroke-width: 1; }
+  .wf-svg .dot { fill: var(--gold-lg); }
+  .wf-svg .clab { font-family: var(--mono); font-size: 13px; fill: var(--gold-ink); text-anchor: middle; }
+  .wf-svg .pname { font-family: var(--font-disp); font-weight: 300; font-size: 44px; fill: var(--ink); text-anchor: middle; }
+  .wf-svg .pdesc { font-family: var(--font); font-size: 14px; fill: var(--muted); text-anchor: middle; }
+  .wf-svg .anno, .wf-svg .pgroup { opacity: 0; }
+  .wf-svg .wfa-1 { animation: wffade .5s ease forwards .55s; }
+  .wf-svg .wfa-2 { animation: wffade .5s ease forwards 1s; }
+  .wf-svg .wfa-3 { animation: wffade .5s ease forwards 1.45s; }
+  .wf-svg .wfa-4 { animation: wffade .5s ease forwards 1.85s; }
+  .wf-svg .loop { fill: none; stroke: var(--ghost); stroke-width: 1.5; stroke-dasharray: 2 8; stroke-linecap: round; }
+  .wf-svg .arrow { fill: none; stroke: var(--ghost); stroke-width: 1.5; stroke-linecap: round; }
+  .wf-svg .pole { stroke: var(--vermilion); stroke-width: 2; stroke-linecap: round; }
+  .wf-svg .node { fill: var(--gold-lg); }
+  .wf-svg .ring { fill: var(--paper); stroke: var(--gold-lg); stroke-width: 2.4; }
+  .wf-svg .flag { fill: var(--vermilion); }
+  .wf-svg .fl-label { font-family: var(--mono); font-size: 13px; fill: var(--vermilion); text-anchor: middle; letter-spacing: 0.14em; }
+  .wf-svg .loop-label { font-family: var(--mono); font-size: 13px; fill: var(--faint); text-anchor: middle; letter-spacing: 0.16em; }
+  .wf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(12px,1.6vw,28px); margin-top: clamp(6px,1.2vh,14px); align-items: start; }
+  .wf-col { text-align: center; opacity: 0; transform: translateY(10px); animation: wfrise .55s ease forwards; }
+  .wf-col:nth-child(1) { animation-delay: .45s; }
+  .wf-col:nth-child(2) { animation-delay: .85s; }
+  .wf-col:nth-child(3) { animation-delay: 1.3s; }
+  .wf-col:nth-child(4) { animation-delay: 1.7s; }
+  .wf-name { font-family: var(--font-disp); font-weight: 300; font-size: clamp(26px,3vw,54px); line-height: 1; color: var(--ink); }
+  .wf-desc { font-family: var(--font); font-size: clamp(11px,1vw,14px); color: var(--muted); margin-top: 7px; }
+  .wf-cmds { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; margin-top: clamp(9px,1.3vh,15px); }
+  .wf-cmds span { font-family: var(--mono); font-size: clamp(10px,0.85vw,12.5px); color: var(--gold-ink); border: 1px solid oklch(49% 0.08 188 / 0.32); border-radius: 999px; padding: 3px 8px; white-space: nowrap; }
+
   /* raw/slop render — the model's reflexes */
   .slopbox { background: #fbf7f1; color: #4a4640; display: flex; flex-direction: column; height: 100%; }
   .slopbox .hero { flex: 1.1; background: linear-gradient(135deg, #7b5cff 0%, #23c9d8 100%);
@@ -732,10 +776,46 @@
     <div class="meta-bot"><span class="num"></span></div>
   </section>
 
-  <!-- 20 · MAP THE WORKFLOW FIRST (the descent is the workflow → the lesson) -->
+  <!-- 20 · MAP THE WORKFLOW FIRST — the messy design loop, commands mapped on -->
   <section class="slide">
-    <div class="stage center">
-      <h2 class="display" style="font-size:clamp(54px,6.6vw,150px);">Map the workflow<br><span class="gold">first.</span></h2>
+    <div class="stage center" style="max-width:100%;">
+      <h2 class="headline" style="margin-bottom:clamp(28px,4.2vh,60px);">Map the workflow <span class="gold">first.</span></h2>
+      <div class="wf">
+        <svg class="wf-svg" viewBox="0 0 1200 320" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <!-- journey line: flat, then a turbulent middle that crosses baseline at each dot, then clean to ship -->
+          <path class="track" pathLength="1000" d="M 150 180 L 316 180 C 332 118 348 118 360 180 C 382 246 430 246 450 180 C 474 114 526 114 548 180 C 572 244 616 244 635 180 C 664 132 706 180 750 180 L 1050 180"/>
+          <!-- endpoints -->
+          <circle class="ring wfa-1" cx="150" cy="180" r="8"/>
+          <circle class="ring wfa-4" cx="1050" cy="180" r="8"/>
+          <!-- ship flag -->
+          <line class="pole wm3" x1="892" y1="180" x2="892" y2="150"/>
+          <path class="flag wm3" d="M 892 150 L 918 157 L 892 164 Z"/>
+          <text class="fl-label wm3" x="892" y="140">SHIP</text>
+          <!-- command annotations: dot on the line, leader up to the label -->
+          <g class="anno wfa-1">
+            <line class="lead" x1="155" y1="180" x2="155" y2="58"/><circle class="dot" cx="155" cy="180" r="4"/><text class="clab" x="155" y="48">init · shape</text>
+            <line class="lead" x1="270" y1="180" x2="270" y2="58"/><circle class="dot" cx="270" cy="180" r="4"/><text class="clab" x="270" y="48">craft</text>
+          </g>
+          <g class="anno wfa-2">
+            <line class="lead" x1="360" y1="180" x2="360" y2="108"/><circle class="dot" cx="360" cy="180" r="4"/><text class="clab" x="360" y="98">bolder · quieter</text>
+            <line class="lead" x1="450" y1="180" x2="450" y2="58"/><circle class="dot" cx="450" cy="180" r="4"/><text class="clab" x="450" y="48">typeset · layout</text>
+            <line class="lead" x1="548" y1="180" x2="548" y2="108"/><circle class="dot" cx="548" cy="180" r="4"/><text class="clab" x="548" y="98">colorize · animate</text>
+            <line class="lead" x1="635" y1="180" x2="635" y2="58"/><circle class="dot" cx="635" cy="180" r="4"/><text class="clab" x="635" y="48">live · critique</text>
+          </g>
+          <g class="anno wfa-3">
+            <line class="lead" x1="715" y1="172" x2="715" y2="108"/><circle class="dot" cx="715" cy="172" r="4"/><text class="clab" x="715" y="98">audit · clarify</text>
+            <line class="lead" x1="822" y1="180" x2="822" y2="58"/><circle class="dot" cx="822" cy="180" r="4"/><text class="clab" x="822" y="48">harden · polish</text>
+          </g>
+          <g class="anno wfa-4">
+            <line class="lead" x1="983" y1="180" x2="983" y2="108"/><circle class="dot" cx="983" cy="180" r="4"/><text class="clab" x="983" y="98">extract · document</text>
+          </g>
+          <!-- phase names below the line -->
+          <g class="pgroup wfa-1"><text class="pname" x="233" y="256">Start</text><text class="pdesc" x="233" y="282">blank file → brief</text></g>
+          <g class="pgroup wfa-2"><text class="pname" x="497" y="256">Iterate</text><text class="pdesc" x="497" y="282">the messy middle</text></g>
+          <g class="pgroup wfa-3"><text class="pname" x="768" y="256">Polish</text><text class="pdesc" x="768" y="282">the pre-ship gauntlet</text></g>
+          <g class="pgroup wfa-4"><text class="pname" x="985" y="256">Maintain</text><text class="pdesc" x="985" y="282">pay down design debt</text></g>
+        </svg>
+      </div>
     </div>
     <div class="meta-bot"><span class="num"></span></div>
   </section>
@@ -823,7 +903,7 @@
   function replayAnims(slide) {
     // clone-and-replace restarts CSS animations from scratch while preserving each
     // element's inline animation-delay (the stagger) — the reliable restart.
-    slide.querySelectorAll('.flurry, .godno, .scrollframe').forEach(el => {
+    slide.querySelectorAll('.flurry, .godno, .scrollframe, .wf').forEach(el => {
       el.replaceWith(el.cloneNode(true));
     });
   }

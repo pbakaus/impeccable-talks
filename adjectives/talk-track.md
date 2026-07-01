@@ -3,9 +3,7 @@
 > The spoken half. The deck (`index.html`) is **32 sparse beats** — one idea each, no
 > paragraphs. The slides are punctuation; **you carry the argument.** Don't read the slides.
 >
-> **Humor is a requirement** (the organizer asked for it, and it's what made the Dark Arts
-> talk land). Bits marked 🎙️ are *earned* laughs — relatable jabs, not jokes for jokes'
-> sake. The dry version of this talk is worse.
+> Bits marked 🎙️ are the laugh lines — relatable jabs, not jokes for jokes' sake.
 >
 > Target ~18 min content. **Auto-scroll:** Meet Lumina (02). **Play-once videos:** the
 > cold-open recordings (03 Impeccable, 04 vanilla) and the `/overdrive` shader (27). **Auto
@@ -215,9 +213,9 @@
 ---
 
 ## Delivery notes
-- **Cold open is the hook** (03–05): don't rush it. Land "pretty good, right?", *sell* the
-  skeptic's doubt as if it's your own, then let the vanilla trainwreck sit in silence before
-  "you be the judge." If the room laughs at slide 04, you've won the next 18 minutes.
+- **Cold open is the hook** (03–05): don't rush it. Land "pretty good, right?", voice the
+  skeptic's doubt honestly, then let the vanilla trainwreck sit in silence before "you be the
+  judge."
 - **Meet Lumina** (02) is ambient — set it up in a sentence, keep talking; the scroll runs on
   its own and holds at the footer.
 - **Callback:** when you hit the reflex render on 21 ("gradient, glass, neon"), point back —
@@ -228,11 +226,9 @@
   stop to watch. **Auto flurry** (29 tweets→meme): talk *over* it.
 - **The one you build** (15, make-it-pop): click each meme on your beat — the escalation is
   the joke. Don't rush the clicks.
-- **Relatable > clever.** Best laughs here: the vanilla result itself, "Opus to center a div,"
-  "the puzzle piece that fits nothing," and just *gesturing* at Michael Scott. Ask "you know
-  the one?" and let them nod.
-- **Credit Matt Pocock (leitwort) and radiant (the shader) out loud.** Generosity reads as
-  confidence.
+- **Relatable > clever.** The lines that land are the honest, familiar ones — the vanilla
+  result speaking for itself, "Opus to center a div," the puzzle piece that fits nothing.
+- **Credit Matt Pocock (leitwort) and radiant (the shader) out loud.**
 - **Optional spoken jab** (no slide): the "You're absolutely right!" sycophancy tic — drop it
   wherever the model's over-eagerness comes up. Everyone's seen it.
 
